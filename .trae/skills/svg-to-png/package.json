@@ -1,0 +1,25 @@
+{
+  "name": "svg-to-png-converter",
+  "version": "1.0.0",
+  "description": "High-quality SVG to PNG conversion tool",
+  "main": "svg-to-png.js",
+  "scripts": {
+    "convert": "node svg-to-png.js"
+  },
+  "keywords": [
+    "svg",
+    "png",
+    "convert",
+    "image",
+    "vector"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "sharp": "^0.33.5"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
