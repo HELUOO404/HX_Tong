@@ -1,155 +1,125 @@
 ---
 name: "svg-to-png"
-description: "Converts SVG files to PNG format with high quality. Invoke when user needs to convert SVG images to PNG, batch process SVG files, or generate raster images from vector graphics."
+description: "Converts SVG icons to PNG with configurable styles, multi-scale support, and batch processing. Invoke when user needs to convert SVG icons to PNG, generate multi-resolution images, or batch process icon sets with Apple-style design."
 ---
 
 # SVG to PNG Converter
 
-A production-ready skill for converting SVG files to PNG format using Node.js with high-quality rendering.
+High-quality SVG to PNG conversion for icon generation with Apple-style design aesthetics.
 
 ## Features
 
-- **High Quality Rendering**: Uses `@resvg/resvg-js` (Rust-based SVG renderer)
-- **Flexible Input**: Support single file, multiple files, or entire directories
-- **Customizable Output**: Configure size, DPI, background color, quality
-- **Batch Processing**: Convert multiple SVGs efficiently
-- **Cross-Platform**: Works on Windows, macOS, and Linux
+- **Pure Icons**: Generates icon content only, no background frames
+- **Multi-Scale**: Generate @1x, @2x, @3x versions for different screen densities
+- **Style System**: Apple flat, outline, and gradient themes
+- **Batch Processing**: Convert entire directories
+- **Configurable Output**: Custom naming patterns and locations
 
 ## Installation
 
-### Prerequisites
-- Node.js 16+ installed
-
-### Install Dependencies
-
 ```bash
-npm install @resvg/resvg-js sharp
-```
-
-Or use the provided package.json:
-
-```bash
+cd .trae/skills/svg-to-png
 npm install
 ```
 
-## Usage
+## Quick Start
 
-### 1. Single File Conversion
-
-```javascript
-const { convertSvgToPng } = require('./svg-to-png');
-
-// Basic usage
-await convertSvgToPng('input.svg', 'output.png');
-
-// With options
-await convertSvgToPng('input.svg', 'output.png', {
-  width: 800,
-  height: 600,
-  background: '#ffffff',
-  quality: 90
-});
-```
-
-### 2. Batch Conversion
-
-```javascript
-const { batchConvert } = require('./svg-to-png');
-
-// Convert all SVGs in a directory
-await batchConvert('./svgs/', './pngs/', {
-  width: 1024,
-  height: 1024,
-  background: 'transparent'
-});
-```
-
-### 3. Command Line Usage
+### Single File
 
 ```bash
-# Single file
-node svg-to-png.js input.svg output.png
+# Basic conversion
+node svg-to-png.js icon.svg
 
-# With options
-node svg-to-png.js input.svg output.png --width 800 --height 600 --bg white
+# With multi-scale (generates icon.png, icon@2x.png, icon@3x.png)
+node svg-to-png.js icon.svg --scales 1,2,3
 
-# Batch conversion
-node svg-to-png.js --batch ./svgs/ ./pngs/
+# Apple outline style with custom color
+node svg-to-png.js icon.svg -t apple-outline -c #FF6B6B
 ```
 
-## API Reference
+### Batch Conversion
 
-### `convertSvgToPng(input, output, options)`
+```bash
+# Convert all SVGs in directory
+node svg-to-png.js --batch ./icons/ -o ./output/
 
-Converts a single SVG file to PNG.
+# With multi-scale
+node svg-to-png.js --batch ./icons/ -o ./output/ --scales 1,2
+```
 
-**Parameters:**
-- `input` (string): Path to input SVG file
-- `output` (string): Path to output PNG file
-- `options` (object, optional):
-  - `width` (number): Output width in pixels
-  - `height` (number): Output height in pixels
-  - `scale` (number): Scale factor (default: 1)
-  - `background` (string): Background color (e.g., '#ffffff', 'transparent')
-  - `quality` (number): PNG compression level 0-9 (default: 6)
+## Configuration
 
-**Returns:** Promise resolving to conversion result object
+### Themes
 
-### `batchConvert(inputDir, outputDir, options)`
+| Theme | Description | Best For |
+|-------|-------------|----------|
+| `apple-flat` (default) | Solid fill, no stroke | Modern iOS apps |
+| `apple-outline` | Stroke only, no fill | Toolbars, navigation |
+| `apple-gradient` | Gradient fill | Featured icons, highlights |
 
-Converts all SVG files in a directory.
+### CLI Options
 
-**Parameters:**
-- `inputDir` (string): Directory containing SVG files
-- `outputDir` (string): Directory for output PNG files
-- `options` (object, optional): Same as `convertSvgToPng`
+```
+-o, --output <path>      Output directory (default: ./output)
+-s, --size <number>      Base size in pixels (default: 24)
+--scales <1,2,3>         Generate multi-scale images
+-t, --theme <name>       Theme name
+-c, --color <hex>        Icon color
+-n, --naming <pattern>   Naming: {name}, {scale}, {size}
+-b, --batch              Batch convert directory
+```
 
-## Examples
+### Programmatic Usage
 
-### Example 1: Convert with specific dimensions
 ```javascript
-await convertSvgToPng('logo.svg', 'logo.png', {
-  width: 512,
-  height: 512,
-  background: '#ffffff'
+const { convertSvgToPng, batchConvert, mergeConfig } = require('./svg-to-png');
+
+// Single file with config
+await convertSvgToPng('icon.svg', {
+  output: { path: './output', naming: '{name}@{scale}x.png' },
+  size: { baseSize: 24, generateScales: [1, 2, 3] },
+  style: { theme: 'apple-flat', color: { value: '#007AFF' } }
+});
+
+// Batch conversion
+await batchConvert('./icons/', './output/', {
+  size: { generateScales: [1, 2] },
+  style: { theme: 'apple-outline' }
 });
 ```
 
-### Example 2: High-DPI export for retina displays
-```javascript
-await convertSvgToPng('icon.svg', 'icon@2x.png', {
-  width: 100,
-  height: 100,
-  scale: 2  // Outputs 200x200
-});
+## Output Examples
+
+### Multi-Scale Generation
+
+Input: `home.svg` (24x24 viewBox)
+```bash
+node svg-to-png.js home.svg --scales 1,2,3
 ```
 
-### Example 3: Transparent background
-```javascript
-await convertSvgToPng('illustration.svg', 'illustration.png', {
-  width: 1200,
-  background: 'transparent'
-});
+Output:
+- `home.png` (24x24)
+- `home@2x.png` (48x48)
+- `home@3x.png` (72x72)
+
+### Custom Naming
+
+```bash
+node svg-to-png.js icon.svg -n '{name}_{size}px.png' --scales 1,2
 ```
 
-## Troubleshooting
+Output:
+- `icon_24px.png`
+- `icon_48px.png`
 
-### Common Issues
+## Design Integration
 
-1. **Fonts not rendering correctly**
-   - Ensure system fonts are available
-   - Use web-safe fonts or embed fonts in SVG
+This skill works seamlessly with:
+- **frontend-design**: For consistent visual style
+- **ui-ux-design**: For icon usability and accessibility
 
-2. **Out of memory on large batch**
-   - Process files in smaller batches
-   - Increase Node.js memory: `node --max-old-space-size=4096 svg-to-png.js`
-
-3. **Permission errors**
-   - Check write permissions for output directory
-   - Run with appropriate privileges
-
-## Technical Details
-
-- **Rendering Engine**: `@resvg/resvg-js` (Rust-based, supports SVG 1.1)
-- **Image Processing**: `sharp` (libvips-based, high performance)
-- **Supported SVG Features**: CSS, gradients, patterns, filters, text
+When generating icons, consider:
+- **Size**: 24px base for standard icons, 20px for dense UIs
+- **Stroke width**: 1.5px for outline style (Apple standard)
+- **Color**: Use system colors or brand palette
+- **Accessibility**: Ensure sufficient contrast
