@@ -80,7 +80,6 @@ miniprogram/config/env.js
 
 # 项目文档（仅保留 MVP 开发计划，使用 git add -f 强制添加）
 01-项目文档/
-02-开发规范/
 03-配置管理/
 04-工具脚本/
 docs/
