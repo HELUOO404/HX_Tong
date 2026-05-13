@@ -1,0 +1,100 @@
+<!--pages/admin/approvals.wxml-->
+<view class="page" style="background: {{theme.background}};">
+  <!-- 标签栏 -->
+  <view class="tab-bar" style="background: {{theme.card}}; border-color: {{theme.border}};">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="id"
+      class="tab-item {{activeTab === item.id ? 'active' : ''}}"
+      data-id="{{item.id}}"
+      bindtap="onTabChange"
+    >
+      <text style="color: {{activeTab === item.id ? theme.primary : theme.textSecondary}};">{{item.name}}</text>
+      <view wx:if="{{activeTab === item.id}}" class="tab-line" style="background: {{theme.primary}};"></view>
+    </view>
+  </view>
+
+  <!-- 预约列表 -->
+  <view class="booking-list">
+    <block wx:if="{{bookings.length > 0}}">
+      <view
+        wx:for="{{bookings}}"
+        wx:key="_id"
+        class="booking-card"
+        style="background: {{theme.card}}; border-color: {{theme.border}};"
+        bindtap="onViewDetail"
+        data-booking="{{item}}"
+      >
+        <!-- 会议室信息 -->
+        <view class="room-info">
+          <text class="room-name" style="color: {{theme.textPrimary}};">{{(item.roomInfo && item.roomInfo.name) || item.roomName || '未知会议室'}}</text>
+          <view class="status-badge {{item.status}}">
+            <text wx:if="{{item.status === 'pending'}}" style="color: #FAAD14;">待审批</text>
+            <text wx:elif="{{item.status === 'approved'}}" style="color: #52C41A;">已通过</text>
+            <text wx:elif="{{item.status === 'rejected'}}" style="color: #FF4D4F;">已拒绝</text>
+          </view>
+        </view>
+
+        <!-- 预约信息 -->
+        <view class="booking-detail">
+          <view class="info-row">
+            <text class="label" style="color: {{theme.textTertiary}};">预约人：</text>
+            <text style="color: {{theme.textSecondary}};">{{(item.userInfo && (item.userInfo.name || item.userInfo.realName)) || '未知用户'}}</text>
+          </view>
+          <view class="info-row">
+            <text class="label" style="color: {{theme.textTertiary}};">日期：</text>
+            <text style="color: {{theme.textSecondary}};">{{item.date}}</text>
+          </view>
+          <view class="info-row">
+            <text class="label" style="color: {{theme.textTertiary}};">时间：</text>
+            <text style="color: {{theme.textSecondary}};">{{item.startTime}} - {{item.endTime}}</text>
+          </view>
+          <view class="info-row">
+            <text class="label" style="color: {{theme.textTertiary}};">用途：</text>
+            <text style="color: {{theme.textSecondary}};">{{item.purpose || '未填写'}}</text>
+          </view>
+        </view>
+
+        <!-- 操作按钮（仅待审批状态显示） -->
+        <view wx:if="{{item.status === 'pending'}}" class="action-btns">
+          <view
+            class="btn-reject"
+            style="border-color: #FF4D4F; color: #FF4D4F;"
+            catchtap="onReject"
+            data-booking="{{item}}"
+          >
+            拒绝
+          </view>
+          <view
+            class="btn-approve"
+            style="background: {{theme.primary}}; color: #fff;"
+            catchtap="onApprove"
+            data-booking="{{item}}"
+          >
+            通过
+          </view>
+        </view>
+      </view>
+
+      <!-- 加载更多 -->
+      <view wx:if="{{hasMore}}" class="load-more" bindtap="onLoadMore" style="color: {{theme.textSecondary}};">
+        点击加载更多
+      </view>
+      <view wx:else class="no-more" style="color: {{theme.textTertiary}};">
+        没有更多了
+      </view>
+    </block>
+
+    <!-- 空状态 -->
+    <view wx:elif="{{!isLoading}}" class="empty-state">
+      <image class="empty-icon" src="/assets/images/empty-booking.png" mode="aspectFit"/>
+      <text style="color: {{theme.textSecondary}};">暂无{{activeTab === 'pending' ? '待审批' : (activeTab === 'approved' ? '已通过' : '已拒绝')}}预约</text>
+    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view wx:if="{{isLoading && bookings.length === 0}}" class="loading-state">
+    <view class="loading-spinner" style="border-color: {{theme.primary}}; border-top-color: transparent;"></view>
+    <text style="color: {{theme.textSecondary}};">加载中...</text>
+  </view>
+</view>

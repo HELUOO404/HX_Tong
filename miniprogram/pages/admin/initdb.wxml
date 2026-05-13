@@ -1,0 +1,57 @@
+<view class="container">
+  <view class="console-header">
+    <text class="console-title">数据库管理控制台</text>
+    <text class="console-desc">系统数据初始化、修复与维护工具</text>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-icon">🗄️</text>
+      <view class="section-title-group">
+        <text class="section-title">数据库初始化</text>
+        <text class="section-subtitle">首次使用时运行，创建基础数据集合</text>
+      </view>
+    </view>
+    <view class="section-body">
+      <button class="btn btn-primary" bindtap="initDatabase" loading="{{isLoading}}" disabled="{{isLoading}}">初始化数据库</button>
+      <button class="btn btn-secondary" bindtap="viewDatabase" disabled="{{isLoading}}">查看数据库内容</button>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-icon">🏷️</text>
+      <view class="section-title-group">
+        <text class="section-title">权限标签修复</text>
+        <text class="section-subtitle">修复或重建系统权限标签，清理旧标签</text>
+      </view>
+    </view>
+    <view class="section-body">
+      <button class="btn btn-warning" bindtap="fixSystemTags" loading="{{isLoading}}" disabled="{{isLoading}}">修复系统标签</button>
+      <button class="btn btn-danger" bindtap="removeOldTags" disabled="{{isLoading}}">清理旧标签</button>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-icon">📋</text>
+      <view class="section-title-group">
+        <text class="section-title">审批规则修复</text>
+        <text class="section-subtitle">修复审批规则的启用/禁用状态不一致</text>
+      </view>
+    </view>
+    <view class="section-body">
+      <button class="btn btn-warning" bindtap="fixApprovalRuleStatus" loading="{{isLoading}}" disabled="{{isLoading}}">修复审批规则状态</button>
+    </view>
+  </view>
+
+  <view wx:if="{{result}}" class="result-section">
+    <view class="result-header">
+      <text class="result-icon">{{result.code === 200 ? '✅' : '❌'}}</text>
+      <text class="result-title">执行结果</text>
+    </view>
+    <scroll-view scroll-y class="result-scroll">
+      <text class="result-content">{{resultDataStr || '无数据'}}</text>
+    </scroll-view>
+  </view>
+</view>

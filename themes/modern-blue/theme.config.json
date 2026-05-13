@@ -1,0 +1,429 @@
+{
+  "$schema": "https://cdn.example.com/schemas/theme-config-v1.json",
+  "theme": {
+    "id": "modern-blue",
+    "name": "现代简约蓝",
+    "nameEn": "Modern Blue",
+    "version": "1.0.0",
+    "author": "红芯通设计团队",
+    "authorEmail": "design@hxtong.edu.cn",
+    "description": "清新专业的蓝色主题，适合校园行政服务场景。采用简约现代的设计风格，以沉稳的蓝色为主色调，传递专业、可靠的品牌形象。",
+    "descriptionEn": "Fresh and professional blue theme for campus administrative services. Features a minimalist modern design with a calm blue as the primary color, conveying a professional and reliable brand image.",
+    "preview": "preview/thumbnail.jpg",
+    "screenshots": [
+      "preview/screenshot-home.jpg",
+      "preview/screenshot-room.jpg",
+      "preview/screenshot-booking.jpg"
+    ],
+    "minAppVersion": "1.0.0",
+    "maxAppVersion": "2.0.0",
+    "tags": ["官方", "简约", "蓝色", "商务", "校园"],
+    "category": "official",
+    "license": "MIT",
+    "homepage": "https://hxtong.edu.cn/themes/modern-blue",
+    "repository": "https://github.com/hxtong/themes/modern-blue"
+  },
+  "colors": {
+    "primary": {
+      "50": "#E6F7FF",
+      "100": "#BAE7FF",
+      "200": "#91D5FF",
+      "300": "#69C0FF",
+      "400": "#40A9FF",
+      "500": "#1890FF",
+      "600": "#096DD9",
+      "700": "#0050B3",
+      "800": "#003A8C",
+      "900": "#002766",
+      "950": "#001529"
+    },
+    "neutral": {
+      "50": "#FAFAFA",
+      "100": "#F5F5F5",
+      "200": "#EEEEEE",
+      "300": "#E0E0E0",
+      "400": "#BDBDBD",
+      "500": "#9E9E9E",
+      "600": "#757575",
+      "700": "#616161",
+      "800": "#424242",
+      "900": "#212121",
+      "950": "#0A0A0A"
+    },
+    "functional": {
+      "success": "#52C41A",
+      "successLight": "#F6FFED",
+      "successDark": "#389E0D",
+      "warning": "#FAAD14",
+      "warningLight": "#FFF7E6",
+      "warningDark": "#D46B08",
+      "error": "#FF4D4F",
+      "errorLight": "#FFF1F0",
+      "errorDark": "#CF1322",
+      "info": "#1890FF",
+      "infoLight": "#E6F7FF",
+      "infoDark": "#096DD9",
+      "disabled": "#BFBFBF",
+      "disabledLight": "#F5F5F5",
+      "disabledDark": "#8C8C8C"
+    },
+    "background": {
+      "page": "#F5F5F5",
+      "card": "#FFFFFF",
+      "elevated": "#FFFFFF",
+      "sunken": "#EEEEEE",
+      "hover": "#FAFAFA",
+      "pressed": "#F0F0F0",
+      "mask": "rgba(0, 0, 0, 0.45)",
+      "maskLight": "rgba(0, 0, 0, 0.25)",
+      "overlay": "rgba(255, 255, 255, 0.95)"
+    },
+    "text": {
+      "primary": "#212121",
+      "secondary": "#616161",
+      "tertiary": "#9E9E9E",
+      "disabled": "#BFBFBF",
+      "inverse": "#FFFFFF",
+      "link": "#1890FF",
+      "linkHover": "#40A9FF",
+      "linkActive": "#096DD9"
+    },
+    "border": {
+      "light": "#EEEEEE",
+      "default": "#E0E0E0",
+      "dark": "#BDBDBD",
+      "focus": "#1890FF",
+      "error": "#FF4D4F"
+    },
+    "gradient": {
+      "primary": "linear-gradient(135deg, #1890FF 0%, #096DD9 100%)",
+      "primaryLight": "linear-gradient(135deg, #40A9FF 0%, #1890FF 100%)",
+      "background": "linear-gradient(180deg, #FAFAFA 0%, #F5F5F5 100%)",
+      "card": "linear-gradient(180deg, #FFFFFF 0%, #FAFAFA 100%)"
+    }
+  },
+  "typography": {
+    "fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif",
+    "fontFamilyMono": "'SF Mono', Monaco, 'Cascadia Code', 'Fira Code', monospace",
+    "fontSize": {
+      "display": "32px",
+      "displaySmall": "28px",
+      "title": "20px",
+      "titleSmall": "18px",
+      "subtitle": "17px",
+      "body": "15px",
+      "bodySmall": "14px",
+      "caption": "13px",
+      "captionSmall": "12px",
+      "small": "11px",
+      "tiny": "10px"
+    },
+    "fontWeight": {
+      "thin": 100,
+      "light": 300,
+      "regular": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700,
+      "heavy": 800,
+      "black": 900
+    },
+    "lineHeight": {
+      "tight": 1.25,
+      "snug": 1.375,
+      "normal": 1.5,
+      "relaxed": 1.625,
+      "loose": 2
+    },
+    "letterSpacing": {
+      "tighter": "-0.05em",
+      "tight": "-0.025em",
+      "normal": "0",
+      "wide": "0.025em",
+      "wider": "0.05em",
+      "widest": "0.1em"
+    }
+  },
+  "spacing": {
+    "unit": 4,
+    "scale": [0, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96, 128]
+  },
+  "radius": {
+    "none": 0,
+    "xs": "2px",
+    "sm": "4px",
+    "md": "8px",
+    "lg": "12px",
+    "xl": "16px",
+    "2xl": "20px",
+    "3xl": "24px",
+    "full": "9999px"
+  },
+  "shadows": {
+    "none": "none",
+    "xs": "0 1px 2px rgba(0, 0, 0, 0.03)",
+    "sm": "0 1px 2px rgba(0, 0, 0, 0.05)",
+    "md": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+    "lg": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+    "xl": "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+    "2xl": "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+    "inner": "inset 0 2px 4px rgba(0, 0, 0, 0.06)",
+    "primary": "0 4px 14px rgba(24, 144, 255, 0.39)",
+    "primarySm": "0 2px 8px rgba(24, 144, 255, 0.25)"
+  },
+  "animations": {
+    "duration": {
+      "instant": 0,
+      "fast": 100,
+      "normal": 200,
+      "slow": 300,
+      "slower": 500,
+      "slowest": 700
+    },
+    "easing": {
+      "linear": "linear",
+      "easeIn": "cubic-bezier(0.4, 0, 1, 1)",
+      "easeOut": "cubic-bezier(0, 0, 0.2, 1)",
+      "easeInOut": "cubic-bezier(0.4, 0, 0.2, 1)",
+      "spring": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+      "bounce": "cubic-bezier(0.68, -0.55, 0.265, 1.55)"
+    }
+  },
+  "assets": {
+    "images": {
+      "logo": "assets/images/logo.png",
+      "logoDark": "assets/images/logo-dark.png",
+      "bgHome": "assets/images/bg-home.png",
+      "bgProfile": "assets/images/bg-profile.png",
+      "emptyBooking": "assets/images/empty-booking.png",
+      "emptyRoom": "assets/images/empty-room.png",
+      "emptyData": "assets/images/empty-data.png",
+      "emptySearch": "assets/images/empty-search.png",
+      "errorNetwork": "assets/images/error-network.png",
+      "errorGeneric": "assets/images/error-generic.png",
+      "successBooking": "assets/images/success-booking.png"
+    },
+    "icons": {
+      "tabHome": "assets/icons/tab-home.png",
+      "tabHomeActive": "assets/icons/tab-home-active.png",
+      "tabRoom": "assets/icons/tab-room.png",
+      "tabRoomActive": "assets/icons/tab-room-active.png",
+      "tabBooking": "assets/icons/tab-booking.png",
+      "tabBookingActive": "assets/icons/tab-booking-active.png",
+      "tabProfile": "assets/icons/tab-profile.png",
+      "tabProfileActive": "assets/icons/tab-profile-active.png",
+      "calendar": "assets/icons/icon-calendar.png",
+      "clock": "assets/icons/icon-clock.png",
+      "location": "assets/icons/icon-location.png",
+      "phone": "assets/icons/icon-phone.png",
+      "success": "assets/icons/icon-success.png",
+      "warning": "assets/icons/icon-warning.png",
+      "error": "assets/icons/icon-error.png",
+      "info": "assets/icons/icon-info.png",
+      "search": "assets/icons/icon-search.png",
+      "filter": "assets/icons/icon-filter.png",
+      "more": "assets/icons/icon-more.png",
+      "arrowRight": "assets/icons/icon-arrow-right.png",
+      "arrowLeft": "assets/icons/icon-arrow-left.png",
+      "arrowUp": "assets/icons/icon-arrow-up.png",
+      "arrowDown": "assets/icons/icon-arrow-down.png",
+      "check": "assets/icons/icon-check.png",
+      "close": "assets/icons/icon-close.png",
+      "edit": "assets/icons/icon-edit.png",
+      "delete": "assets/icons/icon-delete.png",
+      "add": "assets/icons/icon-add.png",
+      "settings": "assets/icons/icon-settings.png",
+      "notification": "assets/icons/icon-notification.png",
+      "user": "assets/icons/icon-user.png",
+      "star": "assets/icons/icon-star.png",
+      "heart": "assets/icons/icon-heart.png",
+      "share": "assets/icons/icon-share.png",
+      "refresh": "assets/icons/icon-refresh.png"
+    }
+  },
+  "components": {
+    "button": {
+      "borderRadius": "8px",
+      "height": {
+        "large": "48px",
+        "medium": "40px",
+        "small": "32px",
+        "mini": "24px"
+      },
+      "padding": {
+        "large": "0 24px",
+        "medium": "0 20px",
+        "small": "0 16px",
+        "mini": "0 8px"
+      },
+      "fontSize": {
+        "large": "17px",
+        "medium": "15px",
+        "small": "13px",
+        "mini": "11px"
+      },
+      "primaryBg": "#1890FF",
+      "primaryColor": "#FFFFFF",
+      "primaryHoverBg": "#40A9FF",
+      "primaryActiveBg": "#096DD9",
+      "primaryDisabledBg": "#BAE7FF",
+      "secondaryBg": "transparent",
+      "secondaryBorder": "#1890FF",
+      "secondaryColor": "#1890FF",
+      "secondaryHoverBg": "#E6F7FF",
+      "secondaryActiveBg": "#BAE7FF",
+      "ghostBg": "transparent",
+      "ghostColor": "#FFFFFF",
+      "ghostBorder": "#FFFFFF",
+      "ghostHoverBg": "rgba(255, 255, 255, 0.1)",
+      "disabledBg": "#F5F5F5",
+      "disabledColor": "#BFBFBF",
+      "disabledBorder": "#E0E0E0"
+    },
+    "card": {
+      "borderRadius": "12px",
+      "background": "#FFFFFF",
+      "shadow": "0 1px 2px rgba(0, 0, 0, 0.05)",
+      "shadowHover": "0 4px 12px rgba(0, 0, 0, 0.1)",
+      "padding": "16px",
+      "paddingLarge": "24px",
+      "paddingSmall": "12px"
+    },
+    "input": {
+      "borderRadius": "8px",
+      "height": "44px",
+      "borderColor": "#E0E0E0",
+      "borderColorFocus": "#1890FF",
+      "borderColorError": "#FF4D4F",
+      "borderColorDisabled": "#E0E0E0",
+      "background": "#FFFFFF",
+      "backgroundDisabled": "#F5F5F5",
+      "placeholderColor": "#BDBDBD",
+      "padding": "0 12px",
+      "fontSize": "15px"
+    },
+    "tag": {
+      "borderRadius": "4px",
+      "padding": "2px 8px",
+      "fontSize": "11px",
+      "fontWeight": 500,
+      "pendingBg": "#FFF7E6",
+      "pendingColor": "#D46B08",
+      "pendingBorder": "#FFD591",
+      "approvedBg": "#F6FFED",
+      "approvedColor": "#389E0D",
+      "approvedBorder": "#B7EB8F",
+      "rejectedBg": "#FFF1F0",
+      "rejectedColor": "#CF1322",
+      "rejectedBorder": "#FFA39E",
+      "cancelledBg": "#F5F5F5",
+      "cancelledColor": "#8C8C8C",
+      "cancelledBorder": "#D9D9D9",
+      "completedBg": "#E6F7FF",
+      "completedColor": "#096DD9",
+      "completedBorder": "#91D5FF",
+      "noShowBg": "#FFF1F0",
+      "noShowColor": "#A8071A",
+      "noShowBorder": "#FF7875"
+    },
+    "calendar": {
+      "daySize": "40px",
+      "dayRadius": "8px",
+      "selectedBg": "#1890FF",
+      "selectedColor": "#FFFFFF",
+      "todayBorder": "#1890FF",
+      "todayColor": "#1890FF",
+      "disabledColor": "#BFBFBF",
+      "weekdayColor": "#616161",
+      "weekendColor": "#FF4D4F",
+      "headerColor": "#212121"
+    },
+    "timeSlot": {
+      "height": "36px",
+      "borderRadius": "6px",
+      "availableBorder": "#1890FF",
+      "availableColor": "#1890FF",
+      "availableBg": "#FFFFFF",
+      "selectedBg": "#1890FF",
+      "selectedColor": "#FFFFFF",
+      "disabledBg": "#F5F5F5",
+      "disabledColor": "#BFBFBF",
+      "disabledBorder": "#E0E0E0",
+      "bookedBg": "#FFF1F0",
+      "bookedColor": "#CF1322",
+      "bookedBorder": "#FFA39E"
+    },
+    "navigation": {
+      "height": "44px",
+      "background": "#1890FF",
+      "color": "#FFFFFF",
+      "borderBottom": "none",
+      "fontSize": "17px",
+      "fontWeight": 600
+    },
+    "tabBar": {
+      "height": "50px",
+      "background": "#FFFFFF",
+      "borderTop": "1px solid #E0E0E0",
+      "color": "#9E9E9E",
+      "activeColor": "#1890FF",
+      "fontSize": "10px",
+      "iconSize": "24px"
+    },
+    "toast": {
+      "borderRadius": "8px",
+      "padding": "12px 16px",
+      "background": "rgba(0, 0, 0, 0.8)",
+      "color": "#FFFFFF",
+      "fontSize": "14px",
+      "maxWidth": "80%"
+    },
+    "modal": {
+      "borderRadius": "16px",
+      "background": "#FFFFFF",
+      "padding": "24px",
+      "shadow": "0 20px 25px -5px rgba(0, 0, 0, 0.1)"
+    },
+    "divider": {
+      "color": "#E0E0E0",
+      "thickness": "1px",
+      "margin": "16px 0"
+    }
+  },
+  "custom": {
+    "roomCard": {
+      "imageSize": "100px",
+      "imageRadius": "8px",
+      "badgeBg": "#1890FF",
+      "badgeColor": "#FFFFFF"
+    },
+    "bookingCard": {
+      "statusBarWidth": "4px",
+      "padding": "16px",
+      "borderRadius": "12px"
+    },
+    "creditScore": {
+      "highColor": "#52C41A",
+      "highBg": "#F6FFED",
+      "mediumColor": "#FAAD14",
+      "mediumBg": "#FFF7E6",
+      "lowColor": "#FF4D4F",
+      "lowBg": "#FFF1F0",
+      "progressBg": "#E0E0E0",
+      "progressHeight": "8px",
+      "progressRadius": "4px"
+    },
+    "statsCard": {
+      "iconSize": "48px",
+      "iconRadius": "12px",
+      "iconBg": "#E6F7FF",
+      "iconColor": "#1890FF"
+    },
+    "noticeBar": {
+      "height": "36px",
+      "background": "#FFF7E6",
+      "color": "#D46B08",
+      "iconColor": "#FAAD14"
+    }
+  }
+}

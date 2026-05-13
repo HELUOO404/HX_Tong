@@ -1,0 +1,74 @@
+<view class="edit-container" style="background-color: {{theme.background}};">
+  <view class="header-section">
+    <text class="header-title">编辑个人信息</text>
+    <text class="header-desc">修改头像和手机号，其余信息仅展示</text>
+  </view>
+
+  <view class="form-section" style="background-color: {{theme.card}};">
+    <view class="form-item avatar-item">
+      <view class="avatar-wrapper" bindtap="onChangeAvatarTap">
+        <image
+          class="avatar-preview"
+          src="{{avatarUrl || '/assets/images/logo.png'}}"
+          mode="aspectFill"
+        />
+        <view class="avatar-edit-mask">
+          <image class="edit-icon" src="/assets/images/icons/edit.png" mode="aspectFit"/>
+          <text class="edit-text">更换头像</text>
+        </view>
+      </view>
+      <text class="avatar-hint">点击更换头像</text>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">手机号</text>
+      <input 
+        class="form-input" 
+        type="number" 
+        maxlength="11"
+        placeholder="请输入手机号"
+        value="{{phone}}"
+        bindinput="onPhoneInput"
+        style="color: {{theme.textPrimary}}; background: {{theme.background}};"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">姓名</text>
+      <text class="form-value" style="color: {{theme.textPrimary}};">{{realName || '未填写'}}</text>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">学院</text>
+      <text class="form-value" style="color: {{theme.textPrimary}};">{{academy || '未填写'}}</text>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">班级</text>
+      <text class="form-value" style="color: {{theme.textPrimary}};">{{className || '未填写'}}</text>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">学号</text>
+      <text class="form-value" style="color: {{theme.textPrimary}};">{{studentId || '未填写'}}</text>
+    </view>
+  </view>
+
+  <view class="button-section">
+    <button
+      class="save-btn {{isSubmitting ? 'loading' : ''}}"
+      bindtap="onSave"
+      disabled="{{isSubmitting}}"
+      style="background-color: {{theme.primary}};"
+    >
+      {{isSubmitting ? '保存中...' : '保存'}}
+    </button>
+    <button
+      class="cancel-btn"
+      bindtap="onCancel"
+      style="color: {{theme.textSecondary}}; border-color: {{theme.border}};"
+    >
+      取消
+    </button>
+  </view>
+</view>

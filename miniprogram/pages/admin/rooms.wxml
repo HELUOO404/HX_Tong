@@ -1,0 +1,74 @@
+<!--pages/admin/rooms.wxml-->
+<view class="page" style="background: {{theme.background}};">
+  <!-- 添加按钮 -->
+  <view class="header-bar" style="background: {{theme.card}};">
+    <view class="add-btn" bindtap="onShowAddModal" style="background: {{theme.primary}};">
+      <text class="add-icon">+</text>
+      <text>添加会议室</text>
+    </view>
+  </view>
+
+  <!-- 会议室列表 -->
+  <view class="room-list">
+    <block wx:if="{{rooms.length > 0}}">
+      <view
+        wx:for="{{rooms}}"
+        wx:key="_id"
+        class="room-card"
+        style="background: {{theme.card}}; border-color: {{theme.border}};"
+      >
+        <!-- 会议室信息 -->
+        <view class="room-header">
+          <view class="room-title">
+            <text class="room-name" style="color: {{theme.textPrimary}};">{{item.name}}</text>
+            <view class="status-tag {{item.status === 'available' ? 'available' : 'disabled'}}">
+              <text wx:if="{{item.status === 'available'}}" style="color: #52C41A;">可用</text>
+              <text wx:else style="color: #999;">停用</text>
+            </view>
+          </view>
+          <view class="room-actions">
+            <view class="action-btn edit" bindtap="onShowEditModal" data-room="{{item}}" style="color: {{theme.primary}};">编辑</view>
+            <view class="action-btn delete" bindtap="onDeleteRoom" data-room="{{item}}" style="color: #FF4D4F;">删除</view>
+          </view>
+        </view>
+
+        <!-- 详细信息 -->
+        <view class="room-detail">
+          <view class="info-row">
+            <text class="label" style="color: {{theme.textTertiary}};">位置：</text>
+            <text style="color: {{theme.textSecondary}};">{{item.location}}</text>
+          </view>
+          <view class="info-row">
+            <text class="label" style="color: {{theme.textTertiary}};">容量：</text>
+            <text style="color: {{theme.textSecondary}};">
+              <block wx:if="{{item.capacity && item.capacity.min !== undefined}}">{{item.capacity.min}}-{{item.capacity.max}}人</block>
+              <block wx:elif="{{item.capacity > 0}}">{{item.capacity}}人</block>
+              <block wx:else>未知容量</block>
+            </text>
+          </view>
+          <view class="info-row">
+            <text class="label" style="color: {{theme.textTertiary}};">开放时间：</text>
+            <text style="color: {{theme.textSecondary}};">{{item.openTime}} - {{item.closeTime}}</text>
+          </view>
+          <view class="info-row" wx:if="{{item.facilities && item.facilities.length > 0}}">
+            <text class="label" style="color: {{theme.textTertiary}};">设施：</text>
+            <text style="color: {{theme.textSecondary}};">{{item.facilityNames}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 空状态 -->
+    <view wx:elif="{{!isLoading}}" class="empty-state">
+      <image class="empty-icon" src="/assets/images/empty-room.png" mode="aspectFit"/>
+      <text style="color: {{theme.textSecondary}};">暂无会议室数据</text>
+      <text class="empty-tip" style="color: {{theme.textTertiary}};">点击上方按钮添加会议室</text>
+    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view wx:if="{{isLoading}}" class="loading-state">
+    <view class="loading-spinner" style="border-color: {{theme.primary}}; border-top-color: transparent;"></view>
+    <text style="color: {{theme.textSecondary}};">加载中...</text>
+  </view>
+</view>

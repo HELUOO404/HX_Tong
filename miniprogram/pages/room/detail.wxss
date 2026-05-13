@@ -1,0 +1,180 @@
+.room-detail-container {
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  padding-bottom: 120rpx;
+}
+
+/* 加载中 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+}
+
+.loading-text {
+  margin-top: 24rpx;
+  font-size: 28rpx;
+  color: var(--text-tertiary);
+}
+
+/* 图片轮播 */
+.image-swiper {
+  width: 100%;
+  height: 480rpx;
+}
+
+.image-swiper image {
+  width: 100%;
+  height: 100%;
+}
+
+/* 基本信息 */
+.info-section {
+  background-color: var(--bg-white);
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+}
+
+.room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.room-name {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: var(--text-primary);
+}
+
+.room-status {
+  padding: 8rpx 20rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+.room-status.available {
+  background-color: rgba(82, 196, 26, 0.12);
+  color: var(--success-color);
+}
+
+.room-status.unavailable {
+  background-color: var(--bg-gray);
+  color: var(--text-tertiary);
+}
+
+.room-location,
+.room-capacity,
+.room-time {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  font-size: 28rpx;
+  color: var(--text-secondary);
+  margin-bottom: 16rpx;
+}
+
+.room-location:last-child,
+.room-capacity:last-child,
+.room-time:last-child {
+  margin-bottom: 0;
+}
+
+/* 设备设施 */
+.facilities-section,
+.rules-section {
+  background-color: var(--bg-white);
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+}
+
+.section-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: var(--text-primary);
+  margin-bottom: 24rpx;
+}
+
+.facilities-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24rpx;
+}
+
+.facility-item {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  font-size: 28rpx;
+  color: var(--text-secondary);
+}
+
+.rules-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.rule-item {
+  font-size: 28rpx;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.room-description {
+  padding: 20rpx 30rpx;
+  background: #f9f9f9;
+  border-radius: 12rpx;
+  margin: 20rpx 0;
+}
+
+.description-text {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* 底部操作栏 */
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--bg-white);
+  padding: 24rpx 32rpx;
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
+}
+
+.book-btn {
+  width: 100%;
+  height: 88rpx;
+  background: var(--primary-gradient);
+  color: var(--bg-white);
+  font-size: 32rpx;
+  font-weight: 500;
+  border-radius: 44rpx;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.book-btn::after {
+  border: none;
+}
+
+.book-btn.disabled {
+  background: var(--disabled-color);
+  opacity: 0.7;
+}
+
+/* 空状态 */
+.empty-container {
+  padding: 120rpx 0;
+}

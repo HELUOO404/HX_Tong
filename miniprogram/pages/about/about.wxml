@@ -1,0 +1,29 @@
+<view class="about-container" style="background-color: {{theme.background}};">
+  <view class="about-header" style="background-color: {{theme.card}};">
+    <image class="app-logo" src="/assets/images/logo.png" mode="aspectFit"/>
+    <text class="app-name" style="color: {{theme.textPrimary}};">{{appInfo.name}}</text>
+    <text class="app-version" style="color: {{theme.textSecondary}};">{{appInfo.version}}</text>
+  </view>
+
+  <view class="about-section" style="background-color: {{theme.card}};">
+    <view class="info-item">
+      <text class="info-label" style="color: {{theme.textSecondary}};">开发者</text>
+      <text class="info-value" style="color: {{theme.textPrimary}};">{{appInfo.developer}}</text>
+    </view>
+    <view class="info-item">
+      <text class="info-label" style="color: {{theme.textSecondary}};">简介</text>
+      <text class="info-value" style="color: {{theme.textPrimary}};">{{appInfo.description}}</text>
+    </view>
+  </view>
+
+  <view class="about-section" style="background-color: {{theme.card}};">
+    <view class="info-item">
+      <text class="info-label" style="color: {{theme.textSecondary}};">备案信息</text>
+      <text class="info-value" style="color: {{theme.textPrimary}};">粤ICP备XXXXXXXX号-1</text>
+    </view>
+  </view>
+
+  <view class="about-footer">
+    <text class="copyright" style="color: {{theme.textTertiary}};">© 2026 深职大集成电路学院</text>
+  </view>
+</view>

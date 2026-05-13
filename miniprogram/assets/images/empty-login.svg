@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- 背景圆 -->
+  <circle cx="100" cy="100" r="80" fill="#F0F7FF"/>
+  
+  <!-- 用户图标外圈 -->
+  <circle cx="100" cy="85" r="30" fill="#1890FF" opacity="0.2"/>
+  <circle cx="100" cy="85" r="25" fill="#1890FF" opacity="0.4"/>
+  
+  <!-- 用户头像 -->
+  <circle cx="100" cy="80" r="20" fill="#1890FF"/>
+  <circle cx="100" cy="75" r="8" fill="#FFFFFF"/>
+  <path d="M85 90 Q100 100 115 90" stroke="#FFFFFF" stroke-width="3" fill="none"/>
+  
+  <!-- 身体 -->
+  <ellipse cx="100" cy="115" rx="25" ry="15" fill="#1890FF" opacity="0.6"/>
+  
+  <!-- 锁图标 -->
+  <rect x="90" y="125" width="20" height="16" rx="3" fill="#FAAD14"/>
+  <circle cx="100" cy="131" r="3" fill="#FFFFFF"/>
+  <rect x="96" y="118" width="8" height="8" rx="4" fill="none" stroke="#FAAD14" stroke-width="2"/>
+</svg>

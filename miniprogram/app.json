@@ -1,0 +1,75 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/login/login",
+    "pages/profile/complete",
+    "pages/profile/index",
+    "pages/profile/edit",
+    "pages/room/list",
+    "pages/room/detail",
+    "pages/booking/create",
+    "pages/booking/success",
+    "pages/booking/mylist",
+    "pages/booking/detail",
+    "pages/credit/index",
+    "pages/theme-settings/theme-settings",
+    "pages/settings/settings",
+    "pages/about/about",
+    "pages/admin/login",
+    "pages/admin/index",
+    "pages/admin/approvals",
+    "pages/admin/approval-detail",
+    "pages/admin/rooms",
+    "pages/admin/room-edit",
+    "pages/admin/bookings",
+    "pages/admin/users",
+    "pages/admin/user-edit",
+    "pages/admin/public-resources",
+    "pages/admin/approval-rules",
+    "pages/admin/permission-tags",
+    "pages/admin/initdb"
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#2563EB",
+    "navigationBarTitleText": "红芯通",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F8FAFC"
+  },
+  "tabBar": {
+    "color": "#94A3B8",
+    "selectedColor": "#2563EB",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "assets/images/icons/home.png",
+        "selectedIconPath": "assets/images/icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/room/list",
+        "text": "预约",
+        "iconPath": "assets/images/icons/calendar.png",
+        "selectedIconPath": "assets/images/icons/calendar-active.png"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "我的",
+        "iconPath": "assets/images/icons/user.png",
+        "selectedIconPath": "assets/images/icons/user-active.png"
+      }
+    ]
+  },
+  "cloud": true,
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于小程序位置接口的效果展示"
+    }
+  },
+  "requiredBackgroundModes": [],
+  "usingComponents": {}
+}

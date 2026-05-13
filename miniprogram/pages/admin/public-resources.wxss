@@ -1,0 +1,212 @@
+.public-resources-container {
+  min-height: 100%;
+  padding-bottom: 24rpx;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 32rpx;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.status-picker {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  font-size: 30rpx;
+}
+
+.arrow {
+  font-size: 20rpx;
+}
+
+.add-btn {
+  font-size: 30rpx;
+}
+
+.loading-state,
+.empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 100rpx 0;
+}
+
+.resource-list {
+  padding: 0 24rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.resource-card {
+  border-radius: 16rpx;
+  padding: 32rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+}
+
+.resource-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16rpx;
+}
+
+.resource-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.resource-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  word-break: break-all;
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+
+.resource-type {
+  font-size: 26rpx;
+}
+
+.status-badge {
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+}
+
+.resource-desc {
+  margin-bottom: 20rpx;
+  padding: 16rpx;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 8rpx;
+  word-break: break-all;
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+
+.resource-desc text {
+  font-size: 26rpx;
+  line-height: 1.5;
+}
+
+.resource-actions {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1rpx solid rgba(0, 0, 0, 0.06);
+  padding-top: 20rpx;
+}
+
+.action-group {
+  display: flex;
+  gap: 24rpx;
+}
+
+.action-btn {
+  font-size: 28rpx;
+  padding: 8rpx 0;
+}
+
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.modal-mask.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.resource-modal {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+  z-index: 1001;
+  border-radius: 32rpx 32rpx 0 0;
+  overflow: hidden;
+}
+
+.resource-modal.show {
+  transform: translateY(0);
+}
+
+.modal-content {
+  padding: 32rpx;
+  max-height: 1200rpx;
+  overflow-y: auto;
+}
+
+.modal-title {
+  font-size: 34rpx;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 32rpx;
+  text-align: center;
+}
+
+.form-item {
+  margin-bottom: 24rpx;
+}
+
+.form-label {
+  display: block;
+  font-size: 28rpx;
+  margin-bottom: 12rpx;
+}
+
+.form-input {
+  width: 100%;
+  padding: 24rpx;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+
+.textarea-input {
+  min-height: 160rpx;
+  text-align: left;
+}
+
+.picker-display {
+  padding: 24rpx;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 24rpx;
+  margin-top: 32rpx;
+}
+
+.modal-btn {
+  flex: 1;
+  height: 88rpx;
+  border-radius: 44rpx;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30rpx;
+  font-weight: 500;
+}
+
+.modal-btn::after {
+  border: none;
+}

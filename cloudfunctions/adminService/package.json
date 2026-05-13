@@ -1,0 +1,10 @@
+{
+  "name": "adminService",
+  "version": "1.0.0",
+  "description": "管理员服务大合集云函数",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest",
+    "bcryptjs": "^2.4.3"
+  }
+}

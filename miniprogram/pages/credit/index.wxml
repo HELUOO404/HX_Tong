@@ -1,0 +1,48 @@
+<view class="credit-container">
+  <view class="credit-card">
+    <view class="credit-circle">
+      <text class="credit-score">{{creditScore}}</text>
+      <text class="credit-label">当前信誉分</text>
+    </view>
+    <view class="credit-level">
+      <text>信用等级：{{creditLevel}}</text>
+    </view>
+  </view>
+
+  <view class="rules-section">
+    <text class="section-title">信誉分规则</text>
+    <view class="rules-list">
+      <text class="rule-item">• 初始信誉分：100分</text>
+      <text class="rule-item">• 预约权限：信誉分≥80分可正常预约，低于80分禁止预约</text>
+      <text class="rule-divider">取消预约扣分规则：</text>
+      <text class="rule-item">• 取消预约（≥6小时前）：0分</text>
+      <text class="rule-item">• 取消预约（3-6小时前）：-3分</text>
+      <text class="rule-item">• 取消预约（1-3小时前）：-5分</text>
+      <text class="rule-item">• 取消预约（不足1小时前）：-10分</text>
+    </view>
+  </view>
+
+  <view class="records-section">
+    <text class="section-title">变动记录</text>
+
+    <view class="loading-container" wx:if="{{isLoading}}">
+      <text class="loading-text" style="color: {{theme.primary}};">加载中...</text>
+    </view>
+
+    <view class="records-list" wx:elif="{{records.length > 0}}">
+      <view class="record-item" wx:for="{{records}}" wx:key="_id">
+        <view class="record-info">
+          <text class="record-reason">{{item.reason}}</text>
+          <text class="record-time">{{item.createTime}}</text>
+        </view>
+        <text class="record-score {{item.type === 'plus' ? 'plus' : 'minus'}}">
+          {{item.type === 'plus' ? '+' : ''}}{{item.scoreChange}}
+        </text>
+      </view>
+    </view>
+
+    <view class="empty-container" wx:else>
+      <text class="empty-text">暂无变动记录</text>
+    </view>
+  </view>
+</view>

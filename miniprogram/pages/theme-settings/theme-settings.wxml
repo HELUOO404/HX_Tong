@@ -1,0 +1,51 @@
+<!-- 主题设置页面 -->
+<view class="theme-settings-container" style="background-color: {{theme.background}};">
+  <!-- 页面标题 -->
+  <view class="header" style="background-color: {{theme.primary}};">
+    <text class="title" style="color: #FFFFFF;">主题设置</text>
+    <text class="subtitle" style="color: rgba(255,255,255,0.8);">选择您喜欢的主题风格</text>
+  </view>
+
+  <!-- 当前主题预览 -->
+  <view class="current-theme-preview" style="background-color: {{theme.card}}; border-color: {{theme.border}};">
+    <text class="preview-label" style="color: {{theme.textSecondary}};">当前主题</text>
+    <view class="preview-content">
+      <view class="theme-dot" style="background: {{theme.primary}};"></view>
+      <text class="theme-name" style="color: {{theme.textPrimary}};">{{currentThemeName}}</text>
+    </view>
+  </view>
+
+  <!-- 主题列表 -->
+  <view class="theme-list">
+    <view
+      wx:for="{{themes}}"
+      wx:key="id"
+      class="theme-item {{currentThemeId === item.id ? 'active' : ''}}"
+      style="background-color: {{theme.card}}; border-color: {{currentThemeId === item.id ? theme.primary : theme.border}};"
+      data-id="{{item.id}}"
+      bindtap="handleThemeTap"
+    >
+      <!-- 主题预览图 -->
+      <view class="theme-preview" style="background: {{item.colors.primary}};">
+        <view wx:if="{{currentThemeId === item.id}}" class="selected-badge" style="background-color: {{theme.success}};">
+          <text class="check-icon">✓</text>
+        </view>
+      </view>
+
+      <!-- 主题信息 -->
+      <view class="theme-info">
+        <text class="theme-title" style="color: {{theme.textPrimary}};">{{item.name}}</text>
+        <text class="theme-desc" style="color: {{theme.textSecondary}};">{{item.name}}</text>
+      </view>
+
+      <!-- 选中指示器 -->
+      <view wx:if="{{currentThemeId === item.id}}" class="active-indicator" style="background-color: {{theme.primary}};"></view>
+    </view>
+  </view>
+
+  <!-- 提示信息 -->
+  <view class="tips" style="color: {{theme.textTertiary}};">
+    <text class="tip-icon">💡</text>
+    <text>点击主题即可实时切换，无需重启小程序</text>
+  </view>
+</view>

@@ -1,0 +1,153 @@
+.mylist-container {
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+}
+
+/* 标签栏 */
+.tab-bar {
+  display: flex;
+  background-color: var(--bg-white);
+  border-bottom: 1rpx solid var(--border-color);
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 28rpx 0;
+  font-size: 30rpx;
+  color: var(--text-secondary);
+  position: relative;
+}
+
+.tab-item.active {
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48rpx;
+  height: 4rpx;
+  background-color: var(--primary-color);
+  border-radius: 2rpx;
+}
+
+/* 加载中 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 0;
+}
+
+.loading-text {
+  margin-top: 24rpx;
+  font-size: 28rpx;
+  color: var(--text-tertiary);
+}
+
+/* 预约列表 */
+.booking-list {
+  padding: 24rpx;
+}
+
+.booking-item {
+  background-color: var(--bg-white);
+  border-radius: var(--border-radius-lg);
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease;
+}
+
+.booking-item:active {
+  box-shadow: var(--shadow-md);
+}
+
+.booking-item:last-child {
+  margin-bottom: 0;
+}
+
+.booking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.room-name {
+  font-size: 34rpx;
+  font-weight: bold;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 380rpx;
+}
+
+.status-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6rpx 16rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.status-pending {
+  background-color: rgba(250, 173, 20, 0.12);
+  color: var(--warning-color);
+}
+
+.status-approved {
+  background-color: rgba(82, 196, 26, 0.12);
+  color: var(--success-color);
+}
+
+.status-rejected {
+  background-color: rgba(255, 77, 79, 0.12);
+  color: var(--error-color);
+}
+
+.status-cancelled {
+  background-color: var(--bg-gray);
+  color: var(--text-tertiary);
+}
+
+.booking-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  font-size: 28rpx;
+  color: var(--text-secondary);
+}
+
+.info-icon {
+  width: 28rpx;
+  height: 28rpx;
+}
+
+.purpose {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-secondary);
+}
+
+/* 空状态 */
+.empty-container {
+  padding: 120rpx 0;
+}

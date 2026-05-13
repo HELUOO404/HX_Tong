@@ -1,0 +1,132 @@
+<wxs module="utils">
+var RESOURCE_TYPE_MAP = {
+  'projector': '投影仪',
+  'monitor': '显示器',
+  'whiteboard': '移动白板',
+  'audio': '音响设备',
+  'laptop': '笔记本电脑',
+  'camera': '摄像头',
+  'other': '其他'
+}
+
+module.exports = {
+  getStatusText: function(status) {
+    if (status === 1) return '可用';
+    if (status === 0) return '停用';
+    if (status === 'all') return '全部';
+    return '未知';
+  },
+  getStatusColor: function(status) {
+    if (status === 1) return '#52c41a';
+    return '#999';
+  },
+  getResourceTypeName: function(type) {
+    return RESOURCE_TYPE_MAP[type] || type;
+  }
+}
+</wxs>
+
+<view class="public-resources-container" style="background-color: {{theme.background}};">
+  <view class="header" style="background-color: {{theme.card}};">
+    <picker mode="selector" range="{{statusOptions}}" range-key="label" bindchange="onStatusChange">
+      <view class="status-picker">
+        <text style="color: {{theme.textPrimary}};">{{utils.getStatusText(activeStatus)}}</text>
+        <text class="arrow" style="color: {{theme.textSecondary}};">▼</text>
+      </view>
+    </picker>
+    <view class="add-btn" bindtap="onShowAddModal">
+      <text style="color: {{theme.primary}};">+ 添加资源</text>
+    </view>
+  </view>
+
+  <view class="loading-state" wx:if="{{isLoading}}">
+    <text style="color: {{theme.textSecondary}};">加载中...</text>
+  </view>
+
+  <view class="empty-state" wx:elif="{{filteredResources.length === 0}}">
+    <text style="color: {{theme.textTertiary}};">暂无公共资源</text>
+  </view>
+
+  <view class="resource-list" wx:else>
+    <view
+      class="resource-card"
+      wx:for="{{filteredResources}}"
+      wx:key="_id"
+      style="background-color: {{theme.card}};"
+    >
+      <view class="resource-header">
+        <view class="resource-info">
+          <text class="resource-name" style="color: {{theme.textPrimary}};">{{item.name}}</text>
+          <text class="resource-type" style="color: {{theme.textSecondary}};">{{utils.getResourceTypeName(item.type)}}</text>
+        </view>
+        <view class="status-badge" style="background-color: {{utils.getStatusColor(item.status)}};">
+          <text style="color: #fff;">{{utils.getStatusText(item.status)}}</text>
+        </view>
+      </view>
+
+      <view class="resource-desc" wx:if="{{item.description}}">
+        <text style="color: {{theme.textSecondary}};">{{item.description}}</text>
+      </view>
+
+      <view class="resource-qty" wx:if="{{item.totalQuantity !== undefined}}">
+        <text style="color: {{theme.textSecondary}};">数量：{{item.availableQuantity}}/{{item.totalQuantity}}</text>
+      </view>
+
+      <view class="resource-actions">
+        <view class="action-group">
+          <view class="action-btn" bindtap="onChangeStatus" data-resource="{{item}}" data-status="{{item.status === 1 ? 0 : 1}}">
+            <text style="color: {{item.status === 1 ? '#999' : '#52c41a'}};">{{item.status === 1 ? '停用' : '启用'}}</text>
+          </view>
+        </view>
+        <view class="action-group">
+          <view class="action-btn" bindtap="onShowEditModal" data-resource="{{item}}">
+            <text style="color: {{theme.primary}};">编辑</text>
+          </view>
+          <view class="action-btn" bindtap="onDelete" data-resource="{{item}}">
+            <text style="color: {{theme.error}};">删除</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="modal-mask {{showModal ? 'show' : ''}}" bindtap="onCloseModal"></view>
+  <view class="resource-modal {{showModal ? 'show' : ''}}">
+    <view class="modal-content" style="background-color: {{theme.card}};">
+      <text class="modal-title" style="color: {{theme.textPrimary}};">{{editingResource ? '编辑资源' : '添加资源'}}</text>
+
+      <view class="form-item">
+        <text class="form-label" style="color: {{theme.textSecondary}};">资源名称 *</text>
+        <input class="form-input" placeholder="请输入资源名称" placeholder-style="color: {{theme.textTertiary}};" value="{{formData.name}}" bindinput="onNameInput" style="background-color: {{theme.background}}; color: {{theme.textPrimary}};"/>
+      </view>
+
+      <view class="form-item">
+        <text class="form-label" style="color: {{theme.textSecondary}};">资源类型</text>
+        <picker mode="selector" range="{{resourceTypes}}" range-key="name" bindchange="onTypeChange">
+          <view class="picker-display" style="background-color: {{theme.background}}; color: {{theme.textPrimary}};">
+            <text>{{utils.getResourceTypeName(formData.type)}}</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <text class="form-label" style="color: {{theme.textSecondary}};">数量 *</text>
+        <input class="form-input" type="number" placeholder="请输入资源数量" placeholder-style="color: {{theme.textTertiary}};" value="{{formData.totalQuantity}}" bindinput="onQuantityInput" style="background-color: {{theme.background}}; color: {{theme.textPrimary}};"/>
+      </view>
+
+      <view class="form-item">
+        <text class="form-label" style="color: {{theme.textSecondary}};">资源描述</text>
+        <textarea class="form-input textarea-input" auto-height placeholder="请输入资源描述（可选）" placeholder-style="color: {{theme.textTertiary}};" value="{{formData.description}}" bindinput="onDescriptionInput" style="background-color: {{theme.background}}; color: {{theme.textPrimary}};"/>
+      </view>
+
+      <view class="modal-actions">
+        <button class="modal-btn cancel" bindtap="onCloseModal" style="background-color: {{theme.background}}; color: {{theme.textSecondary}};">
+          <text>取消</text>
+        </button>
+        <button class="modal-btn confirm" bindtap="onSubmit" style="background-color: {{theme.primary}}; color: #fff;">
+          <text>确定</text>
+        </button>
+      </view>
+    </view>
+  </view>
+</view>

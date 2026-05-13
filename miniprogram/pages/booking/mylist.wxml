@@ -1,0 +1,52 @@
+<view class="mylist-container">
+  <view class="tab-bar" style="background-color: {{theme.card}};">
+    <view
+      class="tab-item {{activeTab === item.id ? 'active' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="id"
+      data-index="{{index}}"
+      bindtap="onTabChange"
+      style="color: {{activeTab === item.id ? theme.primary : theme.textSecondary}};"
+    >
+      <text>{{item.name}}</text>
+      <view class="tab-indicator" wx:if="{{activeTab === item.id}}" style="background-color: {{theme.primary}};"></view>
+    </view>
+  </view>
+
+  <view class="loading-container" wx:if="{{isLoading}}">
+    <text class="loading-text" style="color: {{theme.textSecondary}};">加载中...</text>
+  </view>
+
+  <view class="booking-list" wx:elif="{{bookingList.length > 0}}">
+    <view
+      class="booking-item"
+      wx:for="{{bookingList}}"
+      wx:key="_id"
+      data-id="{{item._id}}"
+      bindtap="onBookingTap"
+      style="background-color: {{theme.card}}; box-shadow: var(--shadow-sm);"
+    >
+      <view class="booking-header">
+        <text class="room-name" style="color: {{theme.textPrimary}};">{{item.roomName || item.room.name}}</text>
+        <view class="status-tag status-{{item.status}}">
+          <text style="color: {{item.status === 'pending' ? theme.warning : item.status === 'approved' ? theme.success : item.status === 'completed' ? theme.primary : item.status === 'rejected' ? theme.error : theme.textTertiary}};">{{item.statusText}}</text>
+        </view>
+      </view>
+
+      <view class="booking-info">
+        <view class="info-row">
+          <image class="info-icon" src="/assets/images/icons/calendar.png" mode="aspectFit" style="filter: opacity(0.5);" />
+          <text style="color: {{theme.textSecondary}};"> {{item.date}} {{item.startTime}}-{{item.endTime}}</text>
+        </view>
+        <view class="info-row" wx:if="{{item.purpose}}">
+          <text class="purpose" style="color: {{theme.textTertiary}};">{{item.purpose}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-container" wx:else>
+    <image class="empty-image" src="/assets/images/empty-booking.png" mode="aspectFit" />
+    <text class="empty-text" style="color: {{theme.textTertiary}};">暂无{{activeTab === 'all' ? '' : activeTab === 'pending' ? '待审批' : activeTab === 'approved' ? '已通过' : '已结束'}}预约记录</text>
+  </view>
+</view>

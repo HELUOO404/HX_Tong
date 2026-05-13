@@ -1,0 +1,334 @@
+<wxs module="utils">
+var RESOURCE_TYPE_MAP = {
+  'projector': '投影仪',
+  'monitor': '显示器',
+  'whiteboard': '移动白板',
+  'audio': '音响设备',
+  'laptop': '笔记本电脑',
+  'camera': '摄像头',
+  'other': '其他'
+}
+
+module.exports = {
+  includes: function(arr, val) {
+    if (!arr || !arr.length) return false;
+    for (var i = 0; i < arr.length; i++) {
+      if (arr[i] === val) return true;
+    }
+    return false;
+  },
+  getResourceTypeName: function(type) {
+    return RESOURCE_TYPE_MAP[type] || type;
+  }
+}
+</wxs>
+
+<view class="room-edit-container" style="background-color: {{theme.background}};">
+  <view class="loading-state" wx:if="{{isLoading}}">
+    <text style="color: {{theme.textSecondary}};">加载中...</text>
+  </view>
+
+  <view class="content" wx:else>
+    <view class="section" style="background-color: {{theme.card}};">
+      <text class="section-title" style="color: {{theme.textPrimary}};">基本信息</text>
+
+      <view class="form-item">
+        <text class="form-label" style="color: {{theme.textSecondary}};">会议室名称 *</text>
+        <input
+          class="form-input"
+          placeholder="请输入会议室名称"
+          placeholder-style="color: {{theme.textTertiary}};"
+          value="{{name}}"
+          bindinput="onNameInput"
+          style="background-color: {{theme.background}}; color: {{theme.textPrimary}};"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label" style="color: {{theme.textSecondary}};">位置描述 *</text>
+        <input
+          class="form-input"
+          placeholder="请输入位置描述"
+          placeholder-style="color: {{theme.textTertiary}};"
+          value="{{location}}"
+          bindinput="onLocationInput"
+          style="background-color: {{theme.background}}; color: {{theme.textPrimary}};"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label" style="color: {{theme.textSecondary}};">容量设置 *</text>
+        <view class="capacity-row">
+          <view class="capacity-item">
+            <input
+              class="form-input capacity-input"
+              type="number"
+              placeholder="最小人数"
+              placeholder-style="color: {{theme.textTertiary}};"
+              value="{{capacityMin}}"
+              bindinput="onCapacityMinInput"
+              style="background-color: {{theme.background}}; color: {{theme.textPrimary}};"
+            />
+            <text class="capacity-label" style="color: {{theme.textSecondary}};">最小人数</text>
+          </view>
+          <text class="capacity-separator" style="color: {{theme.textSecondary}};">-</text>
+          <view class="capacity-item">
+            <input
+              class="form-input capacity-input"
+              type="number"
+              placeholder="最大人数"
+              placeholder-style="color: {{theme.textTertiary}};"
+              value="{{capacityMax}}"
+              bindinput="onCapacityMaxInput"
+              style="background-color: {{theme.background}}; color: {{theme.textPrimary}};"
+            />
+            <text class="capacity-label" style="color: {{theme.textSecondary}};">最大人数</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="form-item">
+        <text class="form-label" style="color: {{theme.textSecondary}};">会议室简介</text>
+        <textarea
+          class="form-input textarea-input"
+          placeholder="请输入会议室简介（可选）"
+          placeholder-style="color: {{theme.textTertiary}};"
+          value="{{description}}"
+          bindinput="onDescriptionInput"
+          maxlength="500"
+          style="background-color: {{theme.background}}; color: {{theme.textPrimary}};"
+        />
+      </view>
+    </view>
+
+    <view class="section" style="background-color: {{theme.card}};">
+      <text class="section-title" style="color: {{theme.textPrimary}};">开放时间</text>
+
+      <view class="form-item">
+        <view class="time-picker-row">
+          <view class="time-picker-item">
+            <text class="form-label" style="color: {{theme.textSecondary}};">开始时间</text>
+            <picker mode="time" value="{{openTime}}" bindchange="onOpenTimeChange">
+              <view class="time-picker-value" style="background-color: {{theme.background}}; color: {{theme.textPrimary}};">
+                <text>{{openTime}}</text>
+              </view>
+            </picker>
+          </view>
+          <text class="time-separator" style="color: {{theme.textSecondary}};">-</text>
+          <view class="time-picker-item">
+            <text class="form-label" style="color: {{theme.textSecondary}};">结束时间</text>
+            <picker mode="time" value="{{closeTime}}" bindchange="onCloseTimeChange">
+              <view class="time-picker-value" style="background-color: {{theme.background}}; color: {{theme.textPrimary}};">
+                <text>{{closeTime}}</text>
+              </view>
+            </picker>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="section" style="background-color: {{theme.card}};">
+      <text class="section-title" style="color: {{theme.textPrimary}};">状态设置</text>
+
+      <picker mode="selector" range="{{statusOptions}}" range-key="label" bindchange="onStatusChange">
+        <view class="form-item">
+          <text class="form-label" style="color: {{theme.textSecondary}};">会议室状态</text>
+          <view class="picker-display" style="background-color: {{theme.background}}; color: {{theme.textPrimary}};">
+            <text>{{status === 'available' ? '可用' : status === 'unavailable' ? '不可用' : '隐藏'}}</text>
+          </view>
+        </view>
+      </picker>
+    </view>
+
+    <view class="section" style="background-color: {{theme.card}};">
+      <text class="section-title" style="color: {{theme.textPrimary}};">预约天数限制</text>
+
+      <view class="form-item">
+        <text class="form-label" style="color: {{theme.textSecondary}};">最多提前几天预约</text>
+        <input
+          class="form-input"
+          type="digit"
+          min="0"
+          placeholder="0 表示不限制"
+          placeholder-style="color: {{theme.textTertiary}};"
+          value="{{maxAdvanceDays}}"
+          bindinput="onMaxAdvanceDaysInput"
+          style="background-color: {{theme.background}}; color: {{theme.textPrimary}};"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label" style="color: {{theme.textSecondary}};">至少提前几天预约</text>
+        <input
+          class="form-input"
+          type="digit"
+          min="0"
+          placeholder="0 表示不限制"
+          placeholder-style="color: {{theme.textTertiary}};"
+          value="{{minAdvanceDays}}"
+          bindinput="onMinAdvanceDaysInput"
+          style="background-color: {{theme.background}}; color: {{theme.textPrimary}};"
+        />
+      </view>
+    </view>
+
+    <view class="section" style="background-color: {{theme.card}};">
+      <text class="section-title" style="color: {{theme.textPrimary}};">会议室图片</text>
+
+      <view class="image-grid">
+        <view
+          class="image-item {{item.isDefault ? 'is-default' : ''}}"
+          wx:for="{{images}}"
+          wx:key="url"
+          bindtap="onPreviewImage"
+          data-url="{{item.url}}"
+        >
+          <image src="{{item.url}}" mode="aspectFill"/>
+          <view class="image-actions">
+            <view class="image-action-btn set-default" bindtap="onSetDefaultImage" data-index="{{index}}" wx:if="{{!item.isDefault}}">
+              <text>设默认</text>
+            </view>
+            <view class="image-action-btn delete" bindtap="onDeleteImage" data-index="{{index}}">
+              <text>删除</text>
+            </view>
+          </view>
+          <view class="default-badge" wx:if="{{item.isDefault}}">默认</view>
+        </view>
+
+        <view class="image-item add-btn" bindtap="onChooseImage" wx:if="{{images.length < 9}}">
+          <text class="add-icon">+</text>
+          <text class="add-text">添加图片</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section" style="background-color: {{theme.card}};">
+      <view class="section-header">
+        <text class="section-title" style="color: {{theme.textPrimary}};">设施管理</text>
+        <view class="add-btn" bindtap="onShowFacilityModal">
+          <text style="color: {{theme.primary}};">+ 添加设施</text>
+        </view>
+      </view>
+
+      <view class="facility-list" wx:if="{{facilities.length > 0}}">
+        <view
+          class="facility-item"
+          wx:for="{{facilities}}"
+          wx:key="id"
+        >
+          <view class="facility-info">
+            <text class="facility-name" style="color: {{theme.textPrimary}};">{{item.name}}</text>
+            <text class="facility-type" style="color: {{theme.textSecondary}};">{{item.type}}</text>
+          </view>
+          <view class="facility-actions">
+            <view class="action-btn" bindtap="onEditFacility" data-index="{{index}}">
+              <text style="color: {{theme.primary}};">编辑</text>
+            </view>
+            <view class="action-btn" bindtap="onDeleteFacility" data-index="{{index}}">
+              <text style="color: {{theme.error}};">删除</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="empty-state" wx:else>
+        <text style="color: {{theme.textTertiary}};">暂无设施，点击上方添加</text>
+      </view>
+    </view>
+
+    <view class="section" style="background-color: {{theme.card}};">
+      <text class="section-title" style="color: {{theme.textPrimary}};">公共资源关联</text>
+
+      <view class="resource-list" wx:if="{{publicResourceList.length > 0}}">
+        <view
+          class="resource-item {{utils.includes(publicResources, item._id) ? 'selected' : ''}}"
+          wx:for="{{publicResourceList}}"
+          wx:key="_id"
+          bindtap="onToggleResource"
+          data-id="{{item._id}}"
+        >
+          <text class="resource-name" style="color: {{theme.textPrimary}};">{{item.name}}</text>
+          <text class="resource-type" style="color: {{theme.textSecondary}};">{{utils.getResourceTypeName(item.type)}}</text>
+          <view class="checkbox {{utils.includes(publicResources, item._id) ? 'checked' : ''}}" style="border-color: {{theme.primary}}; background-color: {{utils.includes(publicResources, item._id) ? theme.primary : 'transparent'}};">
+            <text wx:if="{{utils.includes(publicResources, item._id)}}" style="color: #fff;">✓</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="empty-state" wx:else>
+        <text style="color: {{theme.textTertiary}};">暂无可关联的资源</text>
+      </view>
+    </view>
+
+    <view class="section" style="background-color: {{theme.card}};">
+      <text class="section-title" style="color: {{theme.textPrimary}};">审批规则</text>
+
+      <picker mode="selector" range="{{approvalRuleOptions}}" range-key="name" bindchange="onApprovalRuleChange">
+        <view class="form-item">
+          <text class="form-label" style="color: {{theme.textSecondary}};">选择审批规则</text>
+          <view class="picker-display" style="background-color: {{theme.background}}; color: {{theme.textPrimary}};">
+            <text wx:if="{{approvalRuleId}}">{{approvalRuleName || '请选择'}}</text>
+            <text wx:else style="color: {{theme.textTertiary}};">使用默认规则</text>
+          </view>
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <view class="submit-section">
+    <button
+      class="submit-btn {{isSubmitting ? 'disabled' : ''}}"
+      bindtap="onSubmit"
+      disabled="{{isSubmitting}}"
+      style="background-color: {{isSubmitting ? theme.textTertiary : theme.primary}}; color: #fff;"
+    >
+      <text wx:if="{{!isSubmitting}}">{{isEdit ? '保存修改' : '创建会议室'}}</text>
+      <text wx:else>保存中...</text>
+    </button>
+  </view>
+
+  <view class="modal-mask {{showFacilityModal ? 'show' : ''}}" bindtap="onCloseFacilityModal"></view>
+  <view class="facility-modal {{showFacilityModal ? 'show' : ''}}">
+    <view class="modal-content" style="background-color: {{theme.card}};">
+      <text class="modal-title" style="color: {{theme.textPrimary}};">{{editingFacility ? '编辑设施' : '添加设施'}}</text>
+
+      <view class="form-item">
+        <text class="form-label" style="color: {{theme.textSecondary}};">设施名称</text>
+        <input
+          class="form-input"
+          placeholder="请输入设施名称"
+          placeholder-style="color: {{theme.textTertiary}};"
+          value="{{facilityName}}"
+          bindinput="onFacilityNameInput"
+          style="background-color: {{theme.background}}; color: {{theme.textPrimary}};"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label" style="color: {{theme.textSecondary}};">设施类型</text>
+        <picker mode="selector" range="{{facilityTypes}}" range-key="name" bindchange="onFacilityTypeChange">
+          <view class="picker-display" style="background-color: {{theme.background}}; color: {{theme.textPrimary}};">
+            <text>{{facilityTypeName}}</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="modal-actions">
+        <button
+          class="modal-btn cancel"
+          bindtap="onCloseFacilityModal"
+          style="background-color: {{theme.background}}; color: {{theme.textSecondary}};"
+        >
+          <text>取消</text>
+        </button>
+        <button
+          class="modal-btn confirm"
+          bindtap="onAddFacility"
+          style="background-color: {{theme.primary}}; color: #fff;"
+        >
+          <text>确定</text>
+        </button>
+      </view>
+    </view>
+  </view>
+</view>

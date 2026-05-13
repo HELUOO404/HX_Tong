@@ -1,0 +1,134 @@
+<view class="approval-detail-container" style="background-color: {{theme.background}};">
+  <view class="loading-state" wx:if="{{isLoading}}">
+    <text style="color: {{theme.textSecondary}};">加载中...</text>
+  </view>
+
+  <view class="content" wx:else>
+    <view class="info-card user-card" style="background-color: {{theme.card}};">
+      <view class="card-header">
+        <text class="card-title" style="color: {{theme.textPrimary}};">预约人信息</text>
+        <view class="credit-badge" style="background-color: {{creditBadge.color}};">
+          <text class="credit-text">{{creditScore}}分</text>
+          <text class="credit-label">{{creditBadge.text}}</text>
+        </view>
+      </view>
+      <view class="user-info">
+        <view class="avatar" wx:if="{{userInfo.avatarUrl}}">
+          <image src="{{userInfo.avatarUrl}}" mode="aspectFill"/>
+        </view>
+        <view class="avatar default-avatar" wx:else style="background-color: {{theme.primary}};">
+          <text style="color: #fff;">{{userInfo.realName ? userInfo.realName[0] : '?'}}</text>
+        </view>
+        <view class="user-detail">
+          <text class="user-name" style="color: {{theme.textPrimary}};">{{userInfo.realName || '未知用户'}}</text>
+          <text class="user-phone" style="color: {{theme.textSecondary}};">{{userInfo.phone || ''}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-card" style="background-color: {{theme.card}};">
+      <text class="card-title" style="color: {{theme.textPrimary}};">会议室信息</text>
+      <view class="room-info">
+        <text class="room-name" style="color: {{theme.textPrimary}};">{{room.name || booking.roomName || '未知会议室'}}</text>
+        <text class="room-location" style="color: {{theme.textSecondary}};">{{room.location || ''}}</text>
+      </view>
+    </view>
+
+    <view class="info-card" style="background-color: {{theme.card}};">
+      <text class="card-title" style="color: {{theme.textPrimary}};">预约信息</text>
+      <view class="booking-details">
+        <view class="detail-row">
+          <text class="detail-label" style="color: {{theme.textSecondary}};">预约日期</text>
+          <text class="detail-value" style="color: {{theme.textPrimary}};">{{booking.date}}</text>
+        </view>
+        <view class="detail-row">
+          <text class="detail-label" style="color: {{theme.textSecondary}};">预约时间</text>
+          <text class="detail-value" style="color: {{theme.textPrimary}};">{{booking.startTime}} - {{booking.endTime}}</text>
+        </view>
+        <view class="detail-row">
+          <text class="detail-label" style="color: {{theme.textSecondary}};">预约时长</text>
+          <text class="detail-value" style="color: {{theme.textPrimary}};">{{booking.duration}} 分钟</text>
+        </view>
+        <view class="detail-row">
+          <text class="detail-label" style="color: {{theme.textSecondary}};">参与人数</text>
+          <text class="detail-value" style="color: {{theme.textPrimary}};">{{booking.attendees || 0}} 人</text>
+        </view>
+        <view class="detail-row">
+          <text class="detail-label" style="color: {{theme.textSecondary}};">联系电话</text>
+          <text class="detail-value" style="color: {{theme.textPrimary}};">{{booking.contactPhone}}</text>
+        </view>
+        <view class="detail-row purpose-row">
+          <text class="detail-label" style="color: {{theme.textSecondary}};">预约用途</text>
+          <text class="detail-value purpose-text" style="color: {{theme.textPrimary}};">{{booking.purpose}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-card" style="background-color: {{theme.card}};" wx:if="{{booking.status === 'rejected' && booking.rejectReason}}">
+      <text class="card-title" style="color: {{theme.textPrimary}};">拒绝原因</text>
+      <text class="reject-reason" style="color: {{theme.error}};">{{booking.rejectReason}}</text>
+    </view>
+  </view>
+
+  <view class="action-section" wx:if="{{booking.status === 'pending'}}">
+    <button
+      class="btn btn-reject"
+      bindtap="onShowRejectModal"
+      disabled="{{isSubmitting}}"
+      style="background-color: {{theme.card}}; color: {{theme.error}};"
+    >
+      <text>拒绝</text>
+    </button>
+    <button
+      class="btn btn-approve"
+      bindtap="onApprove"
+      disabled="{{isSubmitting}}"
+      style="background-color: {{theme.primary}}; color: #fff;"
+    >
+      <text>通过</text>
+    </button>
+  </view>
+
+  <view class="action-section readonly" wx:elif="{{booking.status === 'approved'}}">
+    <view class="status-tag approved" style="background-color: {{theme.success}};">
+      <text style="color: #fff;">已通过</text>
+    </view>
+  </view>
+
+  <view class="action-section readonly" wx:elif="{{booking.status === 'rejected'}}">
+    <view class="status-tag rejected" style="background-color: {{theme.error}};">
+      <text style="color: #fff;">已拒绝</text>
+    </view>
+  </view>
+</view>
+
+<view class="modal-mask {{showRejectModal ? 'show' : ''}}" bindtap="onCloseRejectModal"></view>
+<view class="reject-modal {{showRejectModal ? 'show' : ''}}">
+  <view class="modal-content" style="background-color: {{theme.card}};">
+    <text class="modal-title" style="color: {{theme.textPrimary}};">拒绝原因</text>
+    <textarea
+      class="reject-input"
+      placeholder="请输入拒绝原因"
+      placeholder-style="color: {{theme.textTertiary}};"
+      value="{{rejectReason}}"
+      bindinput="onRejectReasonInput"
+      style="background-color: {{theme.background}}; color: {{theme.textPrimary}};"
+    />
+    <view class="modal-actions">
+      <button
+        class="modal-btn cancel"
+        bindtap="onCloseRejectModal"
+        style="background-color: {{theme.background}}; color: {{theme.textSecondary}};"
+      >
+        <text>取消</text>
+      </button>
+      <button
+        class="modal-btn confirm"
+        bindtap="onConfirmReject"
+        style="background-color: {{theme.error}}; color: #fff;"
+      >
+        <text>确认拒绝</text>
+      </button>
+    </view>
+  </view>
+</view>
