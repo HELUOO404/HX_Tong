@@ -1,0 +1,22 @@
+<view class="success-container">
+  <!-- 成功图标 -->
+  <view class="success-icon">
+    <image src="/assets/images/icons/check.png" mode="aspectFit" style="width: 120rpx; height: 120rpx;"/>
+  </view>
+
+  <!-- 成功提示 -->
+  <text class="success-title">预约提交成功</text>
+
+  <text class="success-desc" wx:if="{{status === 'approved'}}">
+    预约已通过，请按时使用会议室
+  </text>
+  <text class="success-desc" wx:else>
+    预约申请已提交，等待管理员审批
+  </text>
+
+  <!-- 操作按钮 -->
+  <view class="action-section">
+    <button class="primary-btn" bindtap="onViewDetail">查看详情</button>
+    <button class="secondary-btn" bindtap="onBackHome">返回首页</button>
+  </view>
+</view>

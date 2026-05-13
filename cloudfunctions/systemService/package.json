@@ -1,0 +1,21 @@
+{
+  "name": "systemService",
+  "version": "1.0.0",
+  "description": "系统服务云函数，提供数据库初始化、查看等系统级功能",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "cloudfunction",
+    "system",
+    "database",
+    "init"
+  ],
+  "author": "红芯通开发团队",
+  "license": "MIT",
+  "dependencies": {
+    "wx-server-sdk": "latest",
+    "bcryptjs": "^2.4.3"
+  }
+}

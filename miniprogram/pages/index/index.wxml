@@ -1,0 +1,115 @@
+<view class="index-container" style="background-color: {{theme.background}};">
+  <!-- 顶部用户信息卡片 -->
+  <view class="header-card" style="background: linear-gradient(180deg, {{theme.primary}} 0%, {{theme.primaryDark}} 100%);">
+    <view class="user-section">
+      <block wx:if="{{isLogin}}">
+        <image class="avatar" src="{{userInfo.avatarUrl || '/assets/images/logo.png'}}" mode="aspectFill"/>
+        <view class="user-info">
+          <text class="user-name">{{userInfo.realName || '用户'}}</text>
+          <text class="user-class" wx:if="{{userInfo.className}}">{{userInfo.className}}</text>
+        </view>
+      </block>
+      <block wx:else>
+        <view class="not-login" bindtap="onLogin">
+          <text class="login-text">点击登录</text>
+          <text class="login-desc">登录后享受完整服务</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 通知栏 -->
+  <view class="notice-section" wx:if="{{noticeList.length > 0}}">
+    <view class="notice-bar" style="background: {{theme.warning}}15; color: {{theme.warning}};">
+      <image class="theme-icon" src="/assets/images/icons/notice.png" style="width:32rpx;height:32rpx;margin-right:8rpx;"/>
+      <text>{{noticeList[0].title}}</text>
+    </view>
+  </view>
+
+  <!-- 快捷功能入口 -->
+  <view class="section" style="background-color: {{theme.card}};">
+    <view class="section-title" style="color: {{theme.textPrimary}};">快捷功能</view>
+    <view class="quick-actions">
+      <view
+        class="action-item"
+        wx:for="{{quickActions}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onQuickActionTap"
+      >
+        <view class="action-icon" style="background-color: {{item.color}}20;">
+          <image src="{{item.icon}}" mode="aspectFit"/>
+        </view>
+        <text class="action-name" style="color: {{theme.textPrimary}};">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 今日预约 -->
+  <view class="section" style="background-color: {{theme.card}};">
+    <view class="section-header">
+      <text class="section-title" style="color: {{theme.textPrimary}};">今日预约</text>
+      <text class="section-more" bindtap="onBookNow" wx:if="{{isLogin}}" style="color: {{theme.primary}};">立即预约 ></text>
+    </view>
+
+    <!-- 加载中 -->
+    <view class="loading-container" wx:if="{{isLoading}}">
+      <text class="loading-text" style="color: {{theme.textSecondary}};">加载中...</text>
+    </view>
+
+    <!-- 未登录 -->
+    <view class="empty-container" wx:elif="{{!isLogin}}">
+      <view class="empty-icon-container">
+        <view class="empty-icon-bg" style="background-color: {{theme.primary}}15;">
+          <image class="empty-icon theme-icon" src="/assets/images/icons/user.png" mode="aspectFit"/>
+        </view>
+        <view class="empty-lock" style="background-color: {{theme.warning}};">
+          <image class="lock-icon" src="/assets/images/icons/lock.png" mode="aspectFit"/>
+        </view>
+      </view>
+      <text class="empty-text" style="color: {{theme.textSecondary}};">登录后查看今日预约</text>
+      <button class="login-btn" bindtap="onLogin" style="background-color: {{theme.primary}};">立即登录</button>
+    </view>
+
+    <!-- 预约列表 -->
+    <view class="booking-list" wx:elif="{{todayBookings.length > 0}}">
+      <view
+        class="booking-item"
+        wx:for="{{todayBookings}}"
+        wx:key="_id"
+        data-id="{{item._id}}"
+        bindtap="onBookingTap"
+        style="border-bottom-color: {{theme.border}};"
+      >
+        <view class="booking-time">
+          <text class="time-text" style="color: {{theme.primary}};">{{item.startTime}}</text>
+          <text class="time-divider" style="color: {{theme.textTertiary}};">-</text>
+          <text class="time-text" style="color: {{theme.primary}};">{{item.endTime}}</text>
+        </view>
+        <view class="booking-info">
+          <text class="room-name" style="color: {{theme.textPrimary}};">{{item.roomName}}</text>
+          <text class="booking-purpose" style="color: {{theme.textSecondary}};">{{item.purpose}}</text>
+        </view>
+        <view class="booking-status">
+          <text class="status-tag status-{{item.status}}" style="background-color: {{item.status === 'approved' ? theme.success : item.status === 'pending' ? theme.warning : item.status === 'expired' ? theme.textTertiary : theme.error}}20; color: {{item.status === 'approved' ? theme.success : item.status === 'pending' ? theme.warning : item.status === 'expired' ? theme.textTertiary : theme.error}};">
+            {{item.statusText}}
+          </text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-container" wx:else>
+      <view class="empty-icon-container">
+        <view class="empty-icon-bg calendar-bg" style="background-color: {{theme.primary}}15;">
+          <image class="empty-icon theme-icon" src="/assets/images/icons/calendar.png" mode="aspectFit"/>
+        </view>
+        <view class="empty-plus" style="background-color: {{theme.success}};">
+          <text class="plus-icon">+</text>
+        </view>
+      </view>
+      <text class="empty-text" style="color: {{theme.textSecondary}};">今日暂无预约</text>
+      <button class="book-btn" bindtap="onBookNow" style="background-color: {{theme.primary}};">去预约</button>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,204 @@
+<view class="approval-rules-container" style="background-color: {{theme.background}};">
+  <view class="tabs" style="background-color: {{theme.card}};">
+    <view
+      class="tab {{activeTab === tab.id ? 'active' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="id"
+      bindtap="onTabChange"
+      data-id="{{tab.id}}"
+      style="color: {{activeTab === tab.id ? theme.primary : theme.textSecondary}};"
+    >
+      <text>{{tab.name}}</text>
+      <view class="tab-indicator" wx:if="{{activeTab === tab.id}}" style="background-color: {{theme.primary}};"></view>
+    </view>
+  </view>
+
+  <view class="header">
+    <view class="add-btn" bindtap="onShowAddModal">
+      <text style="color: {{theme.primary}};">+ 添加规则</text>
+    </view>
+  </view>
+
+  <view class="loading-state" wx:if="{{isLoading}}">
+    <text style="color: {{theme.textSecondary}};">加载中...</text>
+  </view>
+
+  <view class="empty-state" wx:elif="{{currentRules.length === 0}}">
+    <text style="color: {{theme.textTertiary}};">暂无规则，点击上方添加</text>
+  </view>
+
+  <view class="rule-list" wx:else>
+    <view
+      class="rule-card {{!item.enabled ? 'disabled' : ''}}"
+      wx:for="{{currentRules}}"
+      wx:key="_id"
+      style="background-color: {{theme.card}};"
+    >
+      <view class="rule-header">
+        <view class="rule-info">
+          <text class="rule-name" style="color: {{theme.textPrimary}};">{{item.name}}</text>
+          <view class="rule-meta">
+            <text class="rule-priority" style="color: {{theme.textSecondary}};">优先级 {{item.priority}}</text>
+            <text class="rule-action" style="color: {{theme.primary}};">{{item.actionText}}</text>
+          </view>
+        </view>
+        <switch
+          checked="{{item.enabled}}"
+          bindchange="onToggle"
+          data-rule="{{item}}"
+          color="{{theme.primary}}"
+        />
+      </view>
+
+      <view class="rule-room" wx:if="{{item.type === 'meetingroom'}}">
+        <text style="color: {{theme.textSecondary}};">关联会议室：</text>
+        <text style="color: {{theme.textPrimary}};">{{item.roomName}}</text>
+      </view>
+
+      <view class="rule-conditions">
+        <text class="conditions-label" style="color: {{theme.textSecondary}};">条件：</text>
+        <text class="conditions-text" style="color: {{theme.textPrimary}};">{{item.conditionsText}}</text>
+      </view>
+
+      <view class="rule-actions">
+        <view class="action-btn" wx:if="{{!item.isDefault}}" bindtap="onShowEditModal" data-rule="{{item}}">
+          <text style="color: {{theme.primary}};">编辑</text>
+        </view>
+        <view class="action-btn" wx:if="{{!item.isDefault}}" bindtap="onDelete" data-rule="{{item}}">
+          <text style="color: {{theme.error}};">删除</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="modal-mask {{showModal ? 'show' : ''}}" bindtap="onCloseModal"></view>
+  <view class="rule-modal {{showModal ? 'show' : ''}}">
+    <view class="modal-content" style="background-color: {{theme.card}};">
+      <view class="modal-header">
+        <text class="modal-title" style="color: {{theme.textPrimary}};">{{editingRule ? '编辑规则' : '添加规则'}}</text>
+        <view class="modal-close" bindtap="onCloseModal">
+          <text style="color: {{theme.textTertiary}};">×</text>
+        </view>
+      </view>
+
+      <scroll-view scroll-y class="modal-scroll">
+        <view class="form-item">
+          <text class="form-label" style="color: {{theme.textSecondary}};">
+            规则名称<text class="required-mark">*</text>
+          </text>
+          <input
+            class="form-input"
+            placeholder="请输入规则名称"
+            placeholder-style="color: {{theme.textTertiary}};"
+            value="{{formData.name}}"
+            bindinput="onNameInput"
+            style="background-color: {{theme.background}}; color: {{theme.textPrimary}};"
+          />
+        </view>
+
+        <view class="form-item" wx:if="{{activeTab === 'meetingroom'}}">
+          <text class="form-label" style="color: {{theme.textSecondary}};">
+            关联会议室<text class="required-mark">*</text>
+          </text>
+          <picker mode="selector" range="{{roomOptions}}" range-key="name" bindchange="onRoomChange">
+            <view class="picker-display" style="background-color: {{theme.background}}; color: {{formData.roomId ? theme.textPrimary : theme.textTertiary}};">
+              <text wx:if="{{formData.roomId}}">{{formDataRoomName}}</text>
+              <text wx:else>请选择会议室</text>
+            </view>
+          </picker>
+        </view>
+
+        <view class="form-item">
+          <text class="form-label" style="color: {{theme.textSecondary}};">优先级</text>
+          <picker mode="selector" range="{{priorityOptions}}" bindchange="onPriorityChange">
+            <view class="picker-display" style="background-color: {{theme.background}}; color: {{theme.textPrimary}};">
+              <text>{{formData.priority}}</text>
+            </view>
+          </picker>
+        </view>
+
+        <view class="form-item">
+          <text class="form-label" style="color: {{theme.textSecondary}};">审批动作</text>
+          <picker mode="selector" range="{{actionOptions}}" range-key="label" bindchange="onActionChange">
+            <view class="picker-display" style="background-color: {{theme.background}}; color: {{theme.textPrimary}};">
+              <text>{{formDataActionText}}</text>
+            </view>
+          </picker>
+        </view>
+
+        <view class="form-item">
+          <text class="form-label" style="color: {{theme.textSecondary}};">启用规则</text>
+          <switch
+            checked="{{formData.enabled}}"
+            bindchange="onEnabledChange"
+            color="{{theme.primary}}"
+          />
+        </view>
+
+        <view class="form-item">
+          <view class="section-header">
+            <text class="form-label" style="color: {{theme.textSecondary}};">条件</text>
+            <view class="add-btn" bindtap="onAddCondition">
+              <text style="color: {{theme.primary}};">+ 添加条件</text>
+            </view>
+          </view>
+
+          <view class="condition-list" wx:if="{{formData.conditions.length > 0}}">
+            <view
+              class="condition-item"
+              wx:for="{{formData.conditions}}"
+              wx:key="*this"
+            >
+              <picker mode="selector" range="{{conditionTypes}}" range-key="name" bindchange="onConditionTypeChange" data-index="{{index}}">
+                <view class="condition-type" style="background-color: {{theme.background}}; color: {{theme.textPrimary}};">
+                  <text>{{item.typeName}}</text>
+                </view>
+              </picker>
+
+              <picker mode="selector" range="{{item.operators}}" range-key="label" bindchange="onConditionOperatorChange" data-index="{{index}}">
+                <view class="condition-operator" style="background-color: {{theme.background}}; color: {{theme.textPrimary}};">
+                  <text>{{item.operatorLabel}}</text>
+                </view>
+              </picker>
+
+              <input
+                class="condition-value"
+                placeholder="{{item.valueHint || '值'}}"
+                placeholder-style="color: {{theme.textTertiary}};"
+                value="{{item.value}}"
+                bindinput="onConditionValueChange"
+                data-index="{{index}}"
+                style="background-color: {{theme.background}}; color: {{theme.textPrimary}};"
+              />
+
+              <view class="condition-delete" bindtap="onDeleteCondition" data-index="{{index}}">
+                <text style="color: {{theme.error}};">×</text>
+              </view>
+            </view>
+          </view>
+
+          <view class="empty-conditions" wx:else>
+            <text style="color: {{theme.textTertiary}};">暂无条件</text>
+          </view>
+        </view>
+      </scroll-view>
+
+      <view class="modal-footer">
+        <button
+          class="modal-btn cancel"
+          bindtap="onCloseModal"
+          style="background-color: {{theme.background}}; color: {{theme.textSecondary}};"
+        >
+          <text>取消</text>
+        </button>
+        <button
+          class="modal-btn confirm"
+          bindtap="onSubmit"
+          style="background-color: {{theme.primary}}; color: #fff;"
+        >
+          <text>确定</text>
+        </button>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,236 @@
+.room-list-container {
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  padding: 24rpx;
+}
+
+/* 加载中 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+}
+
+.loading-text {
+  margin-top: 24rpx;
+  font-size: 28rpx;
+  color: var(--text-tertiary);
+}
+
+/* 会议室列表 */
+.room-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.room-card {
+  background-color: var(--bg-white);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease;
+}
+
+.room-card:active {
+  box-shadow: var(--shadow-md);
+}
+
+.room-image-wrapper {
+  position: relative;
+  height: 320rpx;
+}
+
+.room-image {
+  width: 100%;
+  height: 100%;
+}
+
+.room-status {
+  position: absolute;
+  top: 16rpx;
+  right: 16rpx;
+  padding: 8rpx 20rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+.room-status.available {
+  background-color: rgba(82, 196, 26, 0.12);
+  color: var(--success-color);
+}
+
+.room-status.unavailable {
+  background-color: var(--bg-gray);
+  color: var(--text-tertiary);
+}
+
+/* 会议室信息 */
+.room-info {
+  padding: 24rpx;
+}
+
+.room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.room-name {
+  font-size: 34rpx;
+  font-weight: bold;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 380rpx;
+}
+
+.room-capacity {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 26rpx;
+  color: var(--text-secondary);
+}
+
+.room-location {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  margin-bottom: 16rpx;
+}
+
+.room-facilities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-bottom: 24rpx;
+}
+
+.facility-tag {
+  padding: 6rpx 16rpx;
+  background-color: var(--bg-primary);
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+.room-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16rpx;
+  border-top: 1rpx solid var(--border-color);
+}
+
+.room-time {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.time-label {
+  font-size: 24rpx;
+  color: var(--text-tertiary);
+}
+
+.time-value {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+.book-btn {
+  margin: 0;
+  background: var(--primary-gradient);
+  color: #FFFFFF;
+  font-size: 26rpx;
+  padding: 12rpx 32rpx;
+  border-radius: 32rpx;
+  border: none;
+  line-height: 1.5;
+}
+
+.book-btn::after {
+  border: none;
+}
+
+.book-btn.disabled {
+  background: var(--disabled-color);
+  opacity: 0.7;
+}
+
+/* 空状态 */
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+}
+
+/* 空状态图标容器 */
+.empty-icon-wrapper {
+  position: relative;
+  width: 160rpx;
+  height: 160rpx;
+  margin-bottom: 24rpx;
+}
+
+.empty-icon-bg {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(250, 173, 20, 0.15) 0%, rgba(255, 204, 61, 0.1) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.empty-icon {
+  width: 70rpx;
+  height: 70rpx;
+  opacity: 0.8;
+}
+
+/* 搜索图标 */
+.empty-search {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-primary);
+}
+
+.search-icon {
+  width: 32rpx;
+  height: 32rpx;
+  filter: brightness(0) invert(1);
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: var(--text-tertiary);
+  margin-bottom: 8rpx;
+}
+
+.empty-desc {
+  font-size: 24rpx;
+  color: var(--text-tertiary);
+  opacity: 0.7;
+}

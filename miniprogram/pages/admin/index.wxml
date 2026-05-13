@@ -1,0 +1,71 @@
+<view class="admin-index-container">
+  <!-- 管理员信息 -->
+  <view class="admin-header">
+    <view class="admin-info">
+      <text class="admin-name">{{adminInfo.name || adminInfo.username || '管理员'}}</text>
+      <text class="admin-role">{{adminRoleName}}</text>
+    </view>
+    <view class="logout-btn" bindtap="onLogout">退出</view>
+  </view>
+
+  <!-- 数据统计卡片 -->
+  <view class="stats-section">
+    <view class="stats-grid">
+      <view class="stat-card">
+        <text class="stat-value">{{stats.totalUsers}}</text>
+        <text class="stat-label">总用户数</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-value">{{stats.totalBookings}}</text>
+        <text class="stat-label">总预约数</text>
+      </view>
+      <view class="stat-card highlight">
+        <text class="stat-value">{{stats.pendingApprovals}}</text>
+        <text class="stat-label">待审批</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-value">{{stats.todayBookings}}</text>
+        <text class="stat-label">今日预约</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能菜单 -->
+  <view class="menu-section">
+    <text class="section-title">功能菜单</text>
+    <view class="menu-grid">
+      <view 
+        class="menu-item {{item.isDev ? 'menu-item-dev' : ''}}"
+        wx:for="{{menuList}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onMenuTap"
+      >
+        <view class="menu-icon" style="background-color: {{item.color}}20;">
+          <image src="{{item.icon}}" mode="aspectFit" style="width: 40rpx; height: 40rpx;"/>
+        </view>
+        <text class="menu-name">{{item.name}}</text>
+        <view class="menu-badge" wx:if="{{item.count > 0}}">{{item.count}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 最近预约 -->
+  <view class="recent-section">
+    <text class="section-title">最近预约</text>
+    <view class="recent-list" wx:if="{{recentBookings.length > 0}}">
+      <view class="recent-item" wx:for="{{recentBookings}}" wx:key="_id">
+        <view class="recent-info">
+          <text class="recent-room">{{item.roomName}}</text>
+          <text class="recent-user">{{item.userName}}</text>
+        </view>
+        <view class="recent-status status-{{item.status}}">
+          {{item.statusText}}
+        </view>
+      </view>
+    </view>
+    <view class="empty-tip" wx:else>
+      <text>暂无预约记录</text>
+    </view>
+  </view>
+</view>

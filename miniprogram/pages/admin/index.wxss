@@ -1,0 +1,242 @@
+.admin-index-container {
+  min-height: 100%;
+  background-color: var(--bg-primary);
+  padding-bottom: 48rpx;
+}
+
+/* 管理员信息 */
+.admin-header {
+  background: var(--primary-gradient);
+  padding: 48rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-name {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #FFFFFF;
+  margin-bottom: 8rpx;
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
+.admin-role {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.logout-btn {
+  font-size: 28rpx;
+  color: #FFFFFF;
+  padding: 16rpx 32rpx;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 32rpx;
+}
+
+/* 数据统计 */
+.stats-section {
+  padding: 24rpx;
+  margin-top: -32rpx;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24rpx;
+}
+
+.stat-card {
+  background-color: var(--bg-white);
+  border-radius: var(--border-radius-lg);
+  padding: 32rpx;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease;
+}
+
+.stat-card:active {
+  box-shadow: var(--shadow-md);
+}
+
+.stat-card.highlight {
+  background: linear-gradient(135deg, var(--warning-color) 0%, #F97316 100%);
+}
+
+.stat-card.highlight .stat-value,
+.stat-card.highlight .stat-label {
+  color: #FFFFFF;
+}
+
+.stat-value {
+  display: block;
+  font-size: 48rpx;
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-bottom: 8rpx;
+}
+
+.stat-label {
+  display: block;
+  font-size: 26rpx;
+  color: var(--text-secondary);
+}
+
+/* 功能菜单 */
+.menu-section {
+  margin: 0 24rpx 24rpx;
+  background-color: var(--bg-white);
+  border-radius: var(--border-radius-lg);
+  padding: 32rpx;
+  box-shadow: var(--shadow-sm);
+}
+
+.section-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: var(--text-primary);
+  margin-bottom: 24rpx;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24rpx;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  background-color: var(--bg-primary);
+  border-radius: 12rpx;
+  position: relative;
+}
+
+.menu-icon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20rpx;
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.menu-name {
+  flex: 1;
+  font-size: 30rpx;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.menu-badge {
+  position: absolute;
+  top: 16rpx;
+  right: 16rpx;
+  min-width: 36rpx;
+  height: 36rpx;
+  background-color: var(--error-color);
+  color: var(--bg-white);
+  font-size: 22rpx;
+  border-radius: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8rpx;
+  z-index: 1;
+}
+
+/* 开发工具菜单项样式 */
+.menu-item-dev {
+  opacity: 0.6;
+  border: 1rpx dashed #999999;
+}
+
+.menu-item-dev .menu-icon {
+  background-color: #99999920 !important;
+}
+
+.menu-item-dev .menu-name {
+  color: #999999;
+}
+
+/* 最近预约 */
+.recent-section {
+  margin: 0 24rpx;
+  background-color: var(--bg-white);
+  border-radius: var(--border-radius-lg);
+  padding: 32rpx;
+  box-shadow: var(--shadow-sm);
+}
+
+.recent-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.recent-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid var(--border-light);
+}
+
+.recent-item:last-child {
+  border-bottom: none;
+}
+
+.recent-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.recent-room {
+  font-size: 30rpx;
+  color: var(--text-primary);
+  margin-bottom: 8rpx;
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
+.recent-user {
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
+.recent-status {
+  padding: 8rpx 20rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+}
+
+.status-pending {
+  background-color: rgba(250, 173, 20, 0.12);
+  color: var(--warning-color);
+}
+
+.status-approved {
+  background-color: rgba(82, 196, 26, 0.12);
+  color: var(--success-color);
+}
+
+.empty-tip {
+  text-align: center;
+  padding: 48rpx 0;
+  color: var(--text-tertiary);
+  font-size: 28rpx;
+}

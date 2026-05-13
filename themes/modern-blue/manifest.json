@@ -1,0 +1,396 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-04-21T14:00:00Z",
+  "themeId": "modern-blue",
+  "themeVersion": "1.0.0",
+  "resources": [
+    {
+      "path": "theme.config.json",
+      "type": "config",
+      "size": 0,
+      "hash": "sha256:config",
+      "url": "theme.config.json",
+      "required": true
+    },
+    {
+      "path": "assets/images/logo.png",
+      "type": "image",
+      "size": 15234,
+      "hash": "sha256:logo",
+      "url": "assets/images/logo.png",
+      "required": true
+    },
+    {
+      "path": "assets/images/logo-dark.png",
+      "type": "image",
+      "size": 14892,
+      "hash": "sha256:logo-dark",
+      "url": "assets/images/logo-dark.png",
+      "required": false
+    },
+    {
+      "path": "assets/images/bg-home.png",
+      "type": "image",
+      "size": 89321,
+      "hash": "sha256:bg-home",
+      "url": "assets/images/bg-home.png",
+      "required": true
+    },
+    {
+      "path": "assets/images/bg-profile.png",
+      "type": "image",
+      "size": 65432,
+      "hash": "sha256:bg-profile",
+      "url": "assets/images/bg-profile.png",
+      "required": false
+    },
+    {
+      "path": "assets/images/empty-booking.png",
+      "type": "image",
+      "size": 28456,
+      "hash": "sha256:empty-booking",
+      "url": "assets/images/empty-booking.png",
+      "required": true
+    },
+    {
+      "path": "assets/images/empty-room.png",
+      "type": "image",
+      "size": 27345,
+      "hash": "sha256:empty-room",
+      "url": "assets/images/empty-room.png",
+      "required": true
+    },
+    {
+      "path": "assets/images/empty-data.png",
+      "type": "image",
+      "size": 26123,
+      "hash": "sha256:empty-data",
+      "url": "assets/images/empty-data.png",
+      "required": true
+    },
+    {
+      "path": "assets/images/empty-search.png",
+      "type": "image",
+      "size": 25890,
+      "hash": "sha256:empty-search",
+      "url": "assets/images/empty-search.png",
+      "required": false
+    },
+    {
+      "path": "assets/images/error-network.png",
+      "type": "image",
+      "size": 30234,
+      "hash": "sha256:error-network",
+      "url": "assets/images/error-network.png",
+      "required": true
+    },
+    {
+      "path": "assets/images/error-generic.png",
+      "type": "image",
+      "size": 29123,
+      "hash": "sha256:error-generic",
+      "url": "assets/images/error-generic.png",
+      "required": true
+    },
+    {
+      "path": "assets/images/success-booking.png",
+      "type": "image",
+      "size": 31567,
+      "hash": "sha256:success-booking",
+      "url": "assets/images/success-booking.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/tab-home.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:tab-home",
+      "url": "assets/icons/tab-home.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/tab-home-active.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:tab-home-active",
+      "url": "assets/icons/tab-home-active.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/tab-room.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:tab-room",
+      "url": "assets/icons/tab-room.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/tab-room-active.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:tab-room-active",
+      "url": "assets/icons/tab-room-active.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/tab-booking.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:tab-booking",
+      "url": "assets/icons/tab-booking.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/tab-booking-active.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:tab-booking-active",
+      "url": "assets/icons/tab-booking-active.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/tab-profile.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:tab-profile",
+      "url": "assets/icons/tab-profile.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/tab-profile-active.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:tab-profile-active",
+      "url": "assets/icons/tab-profile-active.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/icon-calendar.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-calendar",
+      "url": "assets/icons/icon-calendar.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/icon-clock.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-clock",
+      "url": "assets/icons/icon-clock.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/icon-location.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-location",
+      "url": "assets/icons/icon-location.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/icon-phone.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-phone",
+      "url": "assets/icons/icon-phone.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/icon-success.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-success",
+      "url": "assets/icons/icon-success.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/icon-warning.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-warning",
+      "url": "assets/icons/icon-warning.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/icon-error.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-error",
+      "url": "assets/icons/icon-error.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/icon-info.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-info",
+      "url": "assets/icons/icon-info.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/icon-search.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-search",
+      "url": "assets/icons/icon-search.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/icon-filter.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-filter",
+      "url": "assets/icons/icon-filter.png",
+      "required": false
+    },
+    {
+      "path": "assets/icons/icon-more.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-more",
+      "url": "assets/icons/icon-more.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/icon-arrow-right.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-arrow-right",
+      "url": "assets/icons/icon-arrow-right.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/icon-arrow-left.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-arrow-left",
+      "url": "assets/icons/icon-arrow-left.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/icon-arrow-up.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-arrow-up",
+      "url": "assets/icons/icon-arrow-up.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/icon-arrow-down.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-arrow-down",
+      "url": "assets/icons/icon-arrow-down.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/icon-check.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-check",
+      "url": "assets/icons/icon-check.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/icon-close.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-close",
+      "url": "assets/icons/icon-close.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/icon-edit.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-edit",
+      "url": "assets/icons/icon-edit.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/icon-delete.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-delete",
+      "url": "assets/icons/icon-delete.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/icon-add.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-add",
+      "url": "assets/icons/icon-add.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/icon-settings.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-settings",
+      "url": "assets/icons/icon-settings.png",
+      "required": false
+    },
+    {
+      "path": "assets/icons/icon-notification.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-notification",
+      "url": "assets/icons/icon-notification.png",
+      "required": false
+    },
+    {
+      "path": "assets/icons/icon-user.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-user",
+      "url": "assets/icons/icon-user.png",
+      "required": true
+    },
+    {
+      "path": "assets/icons/icon-star.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-star",
+      "url": "assets/icons/icon-star.png",
+      "required": false
+    },
+    {
+      "path": "assets/icons/icon-heart.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-heart",
+      "url": "assets/icons/icon-heart.png",
+      "required": false
+    },
+    {
+      "path": "assets/icons/icon-share.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-share",
+      "url": "assets/icons/icon-share.png",
+      "required": false
+    },
+    {
+      "path": "assets/icons/icon-refresh.png",
+      "type": "icon",
+      "size": 1024,
+      "hash": "sha256:icon-refresh",
+      "url": "assets/icons/icon-refresh.png",
+      "required": false
+    },
+    {
+      "path": "styles/variables.wxss",
+      "type": "stylesheet",
+      "size": 3456,
+      "hash": "sha256:variables",
+      "url": "styles/variables.wxss",
+      "required": true
+    }
+  ],
+  "totalSize": 456789,
+  "totalFiles": 52,
+  "requiredFiles": 38,
+  "optionalFiles": 14
+}

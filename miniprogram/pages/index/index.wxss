@@ -1,0 +1,345 @@
+.index-container {
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  padding-bottom: 48rpx;
+}
+
+/* 顶部用户信息卡片 */
+.header-card {
+  position: relative;
+  padding: 48rpx 32rpx 64rpx;
+  border-radius: 0 0 48rpx 48rpx;
+  overflow: hidden;
+}
+
+.header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 280rpx;
+  background: linear-gradient(180deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  border-radius: 0 0 48rpx 48rpx;
+}
+
+.user-section {
+  position: relative;
+  display: flex;
+  align-items: center;
+  z-index: 1;
+}
+
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 60rpx;
+  border: 4rpx solid var(--bg-white);
+  background-color: var(--bg-white);
+}
+
+.user-info {
+  margin-left: 24rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #FFFFFF;
+  margin-bottom: 8rpx;
+}
+
+.user-class {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.not-login {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-text {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #FFFFFF;
+  margin-bottom: 8rpx;
+}
+
+.login-desc {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* 通知栏 */
+.notice-section {
+  margin: 0 32rpx 32rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+
+/* 区块样式 */
+.section {
+  margin: 0 32rpx 32rpx;
+  background-color: var(--bg-white);
+  border-radius: var(--border-radius-lg);
+  padding: 32rpx;
+  box-shadow: var(--shadow-sm);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: var(--text-primary);
+}
+
+.section-more {
+  font-size: 26rpx;
+  color: var(--primary-color);
+}
+
+/* 快捷功能入口 */
+.quick-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.action-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16rpx;
+}
+
+.action-icon {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16rpx;
+}
+
+.action-icon image {
+  width: 56rpx;
+  height: 56rpx;
+}
+
+.action-name {
+  font-size: 26rpx;
+  color: var(--text-secondary);
+}
+
+/* 预约列表 */
+.booking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.booking-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  background-color: var(--bg-primary);
+  border-radius: 12rpx;
+}
+
+.booking-time {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-right: 24rpx;
+  border-right: 2rpx solid var(--border-color);
+  min-width: 100rpx;
+}
+
+.time-text {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.time-divider {
+  font-size: 20rpx;
+  color: var(--text-tertiary);
+  margin: 4rpx 0;
+}
+
+.booking-info {
+  flex: 1;
+  margin-left: 24rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.room-name {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 8rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 400rpx;
+}
+
+.booking-purpose {
+  font-size: 24rpx;
+  color: var(--text-tertiary);
+}
+
+.booking-status {
+  margin-left: 16rpx;
+}
+
+.status-tag {
+  padding: 6rpx 16rpx;
+  border-radius: 8rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.status-pending {
+  background-color: rgba(250, 173, 20, 0.12);
+  color: var(--warning-color);
+}
+
+.status-approved {
+  background-color: rgba(82, 196, 26, 0.12);
+  color: var(--success-color);
+}
+
+.status-rejected {
+  background-color: rgba(255, 77, 79, 0.12);
+  color: var(--error-color);
+}
+
+/* 空状态 */
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48rpx 0;
+}
+
+/* 空状态图标容器 */
+.empty-icon-container {
+  position: relative;
+  width: 160rpx;
+  height: 160rpx;
+  margin-bottom: 24rpx;
+}
+
+.empty-icon-bg {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(64, 169, 255, 0.15) 0%, rgba(24, 144, 255, 0.1) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.empty-icon-bg.calendar-bg {
+  background: linear-gradient(135deg, rgba(82, 196, 26, 0.15) 0%, rgba(64, 169, 255, 0.1) 100%);
+}
+
+.empty-icon {
+  width: 70rpx;
+  height: 70rpx;
+  opacity: 0.8;
+}
+
+/* 锁图标 */
+.empty-lock {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--warning-color) 0%, #FFC53D 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 16rpx rgba(250, 173, 20, 0.3);
+}
+
+.lock-icon {
+  width: 32rpx;
+  height: 32rpx;
+  filter: brightness(0) invert(1);
+}
+
+/* 加号图标 */
+.empty-plus {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-primary);
+}
+
+.plus-icon {
+  font-size: 40rpx;
+  color: #FFFFFF;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: var(--text-tertiary);
+  margin-bottom: 32rpx;
+}
+
+.login-btn, .book-btn {
+  background: var(--primary-gradient);
+  color: #FFFFFF;
+  font-size: 28rpx;
+  padding: 16rpx 48rpx;
+  border-radius: 32rpx;
+  border: none;
+}
+
+.login-btn::after, .book-btn::after {
+  border: none;
+}
+
+/* 加载状态 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48rpx 0;
+}
+
+.loading-text {
+  margin-top: 16rpx;
+  font-size: 26rpx;
+  color: var(--text-tertiary);
+}

@@ -1,0 +1,9 @@
+{
+  "name": "meetingroomService",
+  "version": "1.0.0",
+  "description": "会议室服务大合集云函数",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
+}

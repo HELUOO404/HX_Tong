@@ -1,0 +1,104 @@
+<view class="page" style="background: {{theme.background}};">
+  <view class="avatar-section" style="background: {{theme.card}};">
+    <image class="avatar" src="{{formData.avatarUrl || '/assets/images/logo.png'}}" mode="aspectFill"/>
+    <view class="avatar-btn" bindtap="onChooseAvatar" style="background: {{theme.primary}};">
+      <text>更换头像</text>
+    </view>
+  </view>
+
+  <view class="form-section" style="background: {{theme.card}};">
+    <view class="form-item">
+      <text class="form-label" style="color: {{theme.textSecondary}};">真实姓名</text>
+      <input
+        class="form-input"
+        placeholder="请输入真实姓名"
+        placeholder-style="color: {{theme.textTertiary}};"
+        value="{{formData.realName}}"
+        data-field="realName"
+        bindinput="onInputChange"
+        style="background: {{theme.background}}; color: {{theme.textPrimary}};"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label" style="color: {{theme.textSecondary}};">学院</text>
+      <input
+        class="form-input"
+        placeholder="请输入学院"
+        placeholder-style="color: {{theme.textTertiary}};"
+        value="{{formData.academy}}"
+        data-field="academy"
+        bindinput="onInputChange"
+        style="background: {{theme.background}}; color: {{theme.textPrimary}};"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label" style="color: {{theme.textSecondary}};">班级</text>
+      <input
+        class="form-input"
+        placeholder="请输入班级"
+        placeholder-style="color: {{theme.textTertiary}};"
+        value="{{formData.className}}"
+        data-field="className"
+        bindinput="onInputChange"
+        style="background: {{theme.background}}; color: {{theme.textPrimary}};"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label" style="color: {{theme.textSecondary}};">学号</text>
+      <input
+        class="form-input"
+        placeholder="请输入学号"
+        placeholder-style="color: {{theme.textTertiary}};"
+        value="{{formData.studentId}}"
+        data-field="studentId"
+        bindinput="onInputChange"
+        style="background: {{theme.background}}; color: {{theme.textPrimary}};"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label" style="color: {{theme.textSecondary}};">手机号</text>
+      <input
+        class="form-input"
+        placeholder="请输入手机号"
+        placeholder-style="color: {{theme.textTertiary}};"
+        value="{{formData.phone}}"
+        data-field="phone"
+        bindinput="onInputChange"
+        style="background: {{theme.background}}; color: {{theme.textPrimary}};"
+      />
+    </view>
+  </view>
+
+  <view class="form-section permission-section" style="background: {{theme.card}};" wx:if="{{canAssignPermissionTags}}">
+    <view class="section-title">
+      <text style="color: {{theme.textPrimary}}; font-size: 30rpx; font-weight: bold;">权限标签</text>
+      <text class="section-tip">勾选为用户分配的权限标签</text>
+    </view>
+    <view class="tag-select-list">
+      <block wx:for="{{availableTags}}" wx:key="_id">
+        <view class="tag-select-item {{item.checked ? 'active' : ''}}" 
+              data-index="{{index}}" bindtap="onToggleTag"
+              style="{{item.checked ? 'border-color: ' + theme.primary + '; color: ' + theme.primary + '; background: #e6f4ff;' : ''}}">
+          <text>{{item.name}}</text>
+          <text class="tag-check" wx:if="{{item.checked}}">✓</text>
+        </view>
+      </block>
+    </view>
+    <view class="tag-empty" wx:if="{{availableTags.length === 0}}">
+      <text style="color: {{theme.textTertiary}};">暂无可分配的权限标签</text>
+    </view>
+  </view>
+
+  <view class="btn-section">
+    <view class="btn-save" bindtap="onSaveUser" style="background: {{theme.primary}};">
+      <text>保存修改</text>
+    </view>
+    <view class="btn-cancel" bindtap="onCancel" style="border-color: {{theme.border}}; color: {{theme.textSecondary}};">
+      <text>取消</text>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,70 @@
+<view class="booking-detail-container" style="background-color: {{theme.background}};">
+  <view class="loading-container" wx:if="{{isLoading}}">
+    <text class="loading-text" style="color: {{theme.textSecondary}};">加载中...</text>
+  </view>
+
+  <block wx:elif="{{bookingInfo}}">
+    <view class="status-card" style="background-color: {{theme.card}};">
+      <view class="status-icon status-{{bookingInfo.status}}">
+        <image wx:if="{{bookingInfo.status === 'approved'}}" src="/assets/images/icons/approved.png" mode="aspectFit" style="width: 48rpx; height: 48rpx;"/>
+        <image wx:elif="{{bookingInfo.status === 'pending'}}" src="/assets/images/icons/pending.png" mode="aspectFit" style="width: 48rpx; height: 48rpx;"/>
+        <image wx:elif="{{bookingInfo.status === 'completed'}}" src="/assets/images/icons/completed.png" mode="aspectFit" style="width: 48rpx; height: 48rpx;"/>
+        <image wx:else src="/assets/images/icons/close.png" mode="aspectFit" style="width: 48rpx; height: 48rpx;"/>
+      </view>
+      <text class="status-text" style="color: {{bookingInfo.status === 'pending' ? '#FA8C16' : bookingInfo.status === 'approved' ? '#52C41A' : bookingInfo.status === 'completed' ? '#1890FF' : bookingInfo.status === 'rejected' ? '#FF4D4F' : '#999999'}};">{{bookingInfo.statusText}}</text>
+      <text class="status-desc" style="color: {{theme.textTertiary}};" wx:if="{{bookingInfo.status === 'pending'}}">请等待管理员审批</text>
+      <text class="status-desc" style="color: {{theme.textTertiary}};" wx:if="{{bookingInfo.status === 'approved'}}">预约已通过，请按时使用</text>
+      <text class="status-desc" style="color: {{theme.textTertiary}};" wx:if="{{bookingInfo.status === 'completed'}}">会议已结束</text>
+      <text class="status-desc" style="color: #FA8C16;" wx:if="{{bookingInfo.status === 'rejected'}}">拒绝原因：{{bookingInfo.rejectReason || '未说明'}}</text>
+      <text class="status-desc" style="color: {{theme.textTertiary}};" wx:if="{{bookingInfo.status === 'cancelled'}}">预约已取消</text>
+    </view>
+
+    <view class="info-section" style="background-color: {{theme.card}};">
+      <view class="section-title" style="color: {{theme.textPrimary}}; border-bottom: 1rpx solid {{theme.border}};">预约信息</view>
+
+      <view class="info-item">
+        <text class="info-label" style="color: {{theme.textSecondary}};">会议室</text>
+        <text class="info-value" style="color: {{theme.textPrimary}};">{{bookingInfo.roomName}}</text>
+      </view>
+
+      <view class="info-item">
+        <text class="info-label" style="color: {{theme.textSecondary}};">预约日期</text>
+        <text class="info-value" style="color: {{theme.textPrimary}};">{{bookingInfo.date}}</text>
+      </view>
+
+      <view class="info-item">
+        <text class="info-label" style="color: {{theme.textSecondary}};">预约时段</text>
+        <text class="info-value" style="color: {{theme.textPrimary}};">{{bookingInfo.startTime}} - {{bookingInfo.endTime}}</text>
+      </view>
+
+      <view class="info-item">
+        <text class="info-label" style="color: {{theme.textSecondary}};">预约时长</text>
+        <text class="info-value" style="color: {{theme.textPrimary}};">{{bookingInfo.duration}} 小时</text>
+      </view>
+
+      <view class="info-item">
+        <text class="info-label" style="color: {{theme.textSecondary}};">预约用途</text>
+        <text class="info-value" style="color: {{theme.textPrimary}};">{{bookingInfo.purpose}}</text>
+      </view>
+
+      <view class="info-item" wx:if="{{bookingInfo.contactPhone}}">
+        <text class="info-label" style="color: {{theme.textSecondary}};">联系电话</text>
+        <text class="info-value" style="color: {{theme.textPrimary}};">{{bookingInfo.contactPhone}}</text>
+      </view>
+    </view>
+
+    <view class="action-section" wx:if="{{bookingInfo.status === 'pending' || bookingInfo.status === 'approved'}}">
+      <button
+        class="cancel-btn"
+        bindtap="onCancel"
+        style="background-color: {{theme.background}}; color: {{theme.textSecondary}};"
+      >
+        取消预约
+      </button>
+    </view>
+  </block>
+
+  <view class="empty-container" wx:else>
+    <text class="empty-text" style="color: {{theme.textTertiary}};">预约信息不存在</text>
+  </view>
+</view>

@@ -1,0 +1,108 @@
+<!--pages/admin/permission-tags.wxml-->
+<view class="page" style="background: {{theme.background}};">
+  <view class="header-bar" style="background: {{theme.card}};">
+    <text class="header-title" style="color: {{theme.textPrimary}};">权限标签管理</text>
+    <text class="header-desc" style="color: {{theme.textSecondary}};">选择角色预设快速填充权限，或自定义配置</text>
+  </view>
+
+  <view class="add-section">
+    <view class="add-btn" bindtap="onShowAddModal" style="background: {{theme.primary}};">
+      <text class="add-icon">+</text>
+      <text>创建权限标签</text>
+    </view>
+  </view>
+
+  <view class="tag-list">
+    <block wx:if="{{tags.length > 0}}">
+      <view wx:for="{{tags}}" wx:key="_id" class="tag-card" style="background: {{theme.card}}; border-color: {{theme.border}};">
+        <view class="tag-info">
+          <view class="tag-header">
+            <text class="tag-name" style="color: {{theme.textPrimary}};">{{item.name}}</text>
+            <view wx:if="{{item.role}}" class="tag-role-badge" style="background: {{theme.primary}}20;">
+              <text style="color: {{theme.primary}}; font-size: 22rpx;">{{item.role === 'systemAdmin' ? '系统管理员' : item.role === 'superAdmin' ? '超级管理员' : item.role === 'academyManager' ? '书院管理人' : item.role === 'approvalManager' ? '审批管理人' : ''}}</text>
+            </view>
+          </view>
+          <text wx:if="{{item.description}}" class="tag-desc" style="color: {{theme.textSecondary}};">{{item.description}}</text>
+          <text class="tag-perm-info" style="color: {{theme.textTertiary}};">已启用 {{item.permCount}}/{{item.totalPerms}} 项权限</text>
+        </view>
+        <view class="tag-actions">
+          <view class="action-btn edit" bindtap="onShowEditModal" data-tag="{{item}}" style="color: {{theme.primary}};">编辑</view>
+          <view class="action-btn delete" bindtap="onDeleteTag" data-tag="{{item}}" style="color: #FF4D4F;">删除</view>
+        </view>
+      </view>
+    </block>
+
+    <view wx:elif="{{!isLoading}}" class="empty-state">
+      <text class="empty-text" style="color: {{theme.textSecondary}};">暂无权限标签</text>
+      <text class="empty-tip" style="color: {{theme.textTertiary}};">点击上方按钮创建第一个标签</text>
+    </view>
+  </view>
+
+  <view wx:if="{{isLoading}}" class="loading-state">
+    <view class="loading-spinner" style="border-color: {{theme.primary}}; border-top-color: transparent;"></view>
+    <text style="color: {{theme.textSecondary}};">加载中...</text>
+  </view>
+
+  <view class="modal-mask {{showModal ? 'show' : ''}}" bindtap="onCloseModal"></view>
+  <view class="tag-modal {{showModal ? 'show' : ''}}">
+    <view class="modal-content" style="background: {{theme.card}};">
+      <view class="modal-header">
+        <text class="modal-title" style="color: {{theme.textPrimary}};">{{editingTag ? '编辑权限标签' : '创建权限标签'}}</text>
+        <view class="modal-close" bindtap="onCloseModal">
+          <text style="color: {{theme.textTertiary}};">×</text>
+        </view>
+      </view>
+
+      <scroll-view class="modal-scroll" scroll-y="true">
+        <view class="form-item">
+          <text class="form-label" style="color: {{theme.textPrimary}};">标签名称 *</text>
+          <input class="form-input" placeholder="如：高级审核员、资源管理员" placeholder-style="color: {{theme.textTertiary}};" value="{{formData.name}}" data-field="name" bindinput="onInputChange" maxlength="20" style="color: {{theme.textPrimary}}; background: {{theme.background}};"/>
+          <text class="char-count" style="color: {{theme.textTertiary}};">{{formData.name.length || 0}}/20</text>
+        </view>
+
+        <view class="form-item">
+          <text class="form-label" style="color: {{theme.textPrimary}};">角色预设</text>
+          <text class="form-hint" style="color: {{theme.textTertiary}};">选择一个预设角色可自动填充权限</text>
+          <picker mode="selector" range="{{roleOptions}}" range-key="label" bindchange="onRoleChange" value="{{selectedRoleIndex >= 0 ? selectedRoleIndex : ''}}">
+            <view class="picker-display" style="background: {{theme.background}}; border-color: {{theme.border}};">
+              <text style="color: {{selectedRoleIndex >= 0 ? theme.textPrimary : theme.textTertiary}};">{{selectedRoleLabel || '点击选择角色（可选）'}}</text>
+              <text class="picker-arrow" style="color: {{theme.textTertiary}};">▼</text>
+            </view>
+          </picker>
+        </view>
+
+        <view class="form-item">
+          <text class="form-label" style="color: {{theme.textPrimary}};">描述（可选）</text>
+          <input class="form-input" placeholder="说明此标签的用途" placeholder-style="color: {{theme.textTertiary}};" value="{{formData.description}}" data-field="description" bindinput="onInputChange" maxlength="50" style="color: {{theme.textPrimary}}; background: {{theme.background}};"/>
+        </view>
+
+        <view class="form-item">
+          <text class="form-label" style="color: {{theme.textPrimary}};">权限配置</text>
+          <text class="form-hint" style="color: {{theme.textTertiary}};">勾选此标签拥有的管理功能权限</text>
+
+          <view class="permission-groups">
+            <block wx:for="{{permissionGroups}}" wx:key="group">
+              <view class="perm-group">
+                <text class="perm-group-title" style="color: {{theme.textSecondary}};">{{item.group}}</text>
+                <view wx:for="{{item.items}}" wx:key="key" wx:for-item="perm" class="perm-item" bindtap="onTogglePermission" data-key="{{perm.key}}">
+                  <view class="perm-checkbox {{formData.permissions[perm.key] ? 'checked' : ''}}" style="border-color: {{formData.permissions[perm.key] ? theme.primary : theme.border}}; background: {{formData.permissions[perm.key] ? theme.primary : 'transparent'}};">
+                    <text wx:if="{{formData.permissions[perm.key]}}" class="check-mark">✓</text>
+                  </view>
+                  <view class="perm-text">
+                    <text class="perm-label" style="color: {{theme.textPrimary}};">{{perm.label}}</text>
+                    <text class="perm-desc" style="color: {{theme.textTertiary}};">{{perm.desc}}</text>
+                  </view>
+                </view>
+              </view>
+            </block>
+          </view>
+        </view>
+      </scroll-view>
+
+      <view class="modal-footer">
+        <button class="btn-cancel" style="border-color: {{theme.border}}; color: {{theme.textSecondary}};" bindtap="onCloseModal">取消</button>
+        <button class="btn-confirm" style="background: {{saving ? theme.textTertiary : theme.primary}}; color: #fff;" bindtap="onSaveTag" disabled="{{saving}}">{{saving ? '保存中...' : '保存'}}</button>
+      </view>
+    </view>
+  </view>
+</view>

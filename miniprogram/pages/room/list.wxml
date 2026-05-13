@@ -1,0 +1,86 @@
+<view class="room-list-container" style="background-color: {{theme.background}};">
+  <!-- 加载中 -->
+  <view class="loading-container" wx:if="{{isLoading}}">
+    <text class="loading-text" style="color: {{theme.primary}};">加载中...</text>
+  </view>
+
+  <!-- 会议室列表 -->
+  <view class="room-list" wx:elif="{{roomList.length > 0}}">
+    <view
+      class="room-card"
+      wx:for="{{roomList}}"
+      wx:key="_id"
+      data-id="{{item._id}}"
+      bindtap="onRoomTap"
+      style="background-color: {{theme.card}};"
+    >
+      <!-- 会议室图片 -->
+      <view class="room-image-wrapper">
+        <image
+          class="room-image"
+          src="{{item.firstImage}}"
+          mode="aspectFill"
+        />
+        <view class="room-status {{item.status === 'available' ? 'available' : 'unavailable'}}">
+          {{item.status === 'available' ? '可预约' : '维护中'}}
+        </view>
+      </view>
+
+      <!-- 会议室信息 -->
+      <view class="room-info">
+        <view class="room-header">
+          <text class="room-name" style="color: {{theme.textPrimary}};">{{item.name}}</text>
+          <view class="room-capacity" style="color: {{theme.textSecondary}};">
+            <image class="theme-icon" src="/assets/images/icons/capacity.png" style="width:24rpx;height:24rpx;margin-right:4rpx;"/>
+            <text wx:if="{{item.capacity && item.capacity.min !== undefined}}">{{item.capacity.min}}-{{item.capacity.max}}人</text>
+            <text wx:elif="{{item.capacity > 0}}">{{item.capacity}}人</text>
+            <text wx:else>未知容量</text>
+          </view>
+        </view>
+
+        <view class="room-location" style="color: {{theme.textSecondary}};">
+          <image class="theme-icon" src="/assets/images/icons/location.png" style="width:24rpx;height:24rpx;margin-right:4rpx;"/>
+          <text>{{item.location}}</text>
+        </view>
+
+        <view class="room-facilities" wx:if="{{item.facilities.length > 0}}">
+          <view class="facility-tag" wx:for="{{item.facilities}}" wx:for-item="facility" wx:key="*this"
+                style="background-color: {{theme.primary}}10; color: {{theme.primary}};">
+            {{facility}}
+          </view>
+        </view>
+
+        <view class="room-footer">
+          <view class="room-time" style="color: {{theme.textSecondary}};">
+            <text class="time-label">开放时间:</text>
+            <text class="time-value">{{item.openTime}}-{{item.closeTime}}</text>
+          </view>
+          <button
+            class="book-btn {{item.status !== 'available' ? 'disabled' : ''}}"
+            size="mini"
+            data-id="{{item._id}}"
+            catchtap="onBookTap"
+            disabled="{{item.status !== 'available'}}"
+            style="background-color: {{item.status === 'available' ? theme.primary : theme.textTertiary}};"
+          >
+            立即预约
+          </button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-container" wx:if="{{!isLoading && roomList.length === 0}}">
+    <view class="empty-icon-wrapper">
+      <view class="empty-icon-bg room-bg" style="background-color: {{theme.primary}}15;">
+        <image class="empty-icon theme-icon" src="/assets/images/icons/room.png" mode="aspectFit"/>
+      </view>
+      <view class="empty-search" style="background-color: {{theme.warning}};">
+        <image class="search-icon theme-icon" src="/assets/images/icons/search.png" mode="aspectFit"/>
+      </view>
+    </view>
+    <text class="empty-text" style="color: {{theme.textSecondary}};">暂无会议室信息</text>
+    <text class="empty-desc" style="color: {{theme.textTertiary}};">请稍后重试或联系管理员</text>
+  </view>
+</view>

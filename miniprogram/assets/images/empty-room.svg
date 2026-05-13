@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- 背景圆 -->
+  <circle cx="100" cy="100" r="80" fill="#FFF2E8"/>
+  
+  <!-- 会议室建筑 -->
+  <rect x="65" y="70" width="70" height="60" rx="4" fill="#FA8C16" opacity="0.2"/>
+  <rect x="70" y="75" width="60" height="50" rx="3" fill="#FFFFFF" stroke="#FA8C16" stroke-width="2"/>
+  
+  <!-- 门 -->
+  <rect x="95" y="105" width="20" height="20" rx="2" fill="#FA8C16" opacity="0.3"/>
+  
+  <!-- 窗户 -->
+  <rect x="78" y="85" width="15" height="12" rx="2" fill="#FA8C16" opacity="0.4"/>
+  <rect x="107" y="85" width="15" height="12" rx="2" fill="#FA8C16" opacity="0.4"/>
+  
+  <!-- 屋顶 -->
+  <path d="M60 75 L100 50 L140 75" fill="none" stroke="#FA8C16" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- 搜索图标 -->
+  <circle cx="135" cy="125" r="15" fill="#1890FF" opacity="0.9"/>
+  <circle cx="135" cy="125" r="6" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+  <line x1="140" y1="130" x2="146" y2="136" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+</svg>

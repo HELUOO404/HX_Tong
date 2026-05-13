@@ -1,0 +1,45 @@
+<view class="admin-login-container">
+  <!-- 标题 -->
+  <view class="header-section">
+    <text class="title">系统管理员登录</text>
+    <text class="subtitle">红芯通会议室预约管理系统</text>
+  </view>
+
+  <!-- 登录表单 -->
+  <view class="form-section">
+    <view class="form-item">
+      <text class="form-label">用户名</text>
+      <input 
+        class="form-input" 
+        type="text" 
+        placeholder="请输入管理员用户名"
+        value="{{username}}"
+        bindinput="onUsernameInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">密码</text>
+      <input 
+        class="form-input" 
+        type="password" 
+        placeholder="请输入密码"
+        value="{{password}}"
+        bindinput="onPasswordInput"
+      />
+    </view>
+
+    <button 
+      class="login-btn {{isLoading ? 'loading' : ''}}"
+      bindtap="onLogin"
+      disabled="{{isLoading}}"
+    >
+      {{isLoading ? '登录中...' : '登录'}}
+    </button>
+  </view>
+
+  <!-- 返回用户端 -->
+  <view class="footer-section">
+    <text class="back-link" bindtap="onBackToUser">← 返回用户端</text>
+  </view>
+</view>

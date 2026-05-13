@@ -1,0 +1,90 @@
+<view class="room-detail-container">
+  <!-- 加载中 -->
+  <view class="loading-container" wx:if="{{isLoading}}">
+    <text class="loading-text" style="color: {{theme.primary}};">加载中...</text>
+  </view>
+
+  <!-- 会议室详情 -->
+  <block wx:elif="{{roomInfo}}">
+    <!-- 图片轮播 -->
+    <swiper class="image-swiper" indicator-dots autoplay circular wx:if="{{roomInfo.images.length > 0}}">
+      <swiper-item wx:for="{{roomInfo.images}}" wx:key="*this">
+        <image src="{{item}}" mode="aspectFill" bindtap="onPreviewImage" data-url="{{item}}"/>
+      </swiper-item>
+    </swiper>
+    <view class="image-swiper" wx:else>
+      <image src="/assets/images/room-default.png" mode="aspectFill"/>
+    </view>
+
+    <!-- 基本信息 -->
+    <view class="info-section">
+      <view class="room-header">
+        <text class="room-name">{{roomInfo.name}}</text>
+        <view class="room-status {{roomInfo.status === 'available' ? 'available' : 'unavailable'}}">
+          {{roomInfo.status === 'available' ? '可预约' : '维护中'}}
+        </view>
+      </view>
+
+      <view class="room-location">
+        <image class="theme-icon" src="/assets/images/icons/location.png" style="width:32rpx;height:32rpx;margin-right:8rpx;"/>
+        <text>{{roomInfo.location}}</text>
+      </view>
+
+      <view class="room-capacity">
+        <image class="theme-icon" src="/assets/images/icons/capacity.png" style="width:32rpx;height:32rpx;margin-right:8rpx;"/>
+        <text wx:if="{{roomInfo.capacity && roomInfo.capacity.min !== undefined}}">容纳 {{roomInfo.capacity.min}}-{{roomInfo.capacity.max}} 人</text>
+        <text wx:elif="{{roomInfo.capacity > 0}}">容纳 {{roomInfo.capacity}} 人</text>
+        <text wx:else>容纳 未知 人</text>
+      </view>
+
+      <view class="room-time">
+        <image class="theme-icon" src="/assets/images/icons/time.png" style="width:32rpx;height:32rpx;margin-right:8rpx;"/>
+        <text>开放时间 {{roomInfo.openTime}}-{{roomInfo.closeTime}}</text>
+      </view>
+
+      <view class="room-description" wx:if="{{roomInfo.description && roomInfo.description !== ''}}">
+        <text class="description-text">{{roomInfo.description}}</text>
+      </view>
+    </view>
+
+    <!-- 设备设施 -->
+    <view class="facilities-section" wx:if="{{roomInfo.facilities.length > 0}}">
+      <text class="section-title">设备设施</text>
+      <view class="facilities-list">
+        <view class="facility-item" wx:for="{{roomInfo.facilities}}" wx:key="*this">
+          <image class="theme-icon" src="/assets/images/icons/approved.png" style="width:28rpx;height:28rpx;margin-right:8rpx;"/>
+          <text>{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 预约规则 -->
+    <view class="rules-section">
+      <text class="section-title">预约规则</text>
+      <view class="rules-list">
+        <text class="rule-item">• 最少预约 {{roomInfo.minBookingHours}} 小时</text>
+        <text class="rule-item">• 最多预约 {{roomInfo.maxBookingHours}} 小时</text>
+        <text class="rule-item">• 需提前 2 小时预约</text>
+        <text class="rule-item">• 预约超过 4 小时需管理员审批</text>
+        <text wx:if="{{roomInfo.minAdvanceDays && roomInfo.minAdvanceDays > 0}}" class="rule-item">• 至少提前 {{roomInfo.minAdvanceDays}} 天预约</text>
+        <text wx:if="{{roomInfo.maxAdvanceDays && roomInfo.maxAdvanceDays > 0}}" class="rule-item">• 最多提前 {{roomInfo.maxAdvanceDays}} 天预约</text>
+      </view>
+    </view>
+
+    <!-- 底部操作栏 -->
+    <view class="bottom-bar">
+      <button
+        class="book-btn {{roomInfo.status !== 'available' ? 'disabled' : ''}}"
+        bindtap="onBookNow"
+        disabled="{{roomInfo.status !== 'available'}}"
+      >
+        {{roomInfo.status === 'available' ? '立即预约' : '暂不可预约'}}
+      </button>
+    </view>
+  </block>
+
+  <!-- 空状态 -->
+  <view class="empty-container" wx:else>
+    <text class="empty-text" style="color: {{theme.textSecondary}};">暂无数据</text>
+  </view>
+</view>

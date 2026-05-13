@@ -1,0 +1,47 @@
+<view class="settings-container" style="background-color: {{theme.background}};">
+  <view class="settings-section" style="background-color: {{theme.card}};">
+    <view class="menu-item" bindtap="onEditProfile">
+      <view class="menu-icon" style="background-color: {{theme.primary}}20;">
+        <image src="/assets/images/icons/edit.png" mode="aspectFit"/>
+      </view>
+      <text class="menu-name" style="color: {{theme.textPrimary}};">编辑个人信息</text>
+      <image class="arrow-icon" src="/assets/images/icons/arrow-right.png" mode="aspectFit"/>
+    </view>
+
+    <view class="menu-item" bindtap="onChangeTheme">
+      <view class="menu-icon" style="background-color: {{theme.primary}}15;">
+        <image src="/assets/images/icons/theme.png" mode="aspectFit"/>
+      </view>
+      <text class="menu-name" style="color: {{theme.textPrimary}};">更换主题</text>
+      <image class="arrow-icon" src="/assets/images/icons/arrow-right.png" mode="aspectFit"/>
+    </view>
+
+    <view class="menu-item" bindtap="onAbout">
+      <view class="menu-icon" style="background-color: {{theme.success}}15;">
+        <image src="/assets/images/icons/notice.png" mode="aspectFit"/>
+      </view>
+      <text class="menu-name" style="color: {{theme.textPrimary}};">关于</text>
+      <image class="arrow-icon" src="/assets/images/icons/arrow-right.png" mode="aspectFit"/>
+    </view>
+  </view>
+
+  <view class="settings-section" style="background-color: {{theme.card}};" wx:if="{{isLogin}}">
+    <view class="menu-item" bindtap="onLogout">
+      <view class="menu-icon" style="background-color: {{theme.error}}15;">
+        <image src="/assets/images/icons/close.png" mode="aspectFit"/>
+      </view>
+      <text class="menu-name" style="color: {{theme.error}};">退出登录</text>
+      <image class="arrow-icon" src="/assets/images/icons/arrow-right.png" mode="aspectFit"/>
+    </view>
+  </view>
+
+  <view class="settings-section system-admin-section" style="background-color: {{theme.card}};">
+    <view class="menu-item" bindtap="onSystemAdmin">
+      <view class="menu-icon" style="background-color: {{theme.textTertiary}}15;">
+        <image src="/assets/images/icons/admin.png" mode="aspectFit"/>
+      </view>
+      <text class="menu-name" style="color: {{theme.textQuaternary || '#c0c0c0'}};">系统管理</text>
+      <image class="arrow-icon" src="/assets/images/icons/arrow-right.png" mode="aspectFit"/>
+    </view>
+  </view>
+</view>
