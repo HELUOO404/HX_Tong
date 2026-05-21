@@ -6,7 +6,7 @@
  * @version 2.0.0
  */
 
-const { config } = require('./config/env');
+const { getConfig } = require('./config/env');
 const UserStore = require('./stores/userStore');
 const { initTheme, switchTheme: switchThemeUtil, getCurrentThemeId } = require('./theme/theme-utils');
 
@@ -65,12 +65,13 @@ App({
       return;
     }
     
+    const config = getConfig();
     wx.cloud.init({
       env: config.envId,
       traceUser: true
     });
-    
-    console.log('[App] 云开发初始化完成，环境ID:', config.envId);
+
+    console.log('[App] 云开发初始化完成，环境:', config.env, '环境ID:', config.envId);
   },
 
   /**
