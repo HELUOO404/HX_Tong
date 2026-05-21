@@ -191,7 +191,7 @@
   },
   "assets": {
     "images": {
-      "logo": "assets/images/logo.jpg",
+      "logo": "assets/images/logo.png",
       "logoDark": "assets/images/logo-dark.png",
       "bgHome": "assets/images/bg-home.png",
       "bgProfile": "assets/images/bg-profile.png",

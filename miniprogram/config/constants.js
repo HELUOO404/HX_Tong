@@ -11,8 +11,7 @@ module.exports = {
   APP_NAME: '芯预约',
   APP_VERSION: '2.1.0',
   APP_DESCRIPTION: '深职大集成电路学院会议室预约小程序',
-  /** 本地默认 Logo（压缩后为 jpg，勿再引用已删除的 logo.png） */
-  LOGO_URL: '/assets/images/logo.jpg',
+  LOGO_URL: '/assets/images/logo.png',
 
   // 分页配置
   PAGE_SIZE: 10,
