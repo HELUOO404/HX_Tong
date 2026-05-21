@@ -120,16 +120,16 @@
 }
 
 .time-slot-grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12rpx;
-  justify-content: flex-start;
+  width: 100%;
 }
 
 .time-slot {
-  width: calc(50% - 6rpx);
-  min-width: calc(50% - 6rpx);
-  max-width: calc(50% - 6rpx);
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
   padding: 20rpx 12rpx;
   border-radius: 12rpx;
   text-align: center;
