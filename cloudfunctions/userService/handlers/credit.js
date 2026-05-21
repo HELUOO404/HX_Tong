@@ -6,6 +6,23 @@
 const response = require('../utils/response')
 
 /**
+ * 构建信誉分记录查询条件（兼容 openid / 用户 _id 两种历史写法）
+ */
+function buildCreditRecordQuery(db, user, openid) {
+  const _ = db.command
+  const ids = []
+  if (user && user._id) ids.push(user._id)
+  if (user && user.openid) ids.push(user.openid)
+  if (openid) ids.push(openid)
+
+  const uniqueIds = [...new Set(ids.filter(Boolean))]
+  if (uniqueIds.length <= 1) {
+    return { userId: uniqueIds[0] || (user && user._id) }
+  }
+  return _.or(uniqueIds.map(id => ({ userId: id })))
+}
+
+/**
  * 获取当前信誉分
  */
 const getScore = async (params, cloud) => {
@@ -110,16 +127,17 @@ const getRecords = async (params, cloud) => {
       return response.notFound('用户')
     }
 
-    const userId = users[0]._id
+    const user = users[0]
+    const recordQuery = buildCreditRecordQuery(db, user, OPENID)
 
     // 获取总数
     const { total } = await db.collection('credit_records')
-      .where({ userId })
+      .where(recordQuery)
       .count()
 
     // 获取记录列表
     const { data: records } = await db.collection('credit_records')
-      .where({ userId })
+      .where(recordQuery)
       .orderBy('createTime', 'desc')
       .skip((pageNum - 1) * size)
       .limit(size)

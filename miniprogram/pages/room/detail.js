@@ -1,27 +1,47 @@
 /**
  * @file 会议室详情页
- * @description 展示会议室详细信息和预约入口
+ * @description 展示会议室详细信息和预约入口，含每日会议安排
  * @author 红芯通开发团队
  * @since 2026-04-21
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 const RoomService = require('../../services/roomService')
+const UserStore = require('../../stores/userStore')
 const { ErrorHandler } = require('../../utils/errorHandler')
 const ThemeMixin = require('../../theme/theme-mixin')
+const {
+  formatDate,
+  getScheduleTitle,
+  getDateRangeForRoom,
+  generateCalendarDays,
+  buildScheduleItems
+} = require('../../utils/bookingCalendar')
 
 Page({
-  // 引入主题混入
   ...ThemeMixin,
 
   data: {
     roomId: '',
     roomInfo: null,
-    isLoading: true
+    isLoading: true,
+    selectedDate: '',
+    scheduleTitle: '今日安排',
+    scheduleList: [],
+    scheduleLoading: false,
+    datePickerReady: false,
+    showCalendar: false,
+    calendarYear: 0,
+    calendarMonth: 0,
+    calendarDays: [],
+    minDate: 0,
+    maxDate: 0,
+    calendarTouchStartX: 0,
+    calendarTouchStartY: 0,
+    dateAvailability: {}
   },
 
   onLoad(options) {
-    // 调用混入的 onLoad 来初始化主题
     ThemeMixin.onLoad.call(this)
 
     const { id } = options
@@ -31,20 +51,22 @@ Page({
       return
     }
 
-    this.setData({ roomId: id })
+    const today = formatDate(new Date())
+    this.setData({
+      roomId: id,
+      selectedDate: today,
+      scheduleTitle: getScheduleTitle(today)
+    })
     this.loadRoomDetail(id)
   },
 
   onShow() {
     ThemeMixin.onShow.call(this)
-    if (this.data.roomId) {
-      this.loadRoomDetail(this.data.roomId)
+    if (this.data.roomId && this.data.datePickerReady) {
+      this.loadSchedule()
     }
   },
 
-  /**
-   * 加载会议室详情
-   */
   async loadRoomDetail(roomId) {
     this.setData({ isLoading: true })
 
@@ -52,16 +74,65 @@ Page({
       const roomService = RoomService.getInstance()
       const roomInfo = await roomService.getRoomDetail(roomId)
       const processedRoom = this.processRoomData(roomInfo)
+      this.initDatePicker(processedRoom)
       this.setData({ roomInfo: processedRoom, isLoading: false })
+      this.loadSchedule()
     } catch (error) {
       ErrorHandler.handle(error)
       this.setData({ isLoading: false })
     }
   },
 
-  /**
-   * 处理会议室数据，统一格式
-   */
+  initDatePicker(roomInfo) {
+    const userStore = UserStore.getInstance()
+    const range = getDateRangeForRoom(roomInfo, userStore.isAdmin())
+    let selectedDate = this.data.selectedDate || range.defaultDate
+    const parts = selectedDate.split('-')
+    const selectedTime = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2])).getTime()
+    if (selectedTime < range.minDate || (range.maxDate && selectedTime > range.maxDate)) {
+      selectedDate = range.defaultDate
+    }
+
+    this.setData({
+      minDate: range.minDate,
+      maxDate: range.maxDate,
+      selectedDate,
+      scheduleTitle: getScheduleTitle(selectedDate),
+      calendarYear: range.calendarYear,
+      calendarMonth: range.calendarMonth,
+      datePickerReady: true,
+      calendarDays: generateCalendarDays({
+        calendarYear: range.calendarYear,
+        calendarMonth: range.calendarMonth,
+        selectedDate,
+        minDate: range.minDate,
+        maxDate: range.maxDate
+      })
+    })
+  },
+
+  async loadSchedule() {
+    const { roomId, selectedDate } = this.data
+    if (!roomId || !selectedDate) return
+
+    this.setData({ scheduleLoading: true })
+
+    try {
+      const roomService = RoomService.getInstance()
+      const data = await roomService.getTimeSlots(roomId, selectedDate)
+      const scheduleList = buildScheduleItems(data.bookings || [], selectedDate)
+
+      this.setData({
+        scheduleList,
+        scheduleLoading: false,
+        scheduleTitle: getScheduleTitle(selectedDate)
+      })
+    } catch (error) {
+      console.error('[RoomDetail] 加载会议安排失败:', error)
+      this.setData({ scheduleList: [], scheduleLoading: false })
+    }
+  },
+
   processRoomData(roomInfo) {
     if (!roomInfo) return null
 
@@ -85,9 +156,6 @@ Page({
     return processed
   },
 
-  /**
-   * 立即预约
-   */
   onBookNow() {
     const { roomId } = this.data
     wx.navigateTo({
@@ -95,9 +163,6 @@ Page({
     })
   },
 
-  /**
-   * 预览图片
-   */
   onPreviewImage(e) {
     const { url } = e.currentTarget.dataset
     const { images } = this.data.roomInfo
@@ -106,5 +171,117 @@ Page({
       current: url,
       urls: images.length > 0 ? images : [url]
     })
+  },
+
+  onShowCalendar() {
+    if (!this.data.datePickerReady) return
+    this.setData({ showCalendar: true })
+    this.refreshCalendarDays()
+    this.loadMonthAvailability()
+  },
+
+  onCloseCalendar() {
+    this.setData({ showCalendar: false })
+  },
+
+  onConfirmCalendar() {
+    this.setData({ showCalendar: false })
+    this.loadSchedule()
+  },
+
+  refreshCalendarDays() {
+    const { calendarYear, calendarMonth, selectedDate, minDate, maxDate, dateAvailability } = this.data
+    this.setData({
+      calendarDays: generateCalendarDays({
+        calendarYear,
+        calendarMonth,
+        selectedDate,
+        minDate,
+        maxDate,
+        dateAvailability
+      })
+    })
+  },
+
+  async loadMonthAvailability() {
+    const { roomId, calendarYear, calendarMonth } = this.data
+    if (!roomId) return
+
+    const startDate = formatDate(new Date(calendarYear, calendarMonth - 1, 1))
+    const endDate = formatDate(new Date(calendarYear, calendarMonth, 0))
+
+    try {
+      const roomService = RoomService.getInstance()
+      const data = await roomService.getDateAvailability(roomId, startDate, endDate)
+      this.setData({ dateAvailability: data.dateMap || {} })
+    } catch (error) {
+      console.error('[RoomDetail] 加载日期预约状态失败:', error)
+      this.setData({ dateAvailability: {} })
+    }
+    this.refreshCalendarDays()
+  },
+
+  onPrevMonth() {
+    let { calendarYear, calendarMonth } = this.data
+    calendarMonth--
+    if (calendarMonth < 1) {
+      calendarMonth = 12
+      calendarYear--
+    }
+    this.setData({ calendarYear, calendarMonth })
+    this.refreshCalendarDays()
+    this.loadMonthAvailability()
+  },
+
+  onNextMonth() {
+    let { calendarYear, calendarMonth } = this.data
+    calendarMonth++
+    if (calendarMonth > 12) {
+      calendarMonth = 1
+      calendarYear++
+    }
+    this.setData({ calendarYear, calendarMonth })
+    this.refreshCalendarDays()
+    this.loadMonthAvailability()
+  },
+
+  onCalendarDayTap(e) {
+    const { date, selectable, availability } = e.currentTarget.dataset
+    if (!selectable) {
+      wx.showToast({ title: '该日期不可选', icon: 'none' })
+      return
+    }
+    if (availability === 'full') {
+      wx.showToast({ title: '该日期已约满', icon: 'none' })
+      return
+    }
+    this.setData({
+      selectedDate: date,
+      scheduleTitle: getScheduleTitle(date)
+    })
+    this.refreshCalendarDays()
+  },
+
+  onCalendarTouchStart(e) {
+    this.setData({
+      calendarTouchStartX: e.touches[0].clientX,
+      calendarTouchStartY: e.touches[0].clientY
+    })
+  },
+
+  onCalendarTouchEnd(e) {
+    const { calendarTouchStartX: startX, calendarTouchStartY: startY } = this.data
+    const endX = e.changedTouches[0].clientX
+    const endY = e.changedTouches[0].clientY
+    const deltaX = endX - startX
+    const deltaY = endY - startY
+
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+      if (deltaX > 0) {
+        this.onPrevMonth()
+      } else {
+        this.onNextMonth()
+      }
+    }
   }
 })

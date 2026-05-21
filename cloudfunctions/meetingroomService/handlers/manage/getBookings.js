@@ -120,7 +120,10 @@ module.exports = async (params, cloud) => {
       return {
         ...booking,
         userInfo: {
+          nickname: user.nickname || '',
+          remark: user.remark || '',
           realName: user.realName || '',
+          name: user.nickname || user.realName || '',
           avatarUrl: user.avatarUrl || '',
           phone: user.phone || ''
         },

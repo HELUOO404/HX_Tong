@@ -74,6 +74,11 @@
   color: #FFFFFF;
 }
 
+.stat-card.highlight.stat-card-clickable:active {
+  transform: scale(0.98);
+  opacity: 0.92;
+}
+
 .stat-value {
   display: block;
   font-size: 48rpx;

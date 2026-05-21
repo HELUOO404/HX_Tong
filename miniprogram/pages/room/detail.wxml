@@ -47,6 +47,64 @@
       </view>
     </view>
 
+    <!-- 会议室安排 -->
+    <view class="schedule-section">
+      <view class="schedule-header">
+        <text class="section-title schedule-title">{{scheduleTitle}}</text>
+        <view class="schedule-date-trigger" bindtap="onShowCalendar">
+          <image class="schedule-date-icon" src="/assets/images/icons/calendar-active.svg" mode="aspectFit"/>
+          <text class="schedule-date-text">{{selectedDate}}</text>
+          <text class="schedule-date-caret">▾</text>
+        </view>
+      </view>
+
+      <view class="schedule-loading" wx:if="{{scheduleLoading}}">
+        <text>加载中...</text>
+      </view>
+
+      <view class="schedule-empty" wx:elif="{{scheduleList.length === 0}}">
+        <view class="schedule-empty-visual">
+          <view class="empty-illust-ring"></view>
+          <view class="empty-illust-calendar">
+            <view class="empty-illust-cal-hook empty-illust-cal-hook-l"></view>
+            <view class="empty-illust-cal-hook empty-illust-cal-hook-r"></view>
+            <view class="empty-illust-cal-head"></view>
+            <view class="empty-illust-cal-body">
+              <view class="empty-illust-line"></view>
+              <view class="empty-illust-line empty-illust-line-mid"></view>
+              <view class="empty-illust-line empty-illust-line-short"></view>
+            </view>
+          </view>
+        </view>
+        <text class="schedule-empty-text">当天暂无会议安排，可随时预约</text>
+      </view>
+
+      <view class="timeline" wx:else>
+        <view
+          class="timeline-item {{item.isPast ? 'past' : ''}}"
+          wx:for="{{scheduleList}}"
+          wx:key="bookingId"
+        >
+          <view class="timeline-time">
+            <text>{{item.startTime}}</text>
+            <text class="timeline-time-divider">-</text>
+            <text>{{item.endTime}}</text>
+          </view>
+          <view class="timeline-card">
+            <view class="timeline-card-main">
+              <view class="timeline-content">
+                <text class="timeline-label">会议内容</text>
+                <text class="timeline-purpose">{{item.displayContent}}</text>
+              </view>
+              <view class="timeline-status status-{{item.status}}">
+                {{item.statusText}}
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
     <!-- 设备设施 -->
     <view class="facilities-section" wx:if="{{roomInfo.facilities.length > 0}}">
       <text class="section-title">设备设施</text>
@@ -86,5 +144,47 @@
   <!-- 空状态 -->
   <view class="empty-container" wx:else>
     <text class="empty-text" style="color: {{theme.textSecondary}};">暂无数据</text>
+  </view>
+
+  <!-- 日期选择（复用预约页半屏日历） -->
+  <view class="calendar-mask {{showCalendar ? 'show' : ''}}" bindtap="onCloseCalendar"></view>
+  <view class="calendar-popup {{showCalendar ? 'show' : ''}}" style="background-color: {{theme.card}};">
+    <view class="calendar-header">
+      <view class="calendar-nav-btn" bindtap="onPrevMonth">
+        <text class="calendar-nav-arrow" style="color: {{theme.textSecondary}};">‹</text>
+      </view>
+      <text class="calendar-title" style="color: {{theme.textPrimary}};">{{calendarYear}}年{{calendarMonth}}月</text>
+      <view class="calendar-nav-btn" bindtap="onNextMonth">
+        <text class="calendar-nav-arrow" style="color: {{theme.textSecondary}};">›</text>
+      </view>
+    </view>
+    <view class="calendar-weekdays">
+      <text wx:for="{{['日','一','二','三','四','五','六']}}" wx:key="*this" class="calendar-weekday" style="color: {{theme.textTertiary}};">{{item}}</text>
+    </view>
+    <view class="calendar-days" bindtouchstart="onCalendarTouchStart" bindtouchend="onCalendarTouchEnd">
+      <view
+        wx:for="{{calendarDays}}"
+        wx:key="date"
+        class="calendar-day {{item.isCurrentMonth ? '' : 'other-month'}} {{item.isToday ? 'today' : ''}} {{item.isSelectable ? 'selectable' : ''}} {{item.isSelected ? 'selected' : ''}} {{item.availability === 'partial' ? 'availability-partial' : ''}} {{item.availability === 'full' ? 'availability-full' : ''}}"
+        style="{{item.isSelected ? 'border-color: ' + theme.primary + '; color: #fff; background-color: ' + theme.primary + ';' : ''}}"
+        data-date="{{item.date}}"
+        data-selectable="{{item.isSelectable}}"
+        data-availability="{{item.availability}}"
+        bindtap="onCalendarDayTap"
+      >
+        <text class="calendar-day-text">{{item.day}}</text>
+        <view
+          wx:if="{{item.isToday}}"
+          class="calendar-today-dot {{item.isSelected ? 'on-selected' : ''}}"
+          style="background-color: {{item.isSelected ? '#fff' : theme.primary}};"
+        ></view>
+      </view>
+    </view>
+    <view class="calendar-footer">
+      <text class="calendar-hint" style="color: {{theme.textTertiary}};">蓝框可选 · 黄框部分已约 · 红框已约满</text>
+      <view class="calendar-close-btn" bindtap="onConfirmCalendar" style="background-color: {{theme.primary}};">
+        <text style="color: #fff;">确定</text>
+      </view>
+    </view>
   </view>
 </view>

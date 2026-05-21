@@ -84,7 +84,7 @@ module.exports = async (params, cloud) => {
 
         await db.collection('credit_records').add({
           data: {
-            userId: OPENID,
+            userId: users[0]._id,
             type: deductScore > 0 ? 'minus' : 'plus',
             scoreChange: -deductScore,
             currentScore: newCredit,

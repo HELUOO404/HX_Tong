@@ -70,6 +70,27 @@ class RoomService {
   /**
    * 获取会议室可预约时段
    */
+  async getDateAvailability(roomId, startDate, endDate) {
+    try {
+      const { result } = await wx.cloud.callFunction({
+        name: 'meetingroomService',
+        data: {
+          action: 'meetingroom_getDateAvailability',
+          params: { roomId, startDate, endDate }
+        }
+      })
+
+      if (result.code !== 200) {
+        throw new Error(result.message || '获取日期预约状态失败')
+      }
+
+      return result.data
+    } catch (error) {
+      console.error('[RoomService] 获取日期预约状态失败:', error)
+      throw error
+    }
+  }
+
   async getTimeSlots(roomId, date) {
     try {
       const { result } = await wx.cloud.callFunction({

@@ -62,3 +62,22 @@ exports.validateClassName = (className) => {
   }
   return { valid: true }
 }
+
+exports.validateNickname = (nickname) => {
+  const value = (nickname || '').trim()
+  if (!value) {
+    return { valid: false, message: '昵称不能为空' }
+  }
+  if (value.length > 20) {
+    return { valid: false, message: '昵称不能超过20个字符' }
+  }
+  return { valid: true }
+}
+
+exports.validateRemark = (remark) => {
+  const value = (remark || '').trim()
+  if (value.length > 200) {
+    return { valid: false, message: '备注不能超过200个字符' }
+  }
+  return { valid: true }
+}

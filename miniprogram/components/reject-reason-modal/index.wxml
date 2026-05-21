@@ -1,0 +1,39 @@
+<view class="reject-mask {{show ? 'show' : ''}}" catchtap="onMaskTap"></view>
+<view class="reject-dialog {{show ? 'show' : ''}}" catchtap="preventBubble">
+  <view class="reject-panel">
+    <text class="reject-title">{{title}}</text>
+
+    <textarea
+      class="reject-input"
+      placeholder="{{placeholder}}"
+      placeholder-class="reject-placeholder"
+      value="{{reason}}"
+      bindinput="onInput"
+      maxlength="200"
+      auto-height
+      show-confirm-bar="{{false}}"
+      adjust-position="{{true}}"
+    />
+
+    <view class="reject-quick" wx:if="{{phrases.length > 0}}">
+      <text class="reject-quick-label">快捷条目</text>
+      <picker
+        class="reject-quick-picker-wrap"
+        mode="selector"
+        range="{{phrases}}"
+        value="{{phraseIndex}}"
+        bindchange="onPhrasePick"
+      >
+        <view class="reject-quick-picker">
+          <text class="reject-quick-value">{{phrases[phraseIndex]}}</text>
+          <text class="reject-quick-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="reject-actions">
+      <view class="reject-btn reject-btn-cancel" bindtap="onCancel">取消</view>
+      <view class="reject-btn reject-btn-confirm" bindtap="onConfirm">确定</view>
+    </view>
+  </view>
+</view>

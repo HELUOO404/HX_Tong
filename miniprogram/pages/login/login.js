@@ -8,10 +8,12 @@
 
 const UserStore = require('../../stores/userStore')
 const { ErrorHandler } = require('../../utils/errorHandler')
+const { APP_NAME } = require('../../config/constants')
 
 Page({
   data: {
-    isLoading: false
+    isLoading: false,
+    appName: APP_NAME
   },
 
   onShow() {
@@ -66,7 +68,7 @@ Page({
   showUserAgreement() {
     wx.showModal({
       title: '用户协议',
-      content: '欢迎使用红芯通小程序。本应用为书院会议室预约管理平台，用户需遵守书院相关规定，合理使用预约功能。违规预约（如预约后不使用、恶意占用资源等）将扣除信誉分，情节严重者将被限制预约权限。',
+      content: `欢迎使用${APP_NAME}。本应用为书院会议室预约管理平台，用户需遵守书院相关规定，合理使用预约功能。违规预约（如预约后不使用、恶意占用资源等）将扣除信誉分，情节严重者将被限制预约权限。`,
       showCancel: false,
       confirmText: '我知道了'
     })
@@ -75,7 +77,7 @@ Page({
   showPrivacyPolicy() {
     wx.showModal({
       title: '隐私政策',
-      content: '红芯通重视您的隐私保护。我们仅收集必要的用户信息（姓名、学号、手机号）用于预约服务。您的信息将安全存储于微信云开发数据库中，不会向第三方披露。如需删除个人信息，请联系管理员。',
+      content: `${APP_NAME}重视您的隐私保护。我们仅收集必要的用户信息（昵称为必填，头像与备注为选填）用于预约服务。您的信息将安全存储于微信云开发数据库中，不会向第三方披露。如需删除个人信息，请联系管理员。`,
       showCancel: false,
       confirmText: '我知道了'
     })
