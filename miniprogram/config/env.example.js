@@ -6,10 +6,13 @@
  * @version 1.0.0
  */
 
+/** 与微信云开发控制台「环境 ID」一致（形如 cloud1-xxxx，勿填 AppID 或其它 UUID） */
+const CLOUD_ENV_ID = 'your-env-id-here'
+
 const ENV = {
   development: {
     env: 'development',
-    envId: 'your-env-id-here',
+    envId: CLOUD_ENV_ID,
     apiBaseUrl: '',
     debug: true,
     mock: false,
@@ -18,7 +21,7 @@ const ENV = {
 
   trial: {
     env: 'trial',
-    envId: 'your-trial-env-id',
+    envId: CLOUD_ENV_ID,
     apiBaseUrl: '',
     debug: true,
     mock: false,
@@ -27,7 +30,7 @@ const ENV = {
 
   production: {
     env: 'production',
-    envId: 'your-prod-env-id',
+    envId: CLOUD_ENV_ID,
     apiBaseUrl: '',
     debug: false,
     mock: false,
@@ -64,6 +67,5 @@ function getConfig() {
 module.exports = {
   ENV,
   getConfig,
-  getCurrentEnv,
-  config: getConfig()
+  getCurrentEnv
 }
