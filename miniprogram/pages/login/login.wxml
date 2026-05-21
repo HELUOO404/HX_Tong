@@ -1,7 +1,7 @@
 <view class="login-container">
   <!-- Logo区域 -->
   <view class="logo-section">
-    <image class="logo" src="/assets/images/logo.png" mode="aspectFit"/>
+    <image class="logo" src="/assets/images/logo.jpg" mode="aspectFit"/>
     <text class="app-name">{{appName}}</text>
     <text class="app-slogan">深职大集成电路学院生活服务</text>
   </view>
