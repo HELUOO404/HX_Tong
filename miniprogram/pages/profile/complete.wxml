@@ -15,7 +15,7 @@
         <view class="avatar-wrapper">
           <image
             class="avatar-preview"
-            src="{{avatarUrl || '/assets/images/logo.jpg'}}"
+            src="{{avatarUrl || '/assets/images/logo.png'}}"
             mode="aspectFill"
           />
           <view class="avatar-edit-hint">点击更换</view>

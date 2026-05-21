@@ -13,11 +13,11 @@
       "required": true
     },
     {
-      "path": "assets/images/logo.jpg",
+      "path": "assets/images/logo.png",
       "type": "image",
       "size": 15234,
       "hash": "sha256:logo",
-      "url": "assets/images/logo.jpg",
+      "url": "assets/images/logo.png",
       "required": true
     },
     {

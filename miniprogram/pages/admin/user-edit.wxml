@@ -1,6 +1,6 @@
 <view class="page" style="background: {{theme.background}};">
   <view class="avatar-section" style="background: {{theme.card}};">
-    <image class="avatar" src="{{formData.avatarUrl || '/assets/images/logo.jpg'}}" mode="aspectFill"/>
+    <image class="avatar" src="{{formData.avatarUrl || '/assets/images/logo.png'}}" mode="aspectFill"/>
     <view class="avatar-btn" bindtap="onChooseAvatar" style="background: {{theme.primary}};">
       <text>更换头像</text>
     </view>

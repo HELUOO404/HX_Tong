@@ -41,7 +41,7 @@
         style="background: {{theme.card}}; border-color: {{theme.border}};"
       >
         <view class="user-info">
-          <image class="avatar" src="{{item.avatarUrl || '/assets/images/logo.jpg'}}" mode="aspectFill"/>
+          <image class="avatar" src="{{item.avatarUrl || '/assets/images/logo.png'}}" mode="aspectFill"/>
           <view class="user-detail">
             <text class="user-name" style="color: {{theme.textPrimary}};">{{item.nickname || item.realName || '未设置昵称'}}</text>
             <text class="user-phone" style="color: {{theme.textSecondary}};">{{item.remark || '未填写备注'}}</text>

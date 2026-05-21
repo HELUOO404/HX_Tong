@@ -10,7 +10,7 @@
       <view class="avatar-wrapper" bindtap="onChangeAvatarTap">
         <image
           class="avatar-preview"
-          src="{{avatarUrl || '/assets/images/logo.jpg'}}"
+          src="{{avatarUrl || '/assets/images/logo.png'}}"
           mode="aspectFill"
         />
         <view class="avatar-edit-mask">
