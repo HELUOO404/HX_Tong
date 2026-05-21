@@ -1,6 +1,6 @@
 const { success, error, notFound } = require('../utils/response')
 
-const DEFAULT_AVATAR = '/assets/images/logo.png'
+const DEFAULT_AVATAR = '/assets/images/logo.jpg'
 const MAX_SCORE = 150
 
 async function findUserByUserId(db, userId) {

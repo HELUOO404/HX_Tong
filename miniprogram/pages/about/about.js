@@ -7,13 +7,14 @@
  */
 
 const ThemeMixin = require('../../theme/theme-mixin')
-const { APP_NAME, APP_VERSION, APP_DESCRIPTION } = require('../../config/constants')
+const { APP_NAME, APP_VERSION, APP_DESCRIPTION, LOGO_URL } = require('../../config/constants')
 
 Page({
   ...ThemeMixin,
 
   data: {
     theme: {},
+    logoUrl: LOGO_URL,
     appInfo: {
       name: APP_NAME,
       version: `v${APP_VERSION}`,

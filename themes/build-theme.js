@@ -85,7 +85,7 @@ class ThemeBuilder {
 
     const assetsDir = path.join(this.sourceDir, 'assets');
     const requiredImages = [
-      'images/logo.png',
+      'images/logo.jpg',
       'images/empty-booking.png',
       'images/empty-room.png',
       'images/empty-data.png',

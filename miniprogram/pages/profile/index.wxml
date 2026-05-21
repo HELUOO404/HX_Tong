@@ -3,7 +3,7 @@
   <view class="header-card" style="background: linear-gradient(180deg, {{theme.primary}} 0%, {{theme.primaryDark}} 100%);">
     <view class="user-section">
       <block wx:if="{{isLogin}}">
-        <image class="avatar avatar-preview" src="{{userInfo.avatarUrl || '/assets/images/logo.png'}}" mode="aspectFill" bindtap="onPreviewAvatar"/>
+        <image class="avatar avatar-preview" src="{{userInfo.avatarUrl || '/assets/images/logo.jpg'}}" mode="aspectFill" bindtap="onPreviewAvatar"/>
         <view class="user-info" bindtap="onEditProfile">
           <text class="user-name">{{userInfo.nickname || userInfo.realName || '用户'}}</text>
           <text class="user-class" wx:if="{{userInfo.remark}}">{{userInfo.remark}}</text>
