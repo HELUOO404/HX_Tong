@@ -5,9 +5,8 @@
       <block wx:if="{{isLogin}}">
         <image class="avatar avatar-preview" src="{{userInfo.avatarUrl || '/assets/images/logo.png'}}" mode="aspectFill" bindtap="onPreviewAvatar"/>
         <view class="user-info" bindtap="onEditProfile">
-          <text class="user-name">{{userInfo.realName || '用户'}}</text>
-          <text class="user-class" wx:if="{{userInfo.className}}">{{userInfo.className}}</text>
-          <text class="user-class">{{userInfo.academy || '未设置'}}</text>
+          <text class="user-name">{{userInfo.nickname || userInfo.realName || '用户'}}</text>
+          <text class="user-class" wx:if="{{userInfo.remark}}">{{userInfo.remark}}</text>
           <view class="user-role" wx:if="{{hasPermissionTag}}">
             <text class="role-tag">{{adminRoleName}}</text>
           </view>
@@ -120,5 +119,5 @@
     </view>
   </view>
 
-  <view class="version-info" style="color: {{theme.textTertiary}};">红芯通 v2.1.0</view>
+  <view class="version-info" style="color: {{theme.textTertiary}};">{{appName}} v{{appVersion}}</view>
 </view>

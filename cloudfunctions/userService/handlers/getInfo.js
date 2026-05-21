@@ -58,6 +58,8 @@ module.exports = async (params, cloud) => {
       _id: userInfo._id,
       openid: userInfo.openid,
       avatarUrl: avatarUrl,
+      nickname: userInfo.nickname || '',
+      remark: userInfo.remark || '',
       realName: userInfo.realName,
       className: userInfo.className,
       studentId: userInfo.studentId,

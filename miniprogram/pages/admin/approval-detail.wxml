@@ -17,11 +17,11 @@
           <image src="{{userInfo.avatarUrl}}" mode="aspectFill"/>
         </view>
         <view class="avatar default-avatar" wx:else style="background-color: {{theme.primary}};">
-          <text style="color: #fff;">{{userInfo.realName ? userInfo.realName[0] : '?'}}</text>
+          <text style="color: #fff;">{{userInfo.nickname ? userInfo.nickname[0] : (userInfo.realName ? userInfo.realName[0] : '?')}}</text>
         </view>
         <view class="user-detail">
-          <text class="user-name" style="color: {{theme.textPrimary}};">{{userInfo.realName || '未知用户'}}</text>
-          <text class="user-phone" style="color: {{theme.textSecondary}};">{{userInfo.phone || ''}}</text>
+          <text class="user-name" style="color: {{theme.textPrimary}};">{{userInfo.nickname || userInfo.realName || '未知用户'}}</text>
+          <text class="user-phone" style="color: {{theme.textSecondary}};">{{userInfo.remark || userInfo.phone || ''}}</text>
         </view>
       </view>
     </view>
@@ -102,33 +102,10 @@
   </view>
 </view>
 
-<view class="modal-mask {{showRejectModal ? 'show' : ''}}" bindtap="onCloseRejectModal"></view>
-<view class="reject-modal {{showRejectModal ? 'show' : ''}}">
-  <view class="modal-content" style="background-color: {{theme.card}};">
-    <text class="modal-title" style="color: {{theme.textPrimary}};">拒绝原因</text>
-    <textarea
-      class="reject-input"
-      placeholder="请输入拒绝原因"
-      placeholder-style="color: {{theme.textTertiary}};"
-      value="{{rejectReason}}"
-      bindinput="onRejectReasonInput"
-      style="background-color: {{theme.background}}; color: {{theme.textPrimary}};"
-    />
-    <view class="modal-actions">
-      <button
-        class="modal-btn cancel"
-        bindtap="onCloseRejectModal"
-        style="background-color: {{theme.background}}; color: {{theme.textSecondary}};"
-      >
-        <text>取消</text>
-      </button>
-      <button
-        class="modal-btn confirm"
-        bindtap="onConfirmReject"
-        style="background-color: {{theme.error}}; color: #fff;"
-      >
-        <text>确认拒绝</text>
-      </button>
-    </view>
-  </view>
-</view>
+<reject-reason-modal
+  show="{{showRejectModal}}"
+  title="拒绝原因"
+  placeholder="请输入拒绝原因（必填）"
+  bindconfirm="onConfirmReject"
+  bindcancel="onCloseRejectModal"
+/>

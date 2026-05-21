@@ -8,9 +8,9 @@
 
 module.exports = {
   // 小程序信息
-  APP_NAME: '红芯通',
-  APP_VERSION: '1.0.0',
-  APP_DESCRIPTION: '深职大集成电路学院生活服务小程序',
+  APP_NAME: '芯预约',
+  APP_VERSION: '2.1.0',
+  APP_DESCRIPTION: '深职大集成电路学院会议室预约小程序',
 
   // 分页配置
   PAGE_SIZE: 10,
@@ -189,6 +189,15 @@ module.exports = {
     { role: 'academyManager', label: '书院管理人', desc: '管理会议室/资源/审批/用户查看' },
     { role: 'approvalManager', label: '审批管理人', desc: '仅审批预约' },
     { role: 'custom', label: '自定义角色', desc: '自由组合权限配置' }
+  ],
+
+  // 审批拒绝快捷短语
+  REJECT_QUICK_PHRASES: [
+    '预约用途不明确',
+    '申请信息填写不全',
+    '事由不符合规定',
+    '场地正在维护中',
+    '昵称/备注/联系方式不完整'
   ],
 
   ROLE_PRESETS: {

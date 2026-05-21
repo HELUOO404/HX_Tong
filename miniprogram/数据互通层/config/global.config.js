@@ -7,43 +7,29 @@ module.exports = {
   // 用户信息完善规则
   userProfile: {
     // 必填字段
-    requiredFields: ['realName', 'className', 'studentId', 'phone'],
-    
+    requiredFields: ['nickname'],
+
     // 字段验证规则
     validation: {
-      realName: {
+      nickname: {
         required: true,
-        minLength: 2,
+        minLength: 1,
         maxLength: 20,
-        pattern: '^[\u4e00-\u9fa5]{2,20}$',
-        message: '姓名必须为2-20个汉字'
+        message: '昵称不能为空且不超过20个字符'
       },
-      className: {
-        required: true,
-        minLength: 2,
-        maxLength: 30,
-        message: '班级名称不能为空'
-      },
-      studentId: {
-        required: true,
-        minLength: 6,
-        maxLength: 20,
-        pattern: '^[0-9a-zA-Z]+$',
-        message: '学号必须为6-20位数字或字母'
-      },
-      phone: {
-        required: true,
-        pattern: '^1[3-9]\\d{9}$',
-        message: '请输入正确的手机号'
+      remark: {
+        required: false,
+        maxLength: 200,
+        message: '备注不能超过200个字符'
       }
     }
   },
-  
+
   // 信誉分规则
   credit: {
     // 初始分值
     initialScore: 100,
-    
+
     // 等级体系
     levels: {
       excellent: { min: 90, max: 100, name: '优秀', color: '#52C41A' },
@@ -51,14 +37,14 @@ module.exports = {
       normal: { min: 60, max: 79, name: '合格', color: '#FAAD14' },
       restricted: { min: 0, max: 59, name: '受限', color: '#FF4D4F' }
     },
-    
+
     // 加分规则
     bonus: {
       onTime: { score: 2, desc: '按时履约' },
       noViolation30Days: { score: 5, desc: '连续30天无违规' },
       returnDevice: { score: 3, desc: '主动归还设备' }
     },
-    
+
     // 扣分规则
     penalty: {
       noShow: { score: -10, desc: '预约未到（未取消）' },
@@ -69,35 +55,35 @@ module.exports = {
       cancel1to3h: { score: -5, desc: '取消预约（1-3小时前，扣5分）' },
       cancelLess1h: { score: -10, desc: '取消预约（<1小时前，扣10分）' }
     },
-    
+
     // 最低可预约分数
     minBookingScore: 80
   },
-  
+
   // 预约规则
   booking: {
     // 可预约时段
     hours: { start: 8, end: 22 },
-    
+
     // 时长限制
     duration: { min: 0.5, max: 8 },
-    
+
     // 提前预约时间（小时）
     advanceBookingHours: 0.5,
-    
+
     // 免费取消时间（开始前小时数）
     freeCancelHours: 6,
-    
+
     // 需要审批的时长阈值（小时）
     approvalThreshold: 4
   },
-  
+
   // 分页配置
   pagination: {
     defaultPageSize: 10,
     maxPageSize: 100
   },
-  
+
   // 缓存配置
   cache: {
     userInfo: 3600,      // 用户信息缓存1小时

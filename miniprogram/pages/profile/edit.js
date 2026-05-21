@@ -1,9 +1,6 @@
 /**
  * @file 个人信息编辑页面
- * @description 用户编辑头像和手机号，其余信息只读展示
- * @author 红芯通开发团队
- * @since 2026-05-06
- * @version 2.0.0
+ * @description 用户编辑头像、昵称、备注
  */
 
 const UserStore = require('../../stores/userStore')
@@ -16,16 +13,11 @@ Page({
 
   data: {
     avatarUrl: '',
-    phone: '',
-    realName: '',
-    academy: '',
-    className: '',
-    studentId: '',
+    nickname: '',
+    remark: '',
     isSubmitting: false,
     theme: {}
   },
-
-  _unsubscribeUserStore: null,
 
   onLoad() {
     ThemeMixin.onLoad.call(this)
@@ -36,12 +28,6 @@ Page({
     this.loadUserInfo()
   },
 
-  onUnload() {
-    if (this._unsubscribeUserStore) {
-      this._unsubscribeUserStore()
-    }
-  },
-
   loadUserInfo() {
     const userStore = UserStore.getInstance()
     const userInfo = userStore.userInfo
@@ -49,36 +35,21 @@ Page({
     if (userInfo) {
       this.setData({
         avatarUrl: userInfo.avatarUrl || '',
-        phone: userInfo.phone || '',
-        realName: userInfo.realName || '',
-        academy: userInfo.academy || '',
-        className: userInfo.className || '',
-        studentId: userInfo.studentId || ''
+        nickname: userInfo.nickname || '',
+        remark: userInfo.remark || ''
       })
     }
   },
 
   onChangeAvatarTap() {
     wx.showActionSheet({
-      itemList: ['上传微信头像', '选择相册图片'],
+      itemList: ['选择相册图片', '拍照'],
       success: (res) => {
         if (res.tapIndex === 0) {
-          this.pickWechatAvatar()
-        } else if (res.tapIndex === 1) {
           this.pickAlbumImage()
+        } else if (res.tapIndex === 1) {
+          this.pickCameraImage()
         }
-      }
-    })
-  },
-
-  pickWechatAvatar() {
-    wx.chooseMedia({
-      count: 1,
-      mediaType: ['image'],
-      sourceType: ['album', 'camera'],
-      sizeType: ['compressed'],
-      success: (res) => {
-        this.uploadAvatar(res.tempFiles[0].tempFilePath)
       }
     })
   },
@@ -87,7 +58,18 @@ Page({
     wx.chooseImage({
       count: 1,
       sizeType: ['compressed'],
-      sourceType: ['album', 'camera'],
+      sourceType: ['album'],
+      success: (res) => {
+        this.uploadAvatar(res.tempFilePaths[0])
+      }
+    })
+  },
+
+  pickCameraImage() {
+    wx.chooseImage({
+      count: 1,
+      sizeType: ['compressed'],
+      sourceType: ['camera'],
       success: (res) => {
         this.uploadAvatar(res.tempFilePaths[0])
       }
@@ -100,7 +82,6 @@ Page({
     try {
       const userStore = UserStore.getInstance()
       const userId = userStore.userId || 'user'
-
       const cloudPath = `avatars/${userId}_${Date.now()}.jpg`
       const { fileID } = await wx.cloud.uploadFile({
         cloudPath,
@@ -116,19 +97,30 @@ Page({
     }
   },
 
-  onPhoneInput(e) {
-    this.setData({ phone: e.detail.value })
+  onNicknameInput(e) {
+    this.setData({ nickname: e.detail.value })
+  },
+
+  onRemarkInput(e) {
+    this.setData({ remark: e.detail.value })
   },
 
   onSave() {
     if (this.data.isSubmitting) return
 
-    if (!this.data.phone.trim()) {
-      ErrorHandler.showError('请输入手机号')
+    const nickname = (this.data.nickname || '').trim()
+    const remark = (this.data.remark || '').trim()
+
+    if (!nickname) {
+      ErrorHandler.showError('请填写昵称')
       return
     }
-    if (!/^1[3-9]\d{9}$/.test(this.data.phone.trim())) {
-      ErrorHandler.showError('请输入正确的手机号格式')
+    if (nickname.length > 20) {
+      ErrorHandler.showError('昵称不能超过20个字符')
+      return
+    }
+    if (remark.length > 200) {
+      ErrorHandler.showError('备注不能超过200个字符')
       return
     }
 
@@ -138,7 +130,8 @@ Page({
     const userService = UserService.getInstance()
     userService.updateUser({
       avatarUrl: this.data.avatarUrl,
-      phone: this.data.phone
+      nickname,
+      remark
     }).then(() => {
       ErrorHandler.hideLoading()
       ErrorHandler.showSuccess('保存成功')
@@ -146,7 +139,8 @@ Page({
       const userStore = UserStore.getInstance()
       userStore.updateUserInfo({
         avatarUrl: this.data.avatarUrl,
-        phone: this.data.phone
+        nickname,
+        remark
       })
 
       setTimeout(() => {

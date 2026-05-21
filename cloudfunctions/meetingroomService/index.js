@@ -124,6 +124,7 @@ const handlers = {
   'meetingroom_getList': require('./handlers/room/getList'),
   'meetingroom_getDetail': require('./handlers/room/getDetail'),
   'meetingroom_getTimeSlots': require('./handlers/room/getTimeSlots'),
+  'meetingroom_getDateAvailability': require('./handlers/room/getDateAvailability'),
   'meetingroom_getPublicResources': require('./handlers/room/getPublicResources'),
   'meetingroom_manage_create': require('./handlers/manage/roomCreate'),
   'meetingroom_manage_update': require('./handlers/manage/roomUpdate'),

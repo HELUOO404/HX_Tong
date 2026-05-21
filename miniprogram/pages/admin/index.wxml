@@ -19,7 +19,10 @@
         <text class="stat-value">{{stats.totalBookings}}</text>
         <text class="stat-label">总预约数</text>
       </view>
-      <view class="stat-card highlight">
+      <view
+        class="stat-card highlight {{canApproveBookings ? 'stat-card-clickable' : ''}}"
+        bindtap="onPendingApprovalsTap"
+      >
         <text class="stat-value">{{stats.pendingApprovals}}</text>
         <text class="stat-label">待审批</text>
       </view>

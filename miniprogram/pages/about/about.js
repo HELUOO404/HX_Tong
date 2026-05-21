@@ -7,6 +7,7 @@
  */
 
 const ThemeMixin = require('../../theme/theme-mixin')
+const { APP_NAME, APP_VERSION, APP_DESCRIPTION } = require('../../config/constants')
 
 Page({
   ...ThemeMixin,
@@ -14,10 +15,10 @@ Page({
   data: {
     theme: {},
     appInfo: {
-      name: '红芯通',
-      version: 'v2.1.0',
+      name: APP_NAME,
+      version: `v${APP_VERSION}`,
       developer: '深职大集成电路学院',
-      description: '面向校园的会议室预约管理小程序'
+      description: APP_DESCRIPTION
     }
   },
 

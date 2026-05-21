@@ -1,16 +1,41 @@
 <view class="mylist-container">
   <view class="tab-bar" style="background-color: {{theme.card}};">
-    <view
-      class="tab-item {{activeTab === item.id ? 'active' : ''}}"
-      wx:for="{{tabs}}"
-      wx:key="id"
-      data-index="{{index}}"
-      bindtap="onTabChange"
-      style="color: {{activeTab === item.id ? theme.primary : theme.textSecondary}};"
-    >
-      <text>{{item.name}}</text>
-      <view class="tab-indicator" wx:if="{{activeTab === item.id}}" style="background-color: {{theme.primary}};"></view>
+    <scroll-view class="tab-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="tab-scroll-inner">
+        <view
+          class="tab-item {{activeTab === item.id ? 'active' : ''}}"
+          wx:for="{{tabs}}"
+          wx:key="id"
+          data-index="{{index}}"
+          bindtap="onTabChange"
+          style="color: {{activeTab === item.id ? theme.primary : theme.textSecondary}};"
+        >
+          <text>{{item.name}}</text>
+          <view class="tab-indicator" wx:if="{{activeTab === item.id}}" style="background-color: {{theme.primary}};"></view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 独立筛选条：Tab 正下方，窄条，点击唤起底部日历 -->
+  <view
+    class="date-filter-strip"
+    style="background-color: {{theme.card}}; border-color: {{theme.border}};"
+    bindtap="onShowCalendar"
+  >
+    <view class="date-filter-left">
+      <image class="date-filter-icon" src="/assets/images/icons/calendar.png" mode="aspectFit"/>
+      <text
+        class="date-filter-label"
+        style="color: {{selectedDate ? theme.primary : theme.textPrimary}};"
+      >{{filterDateLabel}}</text>
+      <text class="date-filter-caret" style="color: {{selectedDate ? theme.primary : theme.textTertiary}};">▾</text>
     </view>
+    <text
+      class="date-filter-reset {{selectedDate ? 'active' : 'inactive'}}"
+      style="color: {{selectedDate ? theme.primary : theme.textTertiary}};"
+      catchtap="onClearDateFilter"
+    >重置</text>
   </view>
 
   <view class="loading-container" wx:if="{{isLoading}}">
@@ -47,6 +72,55 @@
 
   <view class="empty-container" wx:else>
     <image class="empty-image" src="/assets/images/empty-booking.png" mode="aspectFit" />
-    <text class="empty-text" style="color: {{theme.textTertiary}};">暂无{{activeTab === 'all' ? '' : activeTab === 'pending' ? '待审批' : activeTab === 'approved' ? '已通过' : '已结束'}}预约记录</text>
+    <text class="empty-text" style="color: {{theme.textTertiary}};">
+      {{selectedDate ? ('暂无 ' + selectedDate + ' 的预约记录') : ('暂无' + (activeTab === 'all' ? '' : activeTab === 'pending' ? '待审批' : activeTab === 'approved' ? '已通过' : '已结束') + '预约记录')}}
+    </text>
+  </view>
+
+  <!-- 底部半屏日历 Bottom Sheet -->
+  <view class="sheet-mask {{showCalendar ? 'show' : ''}}" bindtap="onCloseCalendar"></view>
+  <view class="sheet-calendar {{showCalendar ? 'show' : ''}}" style="background-color: {{theme.card}};">
+    <view class="sheet-handle"></view>
+    <view class="sheet-header">
+      <text class="sheet-title" style="color: {{theme.textPrimary}};">选择预约日期</text>
+      <text class="sheet-close" style="color: {{theme.textTertiary}};" bindtap="onCloseCalendar">关闭</text>
+    </view>
+
+    <view class="calendar-header">
+      <view class="calendar-nav-btn" bindtap="onPrevMonth">
+        <text class="calendar-nav-arrow" style="color: {{theme.textSecondary}};">‹</text>
+      </view>
+      <text class="calendar-title" style="color: {{theme.textPrimary}};">{{calendarYear}}年{{calendarMonth}}月</text>
+      <view class="calendar-nav-btn" bindtap="onNextMonth">
+        <text class="calendar-nav-arrow" style="color: {{theme.textSecondary}};">›</text>
+      </view>
+    </view>
+
+    <view class="calendar-weekdays">
+      <text wx:for="{{['日','一','二','三','四','五','六']}}" wx:key="*this" class="calendar-weekday" style="color: {{theme.textTertiary}};">{{item}}</text>
+    </view>
+
+    <view class="calendar-days">
+      <view
+        wx:for="{{calendarDays}}"
+        wx:key="date"
+        class="calendar-day {{item.isCurrentMonth ? '' : 'other-month'}} {{item.isSelectable ? 'enabled' : 'disabled'}} {{item.isSelected ? 'selected' : ''}} {{item.isToday ? 'today' : ''}}"
+        data-date="{{item.date}}"
+        data-selectable="{{item.isSelectable}}"
+        bindtap="onCalendarDayTap"
+      >
+        <text
+          class="calendar-day-text"
+          style="color: {{item.isSelected ? '#fff' : (item.isSelectable ? theme.textPrimary : theme.textTertiary)}};"
+        >{{item.day}}</text>
+        <view
+          wx:if="{{item.hasBooking}}"
+          class="calendar-dot"
+          style="background-color: {{item.isSelected ? '#fff' : theme.primary}};"
+        ></view>
+      </view>
+    </view>
+
+    <text class="sheet-legend" style="color: {{theme.textTertiary}};">蓝点表示该日有预约记录</text>
   </view>
 </view>

@@ -1,25 +1,35 @@
 /**
  * @file 首页
- * @description 小程序首页，展示快捷入口和今日预约
+ * @description 小程序首页，展示快捷入口与八日内会议安排
  * @author 红芯通开发团队
  * @since 2026-04-21
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 const UserStore = require('../../stores/userStore')
+const { APP_NAME } = require('../../config/constants')
 const BookingService = require('../../services/bookingService')
 const { ErrorHandler } = require('../../utils/errorHandler')
 const ThemeMixin = require('../../theme/theme-mixin')
+const {
+  formatDate,
+  buildBookingDateStrip,
+  groupBookingsByDate
+} = require('../../utils/bookingCalendar')
 
 Page({
-  // 引入主题混入
   ...ThemeMixin,
 
   data: {
     userInfo: null,
     isLogin: false,
     isLoading: true,
-    todayBookings: [],
+    todayDate: '',
+    selectedDate: '',
+    scrollIntoDay: '',
+    weekDays: [],
+    bookingsByDate: {},
+    displayBookings: [],
     quickActions: [
       { id: 'booking', name: '会议室预约', icon: '/assets/images/icons/room.png', color: '#1890FF' },
       { id: 'schedule', name: '课表查询', icon: '/assets/images/icons/schedule.png', color: '#52C41A' },
@@ -27,7 +37,7 @@ Page({
       { id: 'credit', name: '信誉分', icon: '/assets/images/icons/credit.png', color: '#722ED1' }
     ],
     noticeList: [
-      { id: 1, title: '欢迎使用红芯通小程序', type: 'info' },
+      { id: 1, title: `欢迎使用${APP_NAME}`, type: 'info' },
       { id: 2, title: '会议室预约功能已上线', type: 'success' }
     ]
   },
@@ -35,10 +45,16 @@ Page({
   _unsubscribeUserStore: null,
 
   onLoad() {
-    // 调用混入的 onLoad 来初始化主题
     ThemeMixin.onLoad.call(this)
 
-    // 订阅用户信息变化
+    const todayDate = formatDate(new Date())
+    this.setData({
+      todayDate,
+      selectedDate: todayDate,
+      scrollIntoDay: '',
+      weekDays: []
+    })
+
     const userStore = UserStore.getInstance()
     this._unsubscribeUserStore = userStore.subscribe((state) => {
       this.setData({
@@ -49,23 +65,29 @@ Page({
   },
 
   onShow() {
-    // 调用混入的 onShow 来检查主题变化
     ThemeMixin.onShow.call(this)
 
-    // 强制检查登录状态（包括profileCompleted）
     const userStore = UserStore.getInstance()
     const isReallyLogin = userStore.isLogin
 
-    // 更新UI状态
     this.setData({
       isLogin: isReallyLogin,
       userInfo: userStore.userInfo
     })
 
     if (isReallyLogin) {
-      this.loadTodayBookings()
+      userStore.refreshUserInfo().catch((error) => {
+        console.warn('[index] 刷新用户信息失败:', error)
+      })
+      this.loadMySchedule()
     } else {
-      this.setData({ isLoading: false, todayBookings: [] })
+      const todayDate = this.data.todayDate || formatDate(new Date())
+      this.setData({
+        isLoading: false,
+        displayBookings: [],
+        bookingsByDate: {},
+        weekDays: []
+      })
     }
   },
 
@@ -77,7 +99,7 @@ Page({
 
   onPullDownRefresh() {
     if (this.data.isLogin) {
-      this.loadTodayBookings().finally(() => {
+      this.loadMySchedule().finally(() => {
         wx.stopPullDownRefresh()
       })
     } else {
@@ -85,31 +107,55 @@ Page({
     }
   },
 
-  /**
-   * 加载今日预约
-   */
-  async loadTodayBookings() {
+  async loadMySchedule() {
+    const selectedDate = this.data.selectedDate || this.data.todayDate || formatDate(new Date())
+    const todayStr = this.data.todayDate || formatDate(new Date())
     this.setData({ isLoading: true })
 
     try {
-      const now = new Date()
-      const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
       const bookingService = BookingService.getInstance()
-      const result = await bookingService.getMyBookings(null, today, 1, 20)
+      const result = await bookingService.getMyBookings(null, null, 1, 200)
+      const allBookings = result.list || []
+      const futureBookings = allBookings.filter(item => item.date && item.date >= todayStr)
+
+      const { weekDays, selectedDate: resolvedDate } = buildBookingDateStrip(
+        selectedDate,
+        futureBookings
+      )
+      const stripDates = weekDays.map(item => item.date)
+      const bookingsByDate = groupBookingsByDate(futureBookings, stripDates)
 
       this.setData({
-        todayBookings: result.list,
+        weekDays,
+        selectedDate: resolvedDate,
+        bookingsByDate,
+        displayBookings: bookingsByDate[resolvedDate] || [],
+        scrollIntoDay: weekDays.length > 0 ? `day-${resolvedDate}` : '',
         isLoading: false
       })
     } catch (error) {
-      console.error('[Index] 加载今日预约失败:', error)
+      console.error('[Index] 加载会议安排失败:', error)
       this.setData({ isLoading: false })
     }
   },
 
-  /**
-   * 点击快捷入口
-   */
+  onWeekDayTap(e) {
+    const { date } = e.currentTarget.dataset
+    if (!date || date === this.data.selectedDate) return
+
+    const weekDays = this.data.weekDays.map(item => ({
+      ...item,
+      isSelected: item.date === date
+    }))
+
+    this.setData({
+      selectedDate: date,
+      weekDays,
+      displayBookings: this.data.bookingsByDate[date] || [],
+      scrollIntoDay: `day-${date}`
+    })
+  },
+
   onQuickActionTap(e) {
     const { id } = e.currentTarget.dataset
     const userStore = UserStore.getInstance()
@@ -138,9 +184,6 @@ Page({
     }
   },
 
-  /**
-   * 点击今日预约
-   */
   onBookingTap(e) {
     const { id } = e.currentTarget.dataset
     wx.navigateTo({
@@ -148,16 +191,10 @@ Page({
     })
   },
 
-  /**
-   * 立即预约按钮
-   */
   onBookNow() {
     wx.switchTab({ url: '/pages/room/list' })
   },
 
-  /**
-   * 去登录
-   */
   onLogin() {
     wx.navigateTo({ url: '/pages/login/login' })
   }

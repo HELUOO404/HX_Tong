@@ -15,8 +15,7 @@ Page({
     creditScore: 100,
     isLoading: true,
     isSubmitting: false,
-    showRejectModal: false,
-    rejectReason: ''
+    showRejectModal: false
   },
 
   onLoad(options) {
@@ -92,13 +91,15 @@ Page({
         return
       }
 
-      let userInfo = { realName: '', phone: '', avatarUrl: '' }
+      let userInfo = { nickname: '', remark: '', realName: '', phone: '', avatarUrl: '' }
       let creditScore = 100
 
       try {
         const { data: user } = await db.collection('users').where({ _openid: booking.userId }).get()
         if (user && user.length > 0) {
           userInfo = {
+            nickname: user[0].nickname || '',
+            remark: user[0].remark || '',
             realName: user[0].realName || '',
             phone: user[0].phone || '',
             avatarUrl: user[0].avatarUrl || ''
@@ -180,27 +181,20 @@ Page({
   },
 
   onShowRejectModal() {
-    this.setData({ showRejectModal: true, rejectReason: '' })
+    this.setData({ showRejectModal: true })
   },
 
   onCloseRejectModal() {
-    this.setData({ showRejectModal: false, rejectReason: '' })
+    this.setData({ showRejectModal: false })
   },
 
-  onRejectReasonInput(e) {
-    this.setData({ rejectReason: e.detail.value })
-  },
-
-  async onConfirmReject() {
-    if (!this.data.rejectReason || !this.data.rejectReason.trim()) {
-      ErrorHandler.showError('请输入拒绝原因')
-      return
-    }
+  async onConfirmReject(e) {
+    const reason = e.detail.reason
     if (this.data.isSubmitting) return
     this.setData({ isSubmitting: true, showRejectModal: false })
     ErrorHandler.showLoading('处理中...')
     try {
-      await adminService.approveBooking(this.data.bookingId, 'reject', this.data.rejectReason.trim())
+      await adminService.approveBooking(this.data.bookingId, 'reject', reason)
       ErrorHandler.hideLoading()
       ErrorHandler.showSuccess('已拒绝')
       setTimeout(() => { wx.navigateBack() }, 1500)

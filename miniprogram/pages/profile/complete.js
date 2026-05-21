@@ -1,15 +1,11 @@
 /**
  * @file 信息完善页面
  * @description 首次登录用户完善个人信息
- * @author 红芯通开发团队
- * @since 2026-05-06
- * @version 3.0.0
  */
 
 const UserStore = require('../../stores/userStore')
 const UserService = require('../../services/userService')
 const { ErrorHandler } = require('../../utils/errorHandler')
-const { ACADEMIES, IC_CLASSES } = require('../../config/constants')
 const ThemeMixin = require('../../theme/theme-mixin')
 
 Page({
@@ -17,15 +13,8 @@ Page({
 
   data: {
     avatarUrl: '',
-    realName: '',
-    studentId: '',
-    className: '',
-    academy: '',
-    phone: '',
-    academies: ACADEMIES,
-    icClasses: IC_CLASSES,
-    needClassSelect: false,
-    showClassInput: true,
+    nickname: '',
+    remark: '',
     isSubmitting: false
   },
 
@@ -40,9 +29,7 @@ Page({
 
     if (userStore.isProfileCompleted) {
       wx.switchTab({ url: '/pages/index/index' })
-      return
     }
-
   },
 
   async onChooseAvatar(e) {
@@ -62,74 +49,30 @@ Page({
     }
   },
 
-  onRealNameInput(e) {
-    this.setData({ realName: e.detail.value })
+  onNicknameInput(e) {
+    this.setData({ nickname: e.detail.value })
   },
 
-  onStudentIdInput(e) {
-    this.setData({ studentId: e.detail.value })
-  },
-
-  onPhoneInput(e) {
-    this.setData({ phone: e.detail.value })
-  },
-
-  onSelectAcademy(e) {
-    const { value } = e.detail
-    const academy = this.data.academies[value]
-    const isIC = academy === '集成电路学院'
-    this.setData({
-      academy: academy,
-      needClassSelect: isIC,
-      showClassInput: !isIC,
-      className: ''
-    })
-  },
-
-  onSelectClass(e) {
-    const { value } = e.detail
-    const className = this.data.icClasses[value]
-    this.setData({ className: className })
-  },
-
-  onClassNameInput(e) {
-    this.setData({ className: e.detail.value })
+  onRemarkInput(e) {
+    this.setData({ remark: e.detail.value })
   },
 
   onSubmit() {
     if (this.data.isSubmitting) return
 
-    if (!this.data.realName.trim()) {
-      ErrorHandler.showError('请填写真实姓名')
-      return
-    }
+    const nickname = (this.data.nickname || '').trim()
+    const remark = (this.data.remark || '').trim()
 
-    if (!this.data.academy) {
-      ErrorHandler.showError('请选择学院')
+    if (!nickname) {
+      ErrorHandler.showError('请填写昵称')
       return
     }
-
-    if (!this.data.className) {
-      ErrorHandler.showError('请填写班级')
+    if (nickname.length > 20) {
+      ErrorHandler.showError('昵称不能超过20个字符')
       return
     }
-
-    if (!this.data.studentId.trim()) {
-      ErrorHandler.showError('请填写学号')
-      return
-    }
-
-    if (!/^\d{9}$/.test(this.data.studentId.trim())) {
-      ErrorHandler.showError('学号必须为9位数字')
-      return
-    }
-
-    if (!this.data.phone.trim()) {
-      ErrorHandler.showError('请输入手机号')
-      return
-    }
-    if (!/^1[3-9]\d{9}$/.test(this.data.phone.trim())) {
-      ErrorHandler.showError('请输入正确的手机号格式')
+    if (remark.length > 200) {
+      ErrorHandler.showError('备注不能超过200个字符')
       return
     }
 
@@ -139,11 +82,8 @@ Page({
     const userStore = UserStore.getInstance()
     const userService = UserService.getInstance()
     userService.completeProfile({
-      realName: this.data.realName,
-      studentId: this.data.studentId,
-      className: this.data.className,
-      academy: this.data.academy,
-      phone: this.data.phone,
+      nickname,
+      remark,
       avatarUrl: this.data.avatarUrl
     }).then((updatedInfo) => {
       ErrorHandler.hideLoading()
@@ -179,9 +119,7 @@ Page({
           }
           const userStore = UserStore.getInstance()
           userStore.logout()
-          wx.redirectTo({
-            url: '/pages/login/login'
-          })
+          wx.redirectTo({ url: '/pages/login/login' })
         }
       }
     })

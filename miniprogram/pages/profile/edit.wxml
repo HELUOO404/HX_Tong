@@ -1,11 +1,12 @@
 <view class="edit-container" style="background-color: {{theme.background}};">
   <view class="header-section">
     <text class="header-title">编辑个人信息</text>
-    <text class="header-desc">修改头像和手机号，其余信息仅展示</text>
+    <text class="header-desc">头像、备注选填，昵称必填</text>
   </view>
 
   <view class="form-section" style="background-color: {{theme.card}};">
     <view class="form-item avatar-item">
+      <text class="form-label" style="color: {{theme.textSecondary}};">头像 <text class="optional-tag">选填</text></text>
       <view class="avatar-wrapper" bindtap="onChangeAvatarTap">
         <image
           class="avatar-preview"
@@ -17,40 +18,33 @@
           <text class="edit-text">更换头像</text>
         </view>
       </view>
-      <text class="avatar-hint">点击更换头像</text>
     </view>
 
     <view class="form-item">
-      <text class="form-label">手机号</text>
-      <input 
-        class="form-input" 
-        type="number" 
-        maxlength="11"
-        placeholder="请输入手机号"
-        value="{{phone}}"
-        bindinput="onPhoneInput"
+      <text class="form-label" style="color: {{theme.textSecondary}};">昵称 <text class="required-tag">*</text></text>
+      <input
+        class="form-input"
+        type="text"
+        maxlength="20"
+        placeholder="请输入昵称"
+        value="{{nickname}}"
+        bindinput="onNicknameInput"
         style="color: {{theme.textPrimary}}; background: {{theme.background}};"
       />
     </view>
 
     <view class="form-item">
-      <text class="form-label">姓名</text>
-      <text class="form-value" style="color: {{theme.textPrimary}};">{{realName || '未填写'}}</text>
-    </view>
-
-    <view class="form-item">
-      <text class="form-label">学院</text>
-      <text class="form-value" style="color: {{theme.textPrimary}};">{{academy || '未填写'}}</text>
-    </view>
-
-    <view class="form-item">
-      <text class="form-label">班级</text>
-      <text class="form-value" style="color: {{theme.textPrimary}};">{{className || '未填写'}}</text>
-    </view>
-
-    <view class="form-item">
-      <text class="form-label">学号</text>
-      <text class="form-value" style="color: {{theme.textPrimary}};">{{studentId || '未填写'}}</text>
+      <text class="form-label" style="color: {{theme.textSecondary}};">备注 <text class="optional-tag">选填</text></text>
+      <textarea
+        class="form-textarea"
+        maxlength="200"
+        placeholder="选填，如班级等"
+        value="{{remark}}"
+        bindinput="onRemarkInput"
+        auto-height
+        show-confirm-bar="{{false}}"
+        style="color: {{theme.textPrimary}}; background: {{theme.background}};"
+      />
     </view>
   </view>
 
