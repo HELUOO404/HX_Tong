@@ -7,13 +7,12 @@
  */
 
 const RoomService = require('../../services/roomService')
-const UserStore = require('../../stores/userStore')
 const { ErrorHandler } = require('../../utils/errorHandler')
 const ThemeMixin = require('../../theme/theme-mixin')
 const {
   formatDate,
   getScheduleTitle,
-  getDateRangeForRoom,
+  getScheduleViewDateRange,
   generateCalendarDays,
   buildScheduleItems
 } = require('../../utils/bookingCalendar')
@@ -74,7 +73,7 @@ Page({
       const roomService = RoomService.getInstance()
       const roomInfo = await roomService.getRoomDetail(roomId)
       const processedRoom = this.processRoomData(roomInfo)
-      this.initDatePicker(processedRoom)
+      this.initDatePicker()
       this.setData({ roomInfo: processedRoom, isLoading: false })
       this.loadSchedule()
     } catch (error) {
@@ -83,30 +82,33 @@ Page({
     }
   },
 
-  initDatePicker(roomInfo) {
-    const userStore = UserStore.getInstance()
-    const range = getDateRangeForRoom(roomInfo, userStore.isAdmin())
+  initDatePicker() {
+    const range = getScheduleViewDateRange()
     let selectedDate = this.data.selectedDate || range.defaultDate
     const parts = selectedDate.split('-')
     const selectedTime = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2])).getTime()
-    if (selectedTime < range.minDate || (range.maxDate && selectedTime > range.maxDate)) {
+    if (selectedTime < range.minDate || selectedTime > range.maxDate) {
       selectedDate = range.defaultDate
     }
+
+    const calendarYear = Number(parts[0]) || range.calendarYear
+    const calendarMonth = Number(parts[1]) || range.calendarMonth
 
     this.setData({
       minDate: range.minDate,
       maxDate: range.maxDate,
       selectedDate,
       scheduleTitle: getScheduleTitle(selectedDate),
-      calendarYear: range.calendarYear,
-      calendarMonth: range.calendarMonth,
+      calendarYear,
+      calendarMonth,
       datePickerReady: true,
       calendarDays: generateCalendarDays({
-        calendarYear: range.calendarYear,
-        calendarMonth: range.calendarMonth,
+        calendarYear,
+        calendarMonth,
         selectedDate,
         minDate: range.minDate,
-        maxDate: range.maxDate
+        maxDate: range.maxDate,
+        allowAnyDate: true
       })
     })
   },
@@ -184,11 +186,6 @@ Page({
     this.setData({ showCalendar: false })
   },
 
-  onConfirmCalendar() {
-    this.setData({ showCalendar: false })
-    this.loadSchedule()
-  },
-
   refreshCalendarDays() {
     const { calendarYear, calendarMonth, selectedDate, minDate, maxDate, dateAvailability } = this.data
     this.setData({
@@ -198,7 +195,8 @@ Page({
         selectedDate,
         minDate,
         maxDate,
-        dateAvailability
+        dateAvailability,
+        allowAnyDate: true
       })
     })
   },
@@ -246,20 +244,22 @@ Page({
   },
 
   onCalendarDayTap(e) {
-    const { date, selectable, availability } = e.currentTarget.dataset
-    if (!selectable) {
-      wx.showToast({ title: '该日期不可选', icon: 'none' })
-      return
-    }
-    if (availability === 'full') {
-      wx.showToast({ title: '该日期已约满', icon: 'none' })
-      return
-    }
+    const { date, selectable } = e.currentTarget.dataset
+    if (!selectable || !date) return
+
+    const parts = date.split('-')
+    const year = Number(parts[0])
+    const month = Number(parts[1])
+
     this.setData({
       selectedDate: date,
-      scheduleTitle: getScheduleTitle(date)
+      scheduleTitle: getScheduleTitle(date),
+      calendarYear: year,
+      calendarMonth: month,
+      showCalendar: false
     })
     this.refreshCalendarDays()
+    this.loadSchedule()
   },
 
   onCalendarTouchStart(e) {

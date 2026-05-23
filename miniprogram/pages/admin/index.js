@@ -10,6 +10,7 @@ const { ErrorHandler } = require('../../utils/errorHandler')
 const ThemeMixin = require('../../theme/theme-mixin')
 const AdminService = require('../../services/adminService')
 const { checkAdminAuth, filterMenuByPermission, ROLE_NAMES, getRoleFromTags } = require('../../utils/permission')
+const { LOGO_URL } = require('../../config/constants')
 
 Page({
   ...ThemeMixin,
@@ -22,7 +23,8 @@ Page({
     theme: {},
     stats: { totalUsers: 0, totalBookings: 0, pendingApprovals: 0, todayBookings: 0 },
     recentBookings: [],
-    canApproveBookings: false
+    canApproveBookings: false,
+    defaultAvatar: LOGO_URL
   },
 
   onLoad() {
@@ -83,6 +85,12 @@ Page({
       return
     }
     wx.navigateTo({ url: '/pages/admin/approvals' })
+  },
+
+  onRecentBookingTap(e) {
+    const { id } = e.currentTarget.dataset
+    if (!id) return
+    wx.navigateTo({ url: `/pages/admin/approval-detail?id=${id}` })
   },
 
   onMenuTap(e) {

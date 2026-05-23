@@ -26,9 +26,10 @@ Page({
       this.loadBookingDetail()
     } else if (options.booking) {
       try {
-        const booking = JSON.parse(decodeURIComponent(options.booking))
+        const raw = JSON.parse(decodeURIComponent(options.booking))
+        const booking = this.normalizeBooking(raw.booking || raw)
         this.setData({
-          booking: booking.booking || booking,
+          booking,
           room: booking.roomInfo,
           userInfo: booking.userInfo,
           creditScore: booking.creditScore || 100,
@@ -63,9 +64,9 @@ Page({
         bookingId: this.data.bookingId
       })
       if (data.list && data.list.length > 0) {
-        const booking = data.list[0]
+        const booking = this.normalizeBooking(data.list[0])
         this.setData({
-          booking: booking,
+          booking,
           room: booking.roomInfo,
           userInfo: booking.userInfo,
           creditScore: booking.creditScore || 100,
@@ -131,7 +132,7 @@ Page({
       }
 
       this.setData({
-        booking: booking,
+        booking: this.normalizeBooking(booking),
         room: roomInfo,
         userInfo: userInfo,
         creditScore: creditScore,
@@ -180,6 +181,18 @@ Page({
     }
   },
 
+  onCopyContactPhone() {
+    const phone = this.data.booking && this.data.booking.contactPhone
+    if (!phone) return
+
+    wx.setClipboardData({
+      data: String(phone),
+      success: () => {
+        ErrorHandler.showSuccess('号码已复制')
+      }
+    })
+  },
+
   onShowRejectModal() {
     this.setData({ showRejectModal: true })
   },
@@ -205,12 +218,33 @@ Page({
     }
   },
 
-  formatDate(dateStr) {
-    if (!dateStr) return ''
-    const date = new Date(dateStr)
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
+  normalizeBooking(booking) {
+    if (!booking) return booking
+    return {
+      ...booking,
+      submittedAtText: this.formatDateTime(booking.createdAt || booking.createTime)
+    }
+  },
+
+  formatDateTime(value) {
+    if (!value) return ''
+
+    let date
+    if (value instanceof Date) {
+      date = value
+    } else if (typeof value === 'object' && value.$date) {
+      date = new Date(value.$date)
+    } else if (typeof value === 'number') {
+      date = new Date(value)
+    } else if (typeof value === 'string') {
+      date = new Date(value)
+    } else {
+      return ''
+    }
+
+    if (Number.isNaN(date.getTime())) return ''
+
+    const pad = (n) => String(n).padStart(2, '0')
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`
   }
 })
