@@ -561,6 +561,11 @@
   gap: 24rpx;
 }
 
+.calendar-footer-hint-only {
+  justify-content: center;
+  padding-top: 8rpx;
+}
+
 .calendar-hint {
   flex: 1;
   font-size: 22rpx;

@@ -23,6 +23,21 @@ function getScheduleTitle(selectedDate) {
   return `${parseInt(parts[1], 10)}月${parseInt(parts[2], 10)}日安排`
 }
 
+/** 会议室详情页：查看历史/未来某日会议安排，不限制过去日期 */
+function getScheduleViewDateRange() {
+  const now = new Date()
+  const min = new Date(now.getFullYear() - 3, 0, 1)
+  const max = new Date(now.getFullYear() + 2, 11, 31, 23, 59, 59, 999)
+
+  return {
+    minDate: min.getTime(),
+    maxDate: max.getTime(),
+    defaultDate: formatDate(now),
+    calendarYear: now.getFullYear(),
+    calendarMonth: now.getMonth() + 1
+  }
+}
+
 function getDateRangeForRoom(roomInfo, isAdmin) {
   const now = new Date()
   let minDate
@@ -64,7 +79,15 @@ function getDateRangeForRoom(roomInfo, isAdmin) {
   }
 }
 
-function generateCalendarDays({ calendarYear, calendarMonth, selectedDate, minDate, maxDate, dateAvailability = {} }) {
+function generateCalendarDays({
+  calendarYear,
+  calendarMonth,
+  selectedDate,
+  minDate,
+  maxDate,
+  dateAvailability = {},
+  allowAnyDate = false
+}) {
   const year = calendarYear
   const month = calendarMonth
   const firstDayOfMonth = new Date(year, month - 1, 1)
@@ -74,23 +97,28 @@ function generateCalendarDays({ calendarYear, calendarMonth, selectedDate, minDa
   const days = []
   const today = formatDate(new Date())
 
+  const isDateInRange = (dateTime) => dateTime >= minDate && (!maxDate || dateTime <= maxDate)
+
   for (let i = startWeekday - 1; i >= 0; i--) {
     const day = daysInPrevMonth - i
     const dateStr = formatDate(new Date(year, month - 2, day))
+    const dateTime = new Date(year, month - 2, day).getTime()
+    const isSelectable = allowAnyDate ? isDateInRange(dateTime) : false
     days.push({
       day,
       date: dateStr,
       isCurrentMonth: false,
       isToday: dateStr === today,
-      isSelectable: false,
-      isSelected: dateStr === selectedDate
+      isSelectable,
+      isSelected: dateStr === selectedDate,
+      availability: isSelectable ? (dateAvailability[dateStr] || 'free') : ''
     })
   }
 
   for (let day = 1; day <= daysInMonth; day++) {
     const dateStr = formatDate(new Date(year, month - 1, day))
     const dateTime = new Date(year, month - 1, day).getTime()
-    const isSelectable = dateTime >= minDate && (!maxDate || dateTime <= maxDate)
+    const isSelectable = isDateInRange(dateTime)
     days.push({
       day,
       date: dateStr,
@@ -105,13 +133,16 @@ function generateCalendarDays({ calendarYear, calendarMonth, selectedDate, minDa
   const remaining = 42 - days.length
   for (let day = 1; day <= remaining; day++) {
     const dateStr = formatDate(new Date(year, month, day))
+    const dateTime = new Date(year, month, day).getTime()
+    const isSelectable = allowAnyDate ? isDateInRange(dateTime) : false
     days.push({
       day,
       date: dateStr,
       isCurrentMonth: false,
       isToday: dateStr === today,
-      isSelectable: false,
-      isSelected: dateStr === selectedDate
+      isSelectable,
+      isSelected: dateStr === selectedDate,
+      availability: isSelectable ? (dateAvailability[dateStr] || 'free') : ''
     })
   }
 
@@ -265,6 +296,7 @@ module.exports = {
   formatDate,
   getScheduleTitle,
   getDateRangeForRoom,
+  getScheduleViewDateRange,
   generateCalendarDays,
   buildScheduleItems,
   buildEightDayStrip,

@@ -13,15 +13,27 @@
         </view>
       </view>
       <view class="user-info">
-        <view class="avatar" wx:if="{{userInfo.avatarUrl}}">
-          <image src="{{userInfo.avatarUrl}}" mode="aspectFill"/>
+        <view class="user-info-main">
+          <view class="avatar" wx:if="{{userInfo.avatarUrl}}">
+            <image src="{{userInfo.avatarUrl}}" mode="aspectFill"/>
+          </view>
+          <view class="avatar default-avatar" wx:else style="background-color: {{theme.primary}};">
+            <text style="color: #fff;">{{userInfo.nickname ? userInfo.nickname[0] : (userInfo.realName ? userInfo.realName[0] : '?')}}</text>
+          </view>
+          <view class="user-detail">
+            <text class="user-name" style="color: {{theme.textPrimary}};">{{userInfo.nickname || userInfo.realName || '未知用户'}}</text>
+            <text class="user-remark" wx:if="{{userInfo.remark}}" style="color: {{theme.textSecondary}};">{{userInfo.remark}}</text>
+          </view>
         </view>
-        <view class="avatar default-avatar" wx:else style="background-color: {{theme.primary}};">
-          <text style="color: #fff;">{{userInfo.nickname ? userInfo.nickname[0] : (userInfo.realName ? userInfo.realName[0] : '?')}}</text>
-        </view>
-        <view class="user-detail">
-          <text class="user-name" style="color: {{theme.textPrimary}};">{{userInfo.nickname || userInfo.realName || '未知用户'}}</text>
-          <text class="user-phone" style="color: {{theme.textSecondary}};">{{userInfo.remark || userInfo.phone || ''}}</text>
+        <view
+          class="user-contact"
+          wx:if="{{booking.contactPhone}}"
+          hover-class="user-contact-hover"
+          bindtap="onCopyContactPhone"
+        >
+          <image class="contact-phone-icon" src="/assets/images/icons/phone.png" mode="aspectFit"/>
+          <text class="contact-phone-num" style="color: {{theme.primary}};">{{booking.contactPhone}}</text>
+          <text class="contact-phone-action" style="color: {{theme.textTertiary}};">点击复制</text>
         </view>
       </view>
     </view>
@@ -37,6 +49,10 @@
     <view class="info-card" style="background-color: {{theme.card}};">
       <text class="card-title" style="color: {{theme.textPrimary}};">预约信息</text>
       <view class="booking-details">
+        <view class="detail-row">
+          <text class="detail-label" style="color: {{theme.textSecondary}};">申请时间</text>
+          <text class="detail-value" style="color: {{theme.textPrimary}};">{{booking.submittedAtText || '—'}}</text>
+        </view>
         <view class="detail-row">
           <text class="detail-label" style="color: {{theme.textSecondary}};">预约日期</text>
           <text class="detail-value" style="color: {{theme.textPrimary}};">{{booking.date}}</text>
@@ -54,12 +70,8 @@
           <text class="detail-value" style="color: {{theme.textPrimary}};">{{booking.attendees || 0}} 人</text>
         </view>
         <view class="detail-row">
-          <text class="detail-label" style="color: {{theme.textSecondary}};">联系电话</text>
-          <text class="detail-value" style="color: {{theme.textPrimary}};">{{booking.contactPhone}}</text>
-        </view>
-        <view class="detail-row purpose-row">
           <text class="detail-label" style="color: {{theme.textSecondary}};">预约用途</text>
-          <text class="detail-value purpose-text" style="color: {{theme.textPrimary}};">{{booking.purpose}}</text>
+          <text class="detail-value" style="color: {{theme.textPrimary}};">{{booking.purpose || '—'}}</text>
         </view>
       </view>
     </view>

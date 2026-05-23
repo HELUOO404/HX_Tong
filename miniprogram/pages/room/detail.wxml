@@ -180,11 +180,8 @@
         ></view>
       </view>
     </view>
-    <view class="calendar-footer">
-      <text class="calendar-hint" style="color: {{theme.textTertiary}};">蓝框可选 · 黄框部分已约 · 红框已约满</text>
-      <view class="calendar-close-btn" bindtap="onConfirmCalendar" style="background-color: {{theme.primary}};">
-        <text style="color: #fff;">确定</text>
-      </view>
+    <view class="calendar-footer calendar-footer-hint-only">
+      <text class="calendar-hint" style="color: {{theme.textTertiary}};">点击日期查看当日安排 · 黄框部分已约 · 红框已约满</text>
     </view>
   </view>
 </view>
