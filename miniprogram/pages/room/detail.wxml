@@ -165,10 +165,10 @@
       <view
         wx:for="{{calendarDays}}"
         wx:key="date"
-        class="calendar-day {{item.isCurrentMonth ? '' : 'other-month'}} {{item.isToday ? 'today' : ''}} {{item.isSelectable ? 'selectable' : ''}} {{item.isSelected ? 'selected' : ''}} {{item.availability === 'partial' ? 'availability-partial' : ''}} {{item.availability === 'full' ? 'availability-full' : ''}}"
-        style="{{item.isSelected ? 'border-color: ' + theme.primary + '; color: #fff; background-color: ' + theme.primary + ';' : ''}}"
+        class="calendar-day {{item.isCurrentMonth ? 'is-current-month' : 'other-month'}} {{item.isToday ? 'today' : ''}} {{item.isSelectable ? 'selectable' : ''}} {{item.isSelected ? 'selected' : ''}} {{item.availability === 'partial' ? 'availability-partial' : ''}} {{item.availability === 'full' ? 'availability-full' : ''}}"
+        style="{{item.isSelected && item.isCurrentMonth ? 'border-color: ' + theme.primary + '; color: #fff; background-color: ' + theme.primary + ';' : ''}}"
         data-date="{{item.date}}"
-        data-selectable="{{item.isSelectable}}"
+        data-selectable="{{item.isClickable}}"
         data-availability="{{item.availability}}"
         bindtap="onCalendarDayTap"
       >
