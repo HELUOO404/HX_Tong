@@ -518,8 +518,29 @@
   margin-top: 6rpx;
 }
 
+.calendar-day.other-month {
+  border-color: transparent !important;
+  background-color: transparent !important;
+}
+
 .calendar-day.other-month .calendar-day-text {
-  opacity: 0.3;
+  opacity: 0.35;
+  color: #bbb;
+}
+
+.calendar-day.other-month.selected {
+  border-color: transparent !important;
+  background-color: transparent !important;
+}
+
+.calendar-day.other-month.selected .calendar-day-text {
+  opacity: 1;
+  color: #1890ff;
+  font-weight: 600;
+}
+
+.calendar-day.other-month:active {
+  opacity: 0.65;
 }
 
 .calendar-day.selectable {
@@ -550,8 +571,23 @@
   background-color: #1890ff;
 }
 
-.calendar-day:not(.selectable):not(.other-month) {
+.calendar-day:not(.selectable):not(.other-month):not(.is-current-month) {
   color: #cccccc;
+}
+
+/* 翻到非「今天所在月」时：当月日期无框，数字正常显示、可点击 */
+.calendar-day.is-current-month:not(.selectable):not(.selected) {
+  color: #333;
+  border-color: transparent;
+}
+
+.calendar-day.is-current-month:not(.selectable):active {
+  opacity: 0.65;
+}
+
+.calendar-day.is-current-month.selected:not(.selectable) .calendar-day-text {
+  color: #1890ff;
+  font-weight: 600;
 }
 
 .calendar-footer {

@@ -95,7 +95,11 @@ function generateCalendarDays({
   const daysInMonth = new Date(year, month, 0).getDate()
   const daysInPrevMonth = new Date(year, month - 1, 0).getDate()
   const days = []
-  const today = formatDate(new Date())
+  const now = new Date()
+  const today = formatDate(now)
+  /** 详情页：仅当翻到的月份就是「今天所在的自然月」时，才给日期加方框 */
+  const isViewingRealCurrentMonth =
+    year === now.getFullYear() && month === now.getMonth() + 1
 
   const isDateInRange = (dateTime) => dateTime >= minDate && (!maxDate || dateTime <= maxDate)
 
@@ -103,30 +107,34 @@ function generateCalendarDays({
     const day = daysInPrevMonth - i
     const dateStr = formatDate(new Date(year, month - 2, day))
     const dateTime = new Date(year, month - 2, day).getTime()
-    const isSelectable = allowAnyDate ? isDateInRange(dateTime) : false
+    const inRange = isDateInRange(dateTime)
+    const isClickable = allowAnyDate && inRange
     days.push({
       day,
       date: dateStr,
       isCurrentMonth: false,
       isToday: dateStr === today,
-      isSelectable,
+      isSelectable: false,
+      isClickable,
       isSelected: dateStr === selectedDate,
-      availability: isSelectable ? (dateAvailability[dateStr] || 'free') : ''
+      availability: ''
     })
   }
 
   for (let day = 1; day <= daysInMonth; day++) {
     const dateStr = formatDate(new Date(year, month - 1, day))
     const dateTime = new Date(year, month - 1, day).getTime()
-    const isSelectable = isDateInRange(dateTime)
+    const inRange = isDateInRange(dateTime)
+    const showBox = inRange && (!allowAnyDate || isViewingRealCurrentMonth)
     days.push({
       day,
       date: dateStr,
       isCurrentMonth: true,
       isToday: dateStr === today,
-      isSelectable,
+      isSelectable: showBox,
+      isClickable: allowAnyDate ? inRange : inRange,
       isSelected: dateStr === selectedDate,
-      availability: isSelectable ? (dateAvailability[dateStr] || 'free') : ''
+      availability: showBox ? (dateAvailability[dateStr] || 'free') : ''
     })
   }
 
@@ -134,15 +142,17 @@ function generateCalendarDays({
   for (let day = 1; day <= remaining; day++) {
     const dateStr = formatDate(new Date(year, month, day))
     const dateTime = new Date(year, month, day).getTime()
-    const isSelectable = allowAnyDate ? isDateInRange(dateTime) : false
+    const inRange = isDateInRange(dateTime)
+    const isClickable = allowAnyDate && inRange
     days.push({
       day,
       date: dateStr,
       isCurrentMonth: false,
       isToday: dateStr === today,
-      isSelectable,
+      isSelectable: false,
+      isClickable,
       isSelected: dateStr === selectedDate,
-      availability: isSelectable ? (dateAvailability[dateStr] || 'free') : ''
+      availability: ''
     })
   }
 
