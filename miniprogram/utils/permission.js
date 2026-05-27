@@ -17,8 +17,11 @@ const DEFAULT_PERMISSIONS = {
   canManagePermissions: false,
   canManageSystem: false,
   canDatabaseManage: false,
-  canAssignPermissionTags: false
+  canAssignPermissionTags: false,
+  canViewBookingDetails: false
 }
+
+const VIEW_ONLY_PERMISSION_KEYS = ['canViewBookingDetails']
 
 const ADMIN_ROLES = ['systemAdmin', 'superAdmin', 'academyManager', 'approvalManager']
 
@@ -26,7 +29,8 @@ const ROLE_NAMES = {
   systemAdmin: '系统管理员',
   superAdmin: '超级管理员',
   academyManager: '书院管理人',
-  approvalManager: '审批管理人'
+  approvalManager: '审批管理人',
+  scheduleViewer: '会议安排查看员'
 }
 
 const ALL_PERMISSION_KEYS = Object.keys(DEFAULT_PERMISSIONS)
@@ -129,6 +133,12 @@ function hasAnyPermission(adminInfo) {
   return Object.values(merged).some(v => v === true)
 }
 
+function hasAdminBackendAccess(adminInfo) {
+  if (!adminInfo) return false
+  const merged = getMergedPermissions(adminInfo)
+  return Object.entries(merged).some(([key, val]) => val === true && !VIEW_ONLY_PERMISSION_KEYS.includes(key))
+}
+
 function checkAdminAuth() {
   const adminInfo = wx.getStorageSync('adminInfo')
   if (!adminInfo || !adminInfo.token) {
@@ -159,5 +169,7 @@ module.exports = {
   getRoleName,
   hasAnyPermission,
   hasAnyPermissionInTags,
+  hasAdminBackendAccess,
+  VIEW_ONLY_PERMISSION_KEYS,
   checkAdminAuth
 }

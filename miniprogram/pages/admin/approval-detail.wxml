@@ -73,6 +73,10 @@
           <text class="detail-label" style="color: {{theme.textSecondary}};">预约用途</text>
           <text class="detail-value" style="color: {{theme.textPrimary}};">{{booking.purpose || '—'}}</text>
         </view>
+        <view class="detail-row">
+          <text class="detail-label" style="color: {{theme.textSecondary}};">公共资源</text>
+          <text class="detail-value" style="color: {{theme.textPrimary}};">{{booking.hasPublicResources ? booking.publicResourcesText : '—'}}</text>
+        </view>
       </view>
     </view>
 
@@ -82,7 +86,7 @@
     </view>
   </view>
 
-  <view class="action-section" wx:if="{{booking.status === 'pending'}}">
+  <view class="action-section" wx:if="{{!readonlyMode && booking.status === 'pending'}}">
     <button
       class="btn btn-reject"
       bindtap="onShowRejectModal"
@@ -101,13 +105,13 @@
     </button>
   </view>
 
-  <view class="action-section readonly" wx:elif="{{booking.status === 'approved'}}">
+  <view class="action-section readonly" wx:elif="{{!readonlyMode && booking.status === 'approved'}}">
     <view class="status-tag approved" style="background-color: {{theme.success}};">
       <text style="color: #fff;">已通过</text>
     </view>
   </view>
 
-  <view class="action-section readonly" wx:elif="{{booking.status === 'rejected'}}">
+  <view class="action-section readonly" wx:elif="{{!readonlyMode && booking.status === 'rejected'}}">
     <view class="status-tag rejected" style="background-color: {{theme.error}};">
       <text style="color: #fff;">已拒绝</text>
     </view>

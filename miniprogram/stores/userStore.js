@@ -7,8 +7,9 @@
  */
 
 const UserService = require('../services/userService')
+const { hasAdminBackendAccess } = require('../utils/permission')
 
-const ADMIN_ROLES = ['systemAdmin', 'superAdmin', 'academyManager', 'approvalManager']
+const ADMIN_ROLES = ['systemAdmin', 'superAdmin', 'academyManager', 'approvalManager', 'scheduleViewer']
 
 class UserStore {
   constructor() {
@@ -65,7 +66,7 @@ class UserStore {
   getAdminRole() {
     const tags = this.getPermissionTags()
     if (tags && tags.length > 0) {
-      const priority = ['systemAdmin', 'superAdmin', 'academyManager', 'approvalManager']
+      const priority = ['systemAdmin', 'superAdmin', 'academyManager', 'approvalManager', 'scheduleViewer']
       for (const role of priority) {
         if (tags.some(tag => tag.role === role)) return role
       }
@@ -238,6 +239,15 @@ class UserStore {
       if (tag.permissions && tag.permissions[permission]) return true
     }
     return false
+  }
+
+  hasAdminBackendAccess() {
+    if (!this._userInfo) return false
+    return hasAdminBackendAccess({ permissionTags: this.getPermissionTags() })
+  }
+
+  canViewBookingDetails() {
+    return this.hasPermission('canViewBookingDetails')
   }
 
   isAdmin() {

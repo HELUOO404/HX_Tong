@@ -70,6 +70,25 @@ const DEFAULT_ROLE_TAGS = {
       canDatabaseManage: false,
       canAssignPermissionTags: false
     }
+  },
+  scheduleViewer: {
+    tagId: 'scheduleViewer',
+    tagName: '会议安排查看员',
+    role: 'scheduleViewer',
+    permissions: {
+      canManageRooms: false,
+      canDeleteRooms: false,
+      canManagePublicResources: false,
+      canApproveBookings: false,
+      canViewBookingDetails: true,
+      canViewAllUsers: false,
+      canEditUsers: false,
+      canManageApprovalRules: false,
+      canManagePermissions: false,
+      canManageSystem: false,
+      canDatabaseManage: false,
+      canAssignPermissionTags: false
+    }
   }
 }
 
@@ -82,7 +101,10 @@ function getDefaultTagByRole(role) {
 
 function getEffectivePermissions(tags) {
   if (!tags || !Array.isArray(tags) || tags.length === 0) return false
-  return tags.some(t => t.permissions && Object.keys(t.permissions).length > 0 && Object.values(t.permissions).some(v => v === true))
+  return tags.some(t => {
+    if (!t.permissions) return false
+    return Object.entries(t.permissions).some(([key, val]) => val === true && key !== 'canViewBookingDetails')
+  })
 }
 
 module.exports = { DEFAULT_ROLE_TAGS, getDefaultTagByRole, getEffectivePermissions }

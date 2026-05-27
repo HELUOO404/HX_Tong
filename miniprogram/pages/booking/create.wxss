@@ -357,7 +357,8 @@
 }
 
 .submit-btn.disabled {
-  opacity: 0.7;
+  opacity: 1;
+  color: #fff !important;
 }
 
 .resource-disabled {

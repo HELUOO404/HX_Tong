@@ -189,12 +189,11 @@
       class="submit-btn {{isSubmitting || !isTimeAvailable || creditScore < 80 ? 'disabled' : ''}}"
       bindtap="onSubmit"
       disabled="{{isSubmitting || !isTimeAvailable || creditScore < 80}}"
-      style="background-color: {{isSubmitting || !isTimeAvailable || creditScore < 80 ? theme.textTertiary : theme.primary}};"
+      style="background-color: {{isSubmitting || !isTimeAvailable || creditScore < 80 ? theme.textTertiary : theme.primary}}; color: #fff;"
     >
-      <text wx:if="{{!isSubmitting && isTimeAvailable && creditScore >= 80}}">提交预约</text>
-      <text wx:elif="{{isSubmitting}}">提交中...</text>
+      <text wx:if="{{isSubmitting}}">提交中...</text>
       <text wx:elif="{{creditScore < 80}}">信誉分不足</text>
-      <text wx:else>{{durationText}}</text>
+      <text wx:else>提交预约</text>
     </button>
   </view>
 </view>

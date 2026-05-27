@@ -111,6 +111,27 @@ class RoomService {
       throw error
     }
   }
+
+  async getBookingViewDetail(bookingId) {
+    try {
+      const { result } = await wx.cloud.callFunction({
+        name: 'meetingroomService',
+        data: {
+          action: 'meetingroom_booking_viewDetail',
+          params: { bookingId }
+        }
+      })
+
+      if (result.code !== 200) {
+        throw new Error(result.message || '获取预约详情失败')
+      }
+
+      return result.data
+    } catch (error) {
+      console.error('[RoomService] 获取预约详情失败:', error)
+      throw error
+    }
+  }
 }
 
 RoomService._instance = null

@@ -33,19 +33,29 @@ module.exports = async (params, cloud) => {
       .where({
         roomId,
         date: _.gte(startDate).and(_.lte(endDate)),
-        status: _.in(['pending', 'approved'])
+        status: _.in(['pending', 'approved', 'completed'])
       })
       .get()
 
-    const bookingsByDate = {}
+    const activeByDate = {}
+    const completedByDate = {}
     ;(bookings || []).forEach(booking => {
-      if (!bookingsByDate[booking.date]) bookingsByDate[booking.date] = []
-      bookingsByDate[booking.date].push(booking)
+      if (booking.status === 'completed') {
+        completedByDate[booking.date] = true
+      } else {
+        if (!activeByDate[booking.date]) activeByDate[booking.date] = []
+        activeByDate[booking.date].push(booking)
+      }
     })
 
     const dateMap = {}
     enumerateDates(startDate, endDate).forEach(date => {
-      dateMap[date] = getDayAvailability(slots, bookingsByDate[date] || [])
+      const availability = getDayAvailability(slots, activeByDate[date] || [])
+      if (availability === 'free' && completedByDate[date]) {
+        dateMap[date] = 'completed'
+      } else {
+        dateMap[date] = availability
+      }
     })
 
     return success({ roomId, startDate, endDate, dateMap }, '获取成功')

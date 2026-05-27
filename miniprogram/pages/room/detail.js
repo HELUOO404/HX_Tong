@@ -7,6 +7,7 @@
  */
 
 const RoomService = require('../../services/roomService')
+const UserStore = require('../../stores/userStore')
 const { ErrorHandler } = require('../../utils/errorHandler')
 const ThemeMixin = require('../../theme/theme-mixin')
 const {
@@ -37,7 +38,8 @@ Page({
     maxDate: 0,
     calendarTouchStartX: 0,
     calendarTouchStartY: 0,
-    dateAvailability: {}
+    dateAvailability: {},
+    canViewBookingDetails: false
   },
 
   onLoad(options) {
@@ -61,6 +63,10 @@ Page({
 
   onShow() {
     ThemeMixin.onShow.call(this)
+    const userStore = UserStore.getInstance()
+    this.setData({
+      canViewBookingDetails: userStore.canViewBookingDetails()
+    })
     if (this.data.roomId && this.data.datePickerReady) {
       this.loadSchedule()
     }
@@ -162,6 +168,15 @@ Page({
     const { roomId } = this.data
     wx.navigateTo({
       url: `/pages/booking/create?roomId=${roomId}`
+    })
+  },
+
+  onScheduleItemTap(e) {
+    const { bookingId } = e.currentTarget.dataset
+    if (!bookingId || !this.data.canViewBookingDetails) return
+
+    wx.navigateTo({
+      url: `/pages/admin/approval-detail?id=${bookingId}&mode=view`
     })
   },
 

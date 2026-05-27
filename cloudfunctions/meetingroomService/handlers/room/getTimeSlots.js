@@ -115,12 +115,14 @@ module.exports = async (params, cloud) => {
       .where({
         roomId,
         date,
-        status: _.in(['pending', 'approved'])
+        status: _.in(['pending', 'approved', 'completed'])
       })
       .get()
 
+    const activeBookings = bookings.filter(b => b.status === 'pending' || b.status === 'approved')
+
     const slotStatuses = slots.map(slot => {
-      const overlapping = bookings.filter(b => {
+      const overlapping = activeBookings.filter(b => {
         return slot.start < b.endTime && slot.end > b.startTime
       })
 
@@ -156,7 +158,8 @@ module.exports = async (params, cloud) => {
         endTime: b.endTime,
         status: b.status,
         userName: b.userName || '',
-        purpose: b.purpose || ''
+        purpose: b.purpose || '',
+        usedPublicResources: b.usedPublicResources || []
       }))
     }, '获取成功')
   } catch (err) {

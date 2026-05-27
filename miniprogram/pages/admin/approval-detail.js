@@ -1,8 +1,12 @@
 const { ErrorHandler } = require('../../utils/errorHandler')
 const ThemeMixin = require('../../theme/theme-mixin')
 const AdminService = require('../../services/adminService')
+const RoomService = require('../../services/roomService')
+const UserStore = require('../../stores/userStore')
 const adminService = AdminService.getInstance()
+const roomService = RoomService.getInstance()
 const { checkAdminAuth } = require('../../utils/permission')
+const { formatPublicResources } = require('../../utils/bookingCalendar')
 
 Page({
   ...ThemeMixin,
@@ -15,11 +19,28 @@ Page({
     creditScore: 100,
     isLoading: true,
     isSubmitting: false,
-    showRejectModal: false
+    showRejectModal: false,
+    readonlyMode: false
   },
 
   onLoad(options) {
     ThemeMixin.onLoad.call(this)
+
+    const readonlyMode = options.mode === 'view' || options.readonly === '1' || options.readonly === 'true'
+
+    if (readonlyMode) {
+      if (!this.checkViewerAuth()) return
+      this.setData({ readonlyMode: true })
+      if (options.id) {
+        this.setData({ bookingId: options.id })
+        this.loadBookingDetailAsViewer()
+      } else {
+        ErrorHandler.showError('参数错误')
+        wx.navigateBack()
+      }
+      return
+    }
+
     if (!this.checkAdminAuth()) return
     if (options.id) {
       this.setData({ bookingId: options.id })
@@ -53,6 +74,42 @@ Page({
 
   checkAdminAuth() {
     return checkAdminAuth()
+  },
+
+  checkViewerAuth() {
+    const userStore = UserStore.getInstance()
+    if (!userStore.isLogin) {
+      wx.redirectTo({ url: '/pages/login/login' })
+      return false
+    }
+    if (!userStore.canViewBookingDetails()) {
+      ErrorHandler.showError('无查看权限')
+      setTimeout(() => { wx.navigateBack() }, 1500)
+      return false
+    }
+    return true
+  },
+
+  async loadBookingDetailAsViewer() {
+    this.setData({ isLoading: true })
+    try {
+      const data = await roomService.getBookingViewDetail(this.data.bookingId)
+      const raw = data.booking || data
+      const booking = this.normalizeBooking(raw)
+      this.setData({
+        booking,
+        room: raw.roomInfo || booking.roomInfo,
+        userInfo: raw.userInfo || booking.userInfo,
+        creditScore: raw.creditScore || booking.creditScore || 100,
+        creditBadge: this.getCreditScoreBadge(raw.creditScore || booking.creditScore || 100),
+        isLoading: false
+      })
+    } catch (error) {
+      console.error('[ApprovalDetail] 查看模式加载失败:', error)
+      ErrorHandler.handle(error)
+      this.setData({ isLoading: false })
+      setTimeout(() => { wx.navigateBack() }, 1500)
+    }
   },
 
   async loadBookingDetail() {
@@ -220,9 +277,12 @@ Page({
 
   normalizeBooking(booking) {
     if (!booking) return booking
+    const publicResourcesText = formatPublicResources(booking.usedPublicResources)
     return {
       ...booking,
-      submittedAtText: this.formatDateTime(booking.createdAt || booking.createTime)
+      submittedAtText: this.formatDateTime(booking.createdAt || booking.createTime),
+      publicResourcesText,
+      hasPublicResources: !!publicResourcesText
     }
   },
 
