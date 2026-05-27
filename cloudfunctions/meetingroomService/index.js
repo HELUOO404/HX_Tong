@@ -120,6 +120,7 @@ const handlers = {
   'meetingroom_booking_cancel': require('./handlers/booking/cancel'),
   'meetingroom_booking_getMyList': require('./handlers/booking/list'),
   'meetingroom_booking_getDetail': require('./handlers/booking/detail'),
+  'meetingroom_booking_viewDetail': require('./handlers/booking/viewDetail'),
   'meetingroom_booking_approve': require('./handlers/booking/approve'),
   'meetingroom_getList': require('./handlers/room/getList'),
   'meetingroom_getDetail': require('./handlers/room/getDetail'),

@@ -176,23 +176,45 @@ function isPastBooking(date, endTime, currentDate, currentMinutes) {
   return currentMinutes >= parts[0] * 60 + parts[1]
 }
 
+const SCHEDULE_STATUS_TEXT = {
+  pending: '待审批',
+  approved: '已通过',
+  completed: '已结束'
+}
+
+function formatPublicResources(resources) {
+  if (!resources || !Array.isArray(resources) || resources.length === 0) return ''
+  return resources.map(item => {
+    const name = item.name || '未知资源'
+    const qty = item.quantity > 1 ? `×${item.quantity}` : ''
+    return `${name}${qty}`
+  }).join('、')
+}
+
 function buildScheduleItems(bookings, date) {
   const { currentDate, currentMinutes } = getCSTNow()
 
   return (bookings || [])
+    .filter(item => ['pending', 'approved', 'completed'].includes(item.status))
     .slice()
     .sort((a, b) => a.startTime.localeCompare(b.startTime))
-    .map(item => ({
-      bookingId: item.bookingId,
-      startTime: item.startTime,
-      endTime: item.endTime,
-      status: item.status,
-      purpose: item.purpose || '',
-      timeRange: `${item.startTime} - ${item.endTime}`,
-      displayContent: item.purpose || '未填写用途',
-      statusText: item.status === 'pending' ? '待审批' : '已通过',
-      isPast: isPastBooking(date, item.endTime, currentDate, currentMinutes)
-    }))
+    .map(item => {
+      const publicResourcesText = formatPublicResources(item.usedPublicResources)
+      return {
+        bookingId: item.bookingId,
+        startTime: item.startTime,
+        endTime: item.endTime,
+        status: item.status,
+        purpose: item.purpose || '',
+        usedPublicResources: item.usedPublicResources || [],
+        publicResourcesText,
+        hasPublicResources: !!publicResourcesText,
+        timeRange: `${item.startTime} - ${item.endTime}`,
+        displayContent: item.purpose || '未填写用途',
+        statusText: SCHEDULE_STATUS_TEXT[item.status] || item.status,
+        isPast: item.status === 'completed' || isPastBooking(date, item.endTime, currentDate, currentMinutes)
+      }
+    })
 }
 
 const WEEKDAY_LABELS = ['日', '一', '二', '三', '四', '五', '六']
@@ -309,6 +331,7 @@ module.exports = {
   getScheduleViewDateRange,
   generateCalendarDays,
   buildScheduleItems,
+  formatPublicResources,
   buildEightDayStrip,
   getEightDayDateList,
   applyBookingDotsToStrip,

@@ -166,6 +166,12 @@ module.exports = {
       ]
     },
     {
+      group: '预约查看',
+      items: [
+        { key: 'canViewBookingDetails', label: '查看预约详情', desc: '在会议室安排中查看预约人及预约详情，不可审批、不可进入管理后台' }
+      ]
+    },
+    {
       group: '用户管理',
       items: [
         { key: 'canViewAllUsers', label: '查看所有用户', desc: '查看全部用户信息（只读）' },
@@ -189,6 +195,7 @@ module.exports = {
     { role: 'superAdmin', label: '超级管理员', desc: '除数据库管理外全部功能' },
     { role: 'academyManager', label: '书院管理人', desc: '管理会议室/资源/审批/用户查看' },
     { role: 'approvalManager', label: '审批管理人', desc: '仅审批预约' },
+    { role: 'scheduleViewer', label: '会议安排查看员', desc: '查看会议室安排与预约详情，不可审批' },
     { role: 'custom', label: '自定义角色', desc: '自由组合权限配置' }
   ],
 
@@ -205,7 +212,8 @@ module.exports = {
     systemAdmin: { canManageRooms: true, canDeleteRooms: true, canManagePublicResources: true, canApproveBookings: true, canViewAllUsers: true, canEditUsers: true, canManageApprovalRules: true, canManagePermissions: true, canManageSystem: true, canDatabaseManage: true, canAssignPermissionTags: true },
     superAdmin: { canManageRooms: true, canDeleteRooms: true, canManagePublicResources: true, canApproveBookings: true, canViewAllUsers: true, canEditUsers: true, canManageApprovalRules: true, canManagePermissions: true, canManageSystem: true, canDatabaseManage: false, canAssignPermissionTags: true },
     academyManager: { canManageRooms: true, canDeleteRooms: true, canManagePublicResources: true, canApproveBookings: true, canViewAllUsers: true, canEditUsers: false, canManageApprovalRules: true, canManagePermissions: false, canManageSystem: false, canDatabaseManage: false, canAssignPermissionTags: false },
-    approvalManager: { canManageRooms: false, canDeleteRooms: false, canManagePublicResources: false, canApproveBookings: true, canViewAllUsers: false, canEditUsers: false, canManageApprovalRules: false, canManagePermissions: false, canManageSystem: false, canDatabaseManage: false, canAssignPermissionTags: false }
+    approvalManager: { canManageRooms: false, canDeleteRooms: false, canManagePublicResources: false, canApproveBookings: true, canViewAllUsers: false, canEditUsers: false, canManageApprovalRules: false, canManagePermissions: false, canManageSystem: false, canDatabaseManage: false, canAssignPermissionTags: false },
+    scheduleViewer: { canManageRooms: false, canDeleteRooms: false, canManagePublicResources: false, canApproveBookings: false, canViewBookingDetails: true, canViewAllUsers: false, canEditUsers: false, canManageApprovalRules: false, canManagePermissions: false, canManageSystem: false, canDatabaseManage: false, canAssignPermissionTags: false }
   }
 
 }

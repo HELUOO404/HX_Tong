@@ -157,6 +157,18 @@
   margin-bottom: 0;
 }
 
+.schedule-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.schedule-view-hint {
+  font-size: 22rpx;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
 .schedule-date-trigger {
   display: flex;
   align-items: center;
@@ -311,6 +323,15 @@
   opacity: 0.55;
 }
 
+.timeline-item.clickable .timeline-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.timeline-item.clickable:active .timeline-card {
+  transform: scale(0.98);
+  box-shadow: 0 4rpx 16rpx rgba(24, 144, 255, 0.12);
+}
+
 .timeline-time {
   flex-shrink: 0;
   width: 120rpx;
@@ -350,7 +371,7 @@
 
 .timeline-card-main {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 20rpx;
 }
 
@@ -382,12 +403,30 @@
   font-weight: 500;
 }
 
+.timeline-resources {
+  margin-top: 12rpx;
+  padding-top: 12rpx;
+  border-top: 1rpx dashed rgba(0, 0, 0, 0.06);
+}
+
+.timeline-resource-text {
+  display: block;
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  word-break: break-all;
+}
+
+.timeline-item.past .timeline-resource-text {
+  color: var(--text-tertiary);
+}
+
 .timeline-status {
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  align-self: center;
+  align-self: flex-start;
   min-height: 52rpx;
   padding: 0 22rpx;
   border-radius: 12rpx;
@@ -406,6 +445,11 @@
 .timeline-status.status-pending {
   background-color: rgba(250, 173, 20, 0.12);
   color: var(--warning-color);
+}
+
+.timeline-status.status-completed {
+  background-color: rgba(140, 140, 140, 0.12);
+  color: var(--text-tertiary);
 }
 
 /* 预约页同款半屏日历 */
@@ -562,6 +606,12 @@
   border-color: #ff4d4f;
   background-color: rgba(255, 77, 79, 0.12);
   color: #cf1322;
+}
+
+.calendar-day.selectable.availability-completed:not(.selected) {
+  border-color: #91a3b0;
+  background-color: rgba(145, 163, 176, 0.18);
+  color: #5c6b7a;
 }
 
 .calendar-day.selected {

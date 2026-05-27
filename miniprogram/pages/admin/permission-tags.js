@@ -2,6 +2,14 @@ const { ErrorHandler } = require('../../utils/errorHandler')
 const ThemeMixin = require('../../theme/theme-mixin')
 const AdminService = require('../../services/adminService')
 const { PERMISSION_GROUPS, ROLE_OPTIONS, ROLE_PRESETS } = require('../../config/constants')
+const { ALL_PERMISSION_KEYS } = require('../../utils/permission')
+
+const TOTAL_PERMISSIONS = ALL_PERMISSION_KEYS.length
+
+function countEnabledPermissions(permissions) {
+  if (!permissions || typeof permissions !== 'object') return 0
+  return ALL_PERMISSION_KEYS.filter(key => permissions[key]).length
+}
 
 const { checkAdminAuth } = require('../../utils/permission')
 
@@ -12,7 +20,8 @@ const PermissionHandler = {
     this.setData({
       permissionGroups: PERMISSION_GROUPS,
       roleOptions: ROLE_OPTIONS,
-      rolePresets: ROLE_PRESETS
+      rolePresets: ROLE_PRESETS,
+      totalPerms: TOTAL_PERMISSIONS
     })
     this.loadTags()
   },
@@ -32,8 +41,8 @@ const PermissionHandler = {
       const result = await adminService.getPermissionTagList()
       const tags = (result.data || result || []).map(tag => ({
         ...tag,
-        permCount: tag.permissions ? Object.values(tag.permissions).filter(Boolean).length : 0,
-        totalPerms: 11
+        permCount: countEnabledPermissions(tag.permissions),
+        totalPerms: TOTAL_PERMISSIONS
       }))
       this.setData({ tags, isLoading: false })
     } catch (error) {

@@ -15,7 +15,8 @@ const ROLE_NAMES = {
   systemAdmin: '系统管理员',
   superAdmin: '超级管理员',
   academyManager: '书院管理人',
-  approvalManager: '审批管理人'
+  approvalManager: '审批管理人',
+  scheduleViewer: '会议安排查看员'
 }
 
 Page({

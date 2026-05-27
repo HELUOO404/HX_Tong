@@ -82,7 +82,7 @@
   </view>
 
   <!-- 管理功能 -->
-  <view class="section" style="background-color: {{theme.card}};" wx:if="{{hasPermissionTag}}">
+  <view class="section" style="background-color: {{theme.card}};" wx:if="{{hasAdminBackendAccess}}">
     <view class="section-title" style="color: {{theme.textPrimary}};">管理功能</view>
     <view class="menu-list">
       <view class="menu-item admin-entry" bindtap="onEnterAdminBackend">

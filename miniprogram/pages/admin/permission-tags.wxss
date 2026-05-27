@@ -58,6 +58,7 @@
 
 .tag-info {
   flex: 1;
+  min-width: 0;
 }
 
 .tag-header {
@@ -88,6 +89,8 @@
 .tag-actions {
   display: flex;
   gap: 24rpx;
+  flex-shrink: 0;
+  margin-left: 16rpx;
 }
 
 .action-btn {
@@ -188,6 +191,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
 
 .modal-header {
@@ -218,26 +222,54 @@
 .modal-scroll {
   flex: 1;
   min-height: 0;
-  padding: 30rpx;
-  overflow-y: auto;
+  width: 100%;
+  height: 0;
+  box-sizing: border-box;
+}
+
+.modal-scroll-inner {
+  padding: 30rpx 32rpx;
+  box-sizing: border-box;
 }
 
 .form-item {
   margin-bottom: 24rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  margin-bottom: 12rpx;
 }
 
 .form-label {
   display: block;
   font-size: 28rpx;
   font-weight: 500;
+  margin-bottom: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.form-label-row + .form-input {
+  margin-top: 0;
+}
+
+.form-item > .form-label {
   margin-bottom: 12rpx;
 }
 
 .form-input, .form-picker {
+  width: 100%;
   height: 88rpx;
   padding: 0 24rpx;
   border-radius: 12rpx;
   font-size: 28rpx;
+  box-sizing: border-box;
 }
 
 .form-picker {
@@ -319,11 +351,10 @@
 
 /* 字符计数 */
 .char-count {
-  display: block;
+  flex-shrink: 0;
   font-size: 22rpx;
-  text-align: right;
-  margin-top: 6rpx;
-  padding-right: 8rpx;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 /* 表单提示文字 */
@@ -338,11 +369,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
   height: 88rpx;
   padding: 0 24rpx;
   border-radius: 8rpx;
   border: 2rpx solid;
   font-size: 28rpx;
+  box-sizing: border-box;
 }
 
 .picker-arrow {
@@ -352,6 +385,8 @@
 /* 权限分组 */
 .permission-groups {
   margin-top: 16rpx;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .perm-group {

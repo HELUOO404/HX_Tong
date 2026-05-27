@@ -18,6 +18,7 @@ Page({
     isLogin: false,
     userInfo: null,
     hasPermissionTag: false,
+    hasAdminBackendAccess: false,
     adminRole: '',
     adminRoleName: '',
     appName: APP_NAME,
@@ -62,6 +63,7 @@ Page({
       superAdmin: '超级管理员',
       academyManager: '书院管理人',
       approvalManager: '审批管理人',
+      scheduleViewer: '会议安排查看员',
       custom: '管理员'
     }
 
@@ -69,6 +71,7 @@ Page({
       isLogin: state.isLogin,
       userInfo: state.userInfo,
       hasPermissionTag: userStore.hasPermissionTag(),
+      hasAdminBackendAccess: userStore.hasAdminBackendAccess(),
       adminRole: adminRole || '',
       adminRoleName: adminRole ? (roleNames[adminRole] || '管理员') : ''
     })
@@ -148,8 +151,8 @@ Page({
 
   async onEnterAdminBackend() {
     const userStore = UserStore.getInstance()
-    if (!userStore.hasPermissionTag()) {
-      ErrorHandler.showError('无管理权限')
+    if (!userStore.hasAdminBackendAccess()) {
+      ErrorHandler.showError('无管理后台权限')
       return
     }
 
