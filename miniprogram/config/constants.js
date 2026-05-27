@@ -11,6 +11,7 @@ module.exports = {
   APP_NAME: '芯预约',
   APP_VERSION: '2.1.0',
   APP_DESCRIPTION: '深职大集成电路学院会议室预约小程序',
+  APP_ICP: '粤ICP备2026063430号-1X',
   LOGO_URL: '/assets/images/logo.png',
 
   // 分页配置

@@ -7,7 +7,7 @@
  */
 
 const ThemeMixin = require('../../theme/theme-mixin')
-const { APP_NAME, APP_VERSION, APP_DESCRIPTION, LOGO_URL } = require('../../config/constants')
+const { APP_NAME, APP_VERSION, APP_DESCRIPTION, APP_ICP, LOGO_URL } = require('../../config/constants')
 
 Page({
   ...ThemeMixin,
@@ -19,7 +19,8 @@ Page({
       name: APP_NAME,
       version: `v${APP_VERSION}`,
       developer: '深职大集成电路学院',
-      description: APP_DESCRIPTION
+      description: APP_DESCRIPTION,
+      icp: APP_ICP
     }
   },
 

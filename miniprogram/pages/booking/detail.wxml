@@ -47,6 +47,11 @@
         <text class="info-value" style="color: {{theme.textPrimary}};">{{bookingInfo.purpose}}</text>
       </view>
 
+      <view class="info-item">
+        <text class="info-label" style="color: {{theme.textSecondary}};">公共资源</text>
+        <text class="info-value" style="color: {{theme.textPrimary}};">{{bookingInfo.hasPublicResources ? bookingInfo.publicResourcesText : '—'}}</text>
+      </view>
+
       <view class="info-item" wx:if="{{bookingInfo.contactPhone}}">
         <text class="info-label" style="color: {{theme.textSecondary}};">联系电话</text>
         <text class="info-value" style="color: {{theme.textPrimary}};">{{bookingInfo.contactPhone}}</text>

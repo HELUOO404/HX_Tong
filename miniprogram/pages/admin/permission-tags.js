@@ -13,6 +13,15 @@ function countEnabledPermissions(permissions) {
 
 const { checkAdminAuth } = require('../../utils/permission')
 
+function calcModalScrollHeight() {
+  try {
+    const sys = wx.getSystemInfoSync()
+    return Math.max(280, Math.floor(sys.windowHeight * 0.85 - 140))
+  } catch (e) {
+    return 420
+  }
+}
+
 const PermissionHandler = {
   onLoad() {
     ThemeMixin.onLoad.call(this)
@@ -21,7 +30,8 @@ const PermissionHandler = {
       permissionGroups: PERMISSION_GROUPS,
       roleOptions: ROLE_OPTIONS,
       rolePresets: ROLE_PRESETS,
-      totalPerms: TOTAL_PERMISSIONS
+      totalPerms: TOTAL_PERMISSIONS,
+      modalScrollHeight: calcModalScrollHeight()
     })
     this.loadTags()
   },
@@ -55,6 +65,7 @@ const PermissionHandler = {
   onShowAddModal() {
     this.setData({
       showModal: true,
+      modalScrollHeight: calcModalScrollHeight(),
       editingTag: null,
       formData: {
         name: '',
@@ -75,6 +86,7 @@ const PermissionHandler = {
     }
     this.setData({
       showModal: true,
+      modalScrollHeight: calcModalScrollHeight(),
       editingTag: tag,
       formData: {
         name: tag.name || '',

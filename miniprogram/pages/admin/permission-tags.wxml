@@ -53,7 +53,13 @@
         </view>
       </view>
 
-      <scroll-view class="modal-scroll" scroll-y="true" enhanced show-scrollbar="{{false}}">
+      <scroll-view
+        class="modal-scroll"
+        scroll-y="{{true}}"
+        enhanced
+        show-scrollbar="{{true}}"
+        style="height: {{modalScrollHeight}}px;"
+      >
         <view class="modal-scroll-inner">
         <view class="form-item">
           <view class="form-label-row">
