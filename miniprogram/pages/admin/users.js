@@ -62,7 +62,8 @@ Page({
     filterProfile: 'all',
     creditModalVisible: false,
     creditTargetUser: null,
-    creditChange: 0,
+    creditIsNegative: false,
+    creditChangeAbs: '',
     creditReason: '',
     creditPreview: 0
   },
@@ -503,7 +504,8 @@ Page({
     this.setData({
       creditTargetUser: user,
       creditModalVisible: true,
-      creditChange: '',
+      creditIsNegative: false,
+      creditChangeAbs: '',
       creditReason: '',
       creditPreview: user.creditScore || 0
     })
@@ -513,22 +515,37 @@ Page({
     this.setData({
       creditModalVisible: false,
       creditTargetUser: null,
-      creditChange: 0,
+      creditIsNegative: false,
+      creditChangeAbs: '',
       creditReason: '',
       creditPreview: 0
     })
   },
 
-  onCreditChangeInput(e) {
-    const raw = e.detail.value
-    const change = raw === '' || raw === '-' ? 0 : (parseInt(raw, 10) || 0)
+  onSetCreditSign(e) {
+    const negative = e.currentTarget.dataset.negative === true || e.currentTarget.dataset.negative === 'true'
+    this.setData({ creditIsNegative: negative })
+    this.updateCreditPreview(this.data.creditChangeAbs, negative)
+  },
+
+  onCreditAmountInput(e) {
+    const raw = (e.detail.value || '').replace(/\D/g, '')
+    this.setData({ creditChangeAbs: raw })
+    this.updateCreditPreview(raw)
+  },
+
+  updateCreditPreview(rawAmount, isNegative) {
+    const amount = parseInt(rawAmount, 10) || 0
+    const negative = typeof isNegative === 'boolean' ? isNegative : this.data.creditIsNegative
+    const change = negative ? -amount : amount
     const baseScore = this.data.creditTargetUser ? (this.data.creditTargetUser.creditScore || 0) : 0
     let preview = baseScore + change
     preview = Math.max(0, Math.min(150, preview))
-    this.setData({
-      creditChange: raw,
-      creditPreview: preview
-    })
+    this.setData({ creditPreview: preview })
+  },
+
+  onCreditChangeInput(e) {
+    this.onCreditAmountInput(e)
   },
 
   onCreditReasonInput(e) {
@@ -536,7 +553,7 @@ Page({
   },
 
   async onConfirmCreditChange() {
-    const { creditTargetUser, creditChange, creditReason } = this.data
+    const { creditTargetUser, creditChangeAbs, creditIsNegative, creditReason } = this.data
     if (!creditTargetUser) return
 
     if (!creditReason || !creditReason.trim()) {
@@ -544,7 +561,8 @@ Page({
       return
     }
 
-    const changeNum = parseInt(creditChange, 10)
+    const amount = parseInt(creditChangeAbs, 10) || 0
+    const changeNum = creditIsNegative ? -amount : amount
     if (!changeNum || changeNum === 0) {
       wx.showToast({ title: '调整值不能为0', icon: 'none' })
       return

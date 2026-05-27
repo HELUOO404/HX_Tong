@@ -9,6 +9,7 @@
 const BookingService = require('../../services/bookingService')
 const { ErrorHandler } = require('../../utils/errorHandler')
 const ThemeMixin = require('../../theme/theme-mixin')
+const { formatPublicResources } = require('../../utils/bookingCalendar')
 
 Page({
   ...ThemeMixin,
@@ -45,8 +46,13 @@ Page({
     try {
       const bookingService = BookingService.getInstance()
       const result = await bookingService.getBookingDetail(bookingId)
-      // 云函数返回 { booking: {...}, room: {...} }
-      const bookingInfo = result.booking || result
+      const raw = result.booking || result
+      const publicResourcesText = formatPublicResources(raw.usedPublicResources)
+      const bookingInfo = {
+        ...raw,
+        publicResourcesText,
+        hasPublicResources: !!publicResourcesText
+      }
       this.setData({ bookingInfo, isLoading: false })
     } catch (error) {
       ErrorHandler.handle(error)

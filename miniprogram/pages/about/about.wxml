@@ -19,7 +19,7 @@
   <view class="about-section" style="background-color: {{theme.card}};">
     <view class="info-item">
       <text class="info-label" style="color: {{theme.textSecondary}};">备案信息</text>
-      <text class="info-value" style="color: {{theme.textPrimary}};">粤ICP备XXXXXXXX号-1</text>
+      <text class="info-value" style="color: {{theme.textPrimary}};">{{appInfo.icp}}</text>
     </view>
   </view>
 

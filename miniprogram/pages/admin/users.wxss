@@ -394,6 +394,40 @@
   border-color: #1890ff;
 }
 
+.credit-adjust-row {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.credit-sign-btn {
+  flex: 1;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12rpx;
+  border: 2rpx solid #e8e8e8;
+  font-size: 28rpx;
+  font-weight: 500;
+  box-sizing: border-box;
+}
+
+.credit-sign-btn.active {
+  font-weight: 600;
+}
+
+.credit-amount-input {
+  margin-bottom: 8rpx;
+}
+
+.form-hint {
+  display: block;
+  font-size: 22rpx;
+  line-height: 1.4;
+  margin-top: 8rpx;
+}
+
 .dialog-content .modal-footer {
   display: flex;
   flex-direction: row;

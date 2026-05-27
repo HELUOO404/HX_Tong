@@ -253,11 +253,35 @@
         </view>
         <view class="form-item">
           <text class="form-label" style="color: {{theme.textPrimary}};">调整值</text>
-          <input class="form-input" type="digit" placeholder="正数加分，负数扣分" value="{{creditChange}}" bindinput="onCreditChangeInput" style="background: {{theme.background}}; color: {{theme.textPrimary}};" />
+          <view class="credit-adjust-row">
+            <view
+              class="credit-sign-btn {{!creditIsNegative ? 'active' : ''}}"
+              style="{{!creditIsNegative ? 'background:' + theme.primary + '; color:#fff; border-color:' + theme.primary + ';' : 'border-color:' + theme.border + '; color:' + theme.textSecondary + ';'}}"
+              bindtap="onSetCreditSign"
+              data-negative="{{false}}"
+            >加分 +</view>
+            <view
+              class="credit-sign-btn {{creditIsNegative ? 'active' : ''}}"
+              style="{{creditIsNegative ? 'background:' + theme.error + '; color:#fff; border-color:' + theme.error + ';' : 'border-color:' + theme.border + '; color:' + theme.textSecondary + ';'}}"
+              bindtap="onSetCreditSign"
+              data-negative="{{true}}"
+            >扣分 −</view>
+          </view>
+          <input
+            class="form-input credit-amount-input"
+            type="digit"
+            placeholder="请输入分数"
+            value="{{creditChangeAbs}}"
+            bindinput="onCreditAmountInput"
+            adjust-position="{{true}}"
+            cursor-spacing="120"
+            style="background: {{theme.background}}; color: {{theme.textPrimary}};"
+          />
+          <text class="form-hint" style="color: {{theme.textTertiary}};">先选加分或扣分，再输入具体分数</text>
         </view>
         <view class="form-item">
           <text class="form-label" style="color: {{theme.textPrimary}};">原因</text>
-          <input class="form-input" placeholder="请输入调整原因（必填）" value="{{creditReason}}" bindinput="onCreditReasonInput" style="background: {{theme.background}}; color: {{theme.textPrimary}};" />
+          <input class="form-input" placeholder="请输入调整原因（必填）" value="{{creditReason}}" bindinput="onCreditReasonInput" adjust-position="{{true}}" cursor-spacing="80" style="background: {{theme.background}}; color: {{theme.textPrimary}};" />
         </view>
         <view class="form-item">
           <text class="form-label" style="color: {{theme.textPrimary}};">预估结果：<text style="color: {{theme.primary}}; font-weight: bold;">{{creditPreview}}</text></text>
