@@ -352,6 +352,9 @@ Page({
         return {
           tagId: tagId,
           name: tag.name || tag.tagName,
+          tagName: tag.name || tag.tagName,
+          role: tag.role || '',
+          permissions: tag.permissions || {},
           selected: currentTagIds.indexOf(tagId) !== -1
         }
       })

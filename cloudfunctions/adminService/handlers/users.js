@@ -405,16 +405,19 @@ async function updatePermissionTags(params, cloud) {
       }
     }
 
+    const { hydratePermissionTags } = require('../utils/hydratePermissionTags')
+    const hydratedTags = await hydratePermissionTags(db, dedupedTags)
+
     await db.collection('users')
       .doc(user._id)
       .update({
         data: {
-          permissionTags: dedupedTags,
+          permissionTags: hydratedTags,
           updateTime: db.serverDate()
         }
       })
 
-    return success({ userId, permissionTags: dedupedTags, updateTime: new Date().toISOString() }, '权限标签更新成功')
+    return success({ userId, permissionTags: hydratedTags, updateTime: new Date().toISOString() }, '权限标签更新成功')
   } catch (err) {
     console.error('[adminService.users.updatePermissionTags] 更新权限标签失败:', err)
     return error(500, '更新权限标签失败: ' + err.message)
