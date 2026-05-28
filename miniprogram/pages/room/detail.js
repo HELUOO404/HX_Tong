@@ -61,9 +61,16 @@ Page({
     this.loadRoomDetail(id)
   },
 
-  onShow() {
+  async onShow() {
     ThemeMixin.onShow.call(this)
     const userStore = UserStore.getInstance()
+    try {
+      if (userStore.isLogin) {
+        await userStore.refreshUserInfo()
+      }
+    } catch (error) {
+      console.warn('[RoomDetail] 刷新用户信息失败:', error)
+    }
     this.setData({
       canViewBookingDetails: userStore.canViewBookingDetails()
     })
@@ -173,7 +180,13 @@ Page({
 
   onScheduleItemTap(e) {
     const { bookingId } = e.currentTarget.dataset
-    if (!bookingId || !this.data.canViewBookingDetails) return
+    if (!bookingId) return
+
+    const userStore = UserStore.getInstance()
+    if (!userStore.canViewBookingDetails()) {
+      ErrorHandler.showError('暂无查看预约详情权限，请重新进入页面或联系管理员')
+      return
+    }
 
     wx.navigateTo({
       url: `/pages/admin/approval-detail?id=${bookingId}&mode=view`
