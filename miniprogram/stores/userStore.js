@@ -7,8 +7,18 @@
  */
 
 const UserService = require('../services/userService')
+const { hasAdminBackendAccess } = require('../utils/permission')
+const { ROLE_PRESETS } = require('../config/constants')
 
-const ADMIN_ROLES = ['systemAdmin', 'superAdmin', 'academyManager', 'approvalManager']
+const SYSTEM_TAG_PRESET_MAP = {
+  system: 'systemAdmin',
+  super: 'superAdmin',
+  academy: 'academyManager',
+  approval: 'approvalManager',
+  scheduleViewer: 'scheduleViewer'
+}
+
+const ADMIN_ROLES = ['systemAdmin', 'superAdmin', 'academyManager', 'approvalManager', 'scheduleViewer']
 
 class UserStore {
   constructor() {
@@ -65,7 +75,7 @@ class UserStore {
   getAdminRole() {
     const tags = this.getPermissionTags()
     if (tags && tags.length > 0) {
-      const priority = ['systemAdmin', 'superAdmin', 'academyManager', 'approvalManager']
+      const priority = ['systemAdmin', 'superAdmin', 'academyManager', 'approvalManager', 'scheduleViewer']
       for (const role of priority) {
         if (tags.some(tag => tag.role === role)) return role
       }
@@ -236,8 +246,20 @@ class UserStore {
     if (!tags || tags.length === 0) return false
     for (const tag of tags) {
       if (tag.permissions && tag.permissions[permission]) return true
+      if (tag.role && ROLE_PRESETS[tag.role] && ROLE_PRESETS[tag.role][permission]) return true
+      const presetKey = tag.tagId && SYSTEM_TAG_PRESET_MAP[tag.tagId]
+      if (presetKey && ROLE_PRESETS[presetKey] && ROLE_PRESETS[presetKey][permission]) return true
     }
     return false
+  }
+
+  hasAdminBackendAccess() {
+    if (!this._userInfo) return false
+    return hasAdminBackendAccess({ permissionTags: this.getPermissionTags() })
+  }
+
+  canViewBookingDetails() {
+    return this.hasPermission('canViewBookingDetails')
   }
 
   isAdmin() {

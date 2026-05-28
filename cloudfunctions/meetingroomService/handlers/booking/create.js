@@ -238,7 +238,7 @@ module.exports = async (params, cloud) => {
   const result = await db.collection('bookings').add({
     data: {
       userId: OPENID,
-      userName: user.realName || '',
+      userName: user.nickname || user.realName || '',
       studentId: user.studentId || '',
       roomId,
       roomName: room.name,

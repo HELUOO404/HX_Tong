@@ -1,8 +1,12 @@
 const { ErrorHandler } = require('../../utils/errorHandler')
 const ThemeMixin = require('../../theme/theme-mixin')
 const AdminService = require('../../services/adminService')
+const RoomService = require('../../services/roomService')
+const UserStore = require('../../stores/userStore')
 const adminService = AdminService.getInstance()
+const roomService = RoomService.getInstance()
 const { checkAdminAuth } = require('../../utils/permission')
+const { formatPublicResources } = require('../../utils/bookingCalendar')
 
 Page({
   ...ThemeMixin,
@@ -16,20 +20,37 @@ Page({
     isLoading: true,
     isSubmitting: false,
     showRejectModal: false,
-    rejectReason: ''
+    readonlyMode: false
   },
 
   onLoad(options) {
     ThemeMixin.onLoad.call(this)
+
+    const readonlyMode = options.mode === 'view' || options.readonly === '1' || options.readonly === 'true'
+
+    if (readonlyMode) {
+      if (!this.checkViewerAuth()) return
+      this.setData({ readonlyMode: true })
+      if (options.id) {
+        this.setData({ bookingId: options.id })
+        this.loadBookingDetailAsViewer()
+      } else {
+        ErrorHandler.showError('参数错误')
+        wx.navigateBack()
+      }
+      return
+    }
+
     if (!this.checkAdminAuth()) return
     if (options.id) {
       this.setData({ bookingId: options.id })
       this.loadBookingDetail()
     } else if (options.booking) {
       try {
-        const booking = JSON.parse(decodeURIComponent(options.booking))
+        const raw = JSON.parse(decodeURIComponent(options.booking))
+        const booking = this.normalizeBooking(raw.booking || raw)
         this.setData({
-          booking: booking.booking || booking,
+          booking,
           room: booking.roomInfo,
           userInfo: booking.userInfo,
           creditScore: booking.creditScore || 100,
@@ -55,6 +76,42 @@ Page({
     return checkAdminAuth()
   },
 
+  checkViewerAuth() {
+    const userStore = UserStore.getInstance()
+    if (!userStore.isLogin) {
+      wx.redirectTo({ url: '/pages/login/login' })
+      return false
+    }
+    if (!userStore.canViewBookingDetails()) {
+      ErrorHandler.showError('无查看权限')
+      setTimeout(() => { wx.navigateBack() }, 1500)
+      return false
+    }
+    return true
+  },
+
+  async loadBookingDetailAsViewer() {
+    this.setData({ isLoading: true })
+    try {
+      const data = await roomService.getBookingViewDetail(this.data.bookingId)
+      const raw = data.booking || data
+      const booking = this.normalizeBooking(raw)
+      this.setData({
+        booking,
+        room: raw.roomInfo || booking.roomInfo,
+        userInfo: raw.userInfo || booking.userInfo,
+        creditScore: raw.creditScore || booking.creditScore || 100,
+        creditBadge: this.getCreditScoreBadge(raw.creditScore || booking.creditScore || 100),
+        isLoading: false
+      })
+    } catch (error) {
+      console.error('[ApprovalDetail] 查看模式加载失败:', error)
+      ErrorHandler.handle(error)
+      this.setData({ isLoading: false })
+      setTimeout(() => { wx.navigateBack() }, 1500)
+    }
+  },
+
   async loadBookingDetail() {
     this.setData({ isLoading: true })
     try {
@@ -64,9 +121,9 @@ Page({
         bookingId: this.data.bookingId
       })
       if (data.list && data.list.length > 0) {
-        const booking = data.list[0]
+        const booking = this.normalizeBooking(data.list[0])
         this.setData({
-          booking: booking,
+          booking,
           room: booking.roomInfo,
           userInfo: booking.userInfo,
           creditScore: booking.creditScore || 100,
@@ -92,13 +149,15 @@ Page({
         return
       }
 
-      let userInfo = { realName: '', phone: '', avatarUrl: '' }
+      let userInfo = { nickname: '', remark: '', realName: '', phone: '', avatarUrl: '' }
       let creditScore = 100
 
       try {
         const { data: user } = await db.collection('users').where({ _openid: booking.userId }).get()
         if (user && user.length > 0) {
           userInfo = {
+            nickname: user[0].nickname || '',
+            remark: user[0].remark || '',
             realName: user[0].realName || '',
             phone: user[0].phone || '',
             avatarUrl: user[0].avatarUrl || ''
@@ -130,7 +189,7 @@ Page({
       }
 
       this.setData({
-        booking: booking,
+        booking: this.normalizeBooking(booking),
         room: roomInfo,
         userInfo: userInfo,
         creditScore: creditScore,
@@ -179,28 +238,33 @@ Page({
     }
   },
 
+  onCopyContactPhone() {
+    const phone = this.data.booking && this.data.booking.contactPhone
+    if (!phone) return
+
+    wx.setClipboardData({
+      data: String(phone),
+      success: () => {
+        ErrorHandler.showSuccess('号码已复制')
+      }
+    })
+  },
+
   onShowRejectModal() {
-    this.setData({ showRejectModal: true, rejectReason: '' })
+    this.setData({ showRejectModal: true })
   },
 
   onCloseRejectModal() {
-    this.setData({ showRejectModal: false, rejectReason: '' })
+    this.setData({ showRejectModal: false })
   },
 
-  onRejectReasonInput(e) {
-    this.setData({ rejectReason: e.detail.value })
-  },
-
-  async onConfirmReject() {
-    if (!this.data.rejectReason || !this.data.rejectReason.trim()) {
-      ErrorHandler.showError('请输入拒绝原因')
-      return
-    }
+  async onConfirmReject(e) {
+    const reason = e.detail.reason
     if (this.data.isSubmitting) return
     this.setData({ isSubmitting: true, showRejectModal: false })
     ErrorHandler.showLoading('处理中...')
     try {
-      await adminService.approveBooking(this.data.bookingId, 'reject', this.data.rejectReason.trim())
+      await adminService.approveBooking(this.data.bookingId, 'reject', reason)
       ErrorHandler.hideLoading()
       ErrorHandler.showSuccess('已拒绝')
       setTimeout(() => { wx.navigateBack() }, 1500)
@@ -211,12 +275,36 @@ Page({
     }
   },
 
-  formatDate(dateStr) {
-    if (!dateStr) return ''
-    const date = new Date(dateStr)
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
+  normalizeBooking(booking) {
+    if (!booking) return booking
+    const publicResourcesText = formatPublicResources(booking.usedPublicResources)
+    return {
+      ...booking,
+      submittedAtText: this.formatDateTime(booking.createdAt || booking.createTime),
+      publicResourcesText,
+      hasPublicResources: !!publicResourcesText
+    }
+  },
+
+  formatDateTime(value) {
+    if (!value) return ''
+
+    let date
+    if (value instanceof Date) {
+      date = value
+    } else if (typeof value === 'object' && value.$date) {
+      date = new Date(value.$date)
+    } else if (typeof value === 'number') {
+      date = new Date(value)
+    } else if (typeof value === 'string') {
+      date = new Date(value)
+    } else {
+      return ''
+    }
+
+    if (Number.isNaN(date.getTime())) return ''
+
+    const pad = (n) => String(n).padStart(2, '0')
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`
   }
 })

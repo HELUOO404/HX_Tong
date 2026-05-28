@@ -120,16 +120,16 @@
 }
 
 .time-slot-grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12rpx;
-  justify-content: flex-start;
+  width: 100%;
 }
 
 .time-slot {
-  width: calc(50% - 6rpx);
-  min-width: calc(50% - 6rpx);
-  max-width: calc(50% - 6rpx);
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
   padding: 20rpx 12rpx;
   border-radius: 12rpx;
   text-align: center;
@@ -300,6 +300,24 @@
   white-space: nowrap;
 }
 
+.form-label-icon-row {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  margin-bottom: 16rpx;
+}
+
+.form-label-icon {
+  width: 32rpx;
+  height: 32rpx;
+}
+
+.form-label-required {
+  font-size: 28rpx;
+  font-weight: 500;
+  line-height: 1;
+}
+
 .textarea-input {
   height: 160rpx;
   padding: 24rpx;
@@ -339,7 +357,8 @@
 }
 
 .submit-btn.disabled {
-  opacity: 0.7;
+  opacity: 1;
+  color: #fff !important;
 }
 
 .resource-disabled {
@@ -490,12 +509,23 @@
   background-color: rgba(24, 144, 255, 0.1);
 }
 
-/* 选中日期：蓝色边框 + 蓝色文字 */
+.calendar-day.selectable.availability-partial:not(.selected) {
+  border-color: #faad14;
+  background-color: rgba(250, 173, 20, 0.16);
+  color: #d48806;
+}
+
+.calendar-day.selectable.availability-full:not(.selected) {
+  border-color: #ff4d4f;
+  background-color: rgba(255, 77, 79, 0.12);
+  color: #cf1322;
+}
+
 .calendar-day.selected {
-  border: 2rpx solid #1890FF;
-  color: #1890FF;
+  border: 2rpx solid #1890ff;
+  color: #fff;
   font-weight: 600;
-  background-color: rgba(24, 144, 255, 0.08);
+  background-color: #1890ff;
 }
 
 /* 不可选日期：灰色文字 */

@@ -4,6 +4,7 @@
 
 const { success, error, notFound } = require('../../utils/response')
 const { validateRequired } = require('../../utils/validator')
+const { resolveRoomImages } = require('../../shared/resolveImages')
 
 module.exports = async (params, cloud) => {
   const db = cloud.database()
@@ -21,7 +22,8 @@ module.exports = async (params, cloud) => {
       return notFound('会议室')
     }
 
-    return success(data, '获取会议室详情成功')
+    const room = await resolveRoomImages(cloud, data)
+    return success(room, '获取会议室详情成功')
   } catch (err) {
     return error(500, '获取会议室详情失败')
   }

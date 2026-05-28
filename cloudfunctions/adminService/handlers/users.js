@@ -3,6 +3,35 @@ const { success, error, notFound } = require('../utils/response')
 const DEFAULT_AVATAR = '/assets/images/logo.png'
 const MAX_SCORE = 150
 
+async function findUserByUserId(db, userId) {
+  if (!userId) return null
+
+  const { data: byOpenid } = await db.collection('users')
+    .where({ openid: userId })
+    .limit(1)
+    .get()
+  if (byOpenid.length > 0) return byOpenid[0]
+
+  const { data: byLegacyOpenid } = await db.collection('users')
+    .where({ _openid: userId })
+    .limit(1)
+    .get()
+  if (byLegacyOpenid.length > 0) return byLegacyOpenid[0]
+
+  try {
+    const { data: byDocId } = await db.collection('users').doc(userId).get()
+    if (byDocId) return byDocId
+  } catch (e) {
+    // ignore invalid doc id
+  }
+
+  return null
+}
+
+function getUserOpenid(user) {
+  return user.openid || user._openid || ''
+}
+
 async function getFilterOptions(params, cloud) {
   const db = cloud.database()
   const _ = db.command
@@ -60,6 +89,8 @@ async function getList(params, cloud) {
     if (keyword && keyword.trim()) {
       const searchKey = keyword.trim()
       query.$or = [
+        { nickname: db.RegExp({ regexp: searchKey, options: 'i' }) },
+        { remark: db.RegExp({ regexp: searchKey, options: 'i' }) },
         { realName: db.RegExp({ regexp: searchKey, options: 'i' }) },
         { phone: db.RegExp({ regexp: searchKey, options: 'i' }) },
         { studentId: db.RegExp({ regexp: searchKey, options: 'i' }) }
@@ -91,8 +122,10 @@ async function getList(params, cloud) {
     const users = usersData.map(user => ({
       _id: user._id,
       _openid: user._openid,
-      openid: user.openid,
-      name: user.realName || user.name || '',
+      openid: user.openid || user._openid || '',
+      name: user.nickname || user.realName || user.name || '',
+      nickname: user.nickname || '',
+      remark: user.remark || '',
       realName: user.realName || '',
       avatarUrl: user.avatarUrl || '',
       phone: user.phone || '',
@@ -146,27 +179,24 @@ async function getList(params, cloud) {
 async function updateUser(params, cloud) {
   const db = cloud.database()
   const admin = params._admin
-  const { userId, name, realName, avatarUrl, phone, studentId, className, academy } = params
+  const { userId, name, realName, nickname, remark, avatarUrl, phone, studentId, className, academy } = params
 
   if (!userId) {
     return error(400, '缺少用户ID')
   }
 
   try {
-    const { data: userData } = await db.collection('users')
-      .where({ openid: userId })
-      .limit(1)
-      .get()
-
-    if (userData.length === 0) {
+    const user = await findUserByUserId(db, userId)
+    if (!user) {
       return notFound('用户')
     }
 
-    const user = userData[0]
     const updateData = { updateTime: db.serverDate() }
 
     if (name !== undefined) updateData.name = name
     if (realName !== undefined) updateData.realName = realName
+    if (nickname !== undefined) updateData.nickname = nickname
+    if (remark !== undefined) updateData.remark = remark
     if (avatarUrl !== undefined) updateData.avatarUrl = avatarUrl
     if (phone !== undefined) updateData.phone = phone
     if (studentId !== undefined) updateData.studentId = studentId
@@ -187,6 +217,7 @@ async function updateUser(params, cloud) {
 async function deleteUser(params, cloud) {
   const db = cloud.database()
   const admin = params._admin
+  const _ = db.command
   const { userId } = params
 
   if (!userId) {
@@ -194,27 +225,37 @@ async function deleteUser(params, cloud) {
   }
 
   try {
-    const { data: userData } = await db.collection('users')
-      .where({ _openid: userId })
-      .limit(1)
-      .get()
-
-    if (userData.length === 0) {
+    const user = await findUserByUserId(db, userId)
+    if (!user) {
       return notFound('用户')
     }
 
-    const user = userData[0]
-
-    if (user._openid === admin._id || user._id === admin._id) {
+    const openid = getUserOpenid(user)
+    if (openid && admin.openid && openid === admin.openid) {
       return error(400, '不能删除自己')
     }
 
-    await db.collection('users').where({ _openid: userId }).remove()
-    await db.collection('bookings').where({ userId: userId }).remove()
-    await db.collection('credit_records').where({ userId: userId }).remove()
-    await db.collection('credit_scores').where({ userId: userId }).remove()
+    await db.collection('users').doc(user._id).remove()
 
-    return success({ userId }, '删除成功')
+    if (openid) {
+      await db.collection('bookings').where({ userId: openid }).remove()
+    }
+
+    await db.collection('credit_records').where(
+      _.or([
+        { userId: user._id },
+        ...(openid ? [{ userId: openid }] : [])
+      ])
+    ).remove()
+
+    await db.collection('credit_scores').where(
+      _.or([
+        { userId: user._id },
+        ...(openid ? [{ userId: openid }] : [])
+      ])
+    ).remove()
+
+    return success({ userId: openid || user._id }, '删除成功')
   } catch (err) {
     console.error('[adminService.users.deleteUser] 删除用户失败:', err)
     return error(500, '删除用户失败: ' + err.message)
@@ -231,16 +272,10 @@ async function resetAvatar(params, cloud) {
   }
 
   try {
-    const { data: userData } = await db.collection('users')
-      .where({ _openid: userId })
-      .limit(1)
-      .get()
-
-    if (userData.length === 0) {
+    const user = await findUserByUserId(db, userId)
+    if (!user) {
       return notFound('用户')
     }
-
-    const user = userData[0]
 
     await db.collection('users')
       .doc(user._id)
@@ -251,7 +286,7 @@ async function resetAvatar(params, cloud) {
         }
       })
 
-    return success({ userId, avatarUrl: DEFAULT_AVATAR }, '头像重置成功')
+    return success({ userId: getUserOpenid(user) || user._id, avatarUrl: DEFAULT_AVATAR }, '头像重置成功')
   } catch (err) {
     console.error('[adminService.users.resetAvatar] 重置头像失败:', err)
     return error(500, '重置头像失败: ' + err.message)
@@ -370,16 +405,19 @@ async function updatePermissionTags(params, cloud) {
       }
     }
 
+    const { hydratePermissionTags } = require('../utils/hydratePermissionTags')
+    const hydratedTags = await hydratePermissionTags(db, dedupedTags)
+
     await db.collection('users')
       .doc(user._id)
       .update({
         data: {
-          permissionTags: dedupedTags,
+          permissionTags: hydratedTags,
           updateTime: db.serverDate()
         }
       })
 
-    return success({ userId, permissionTags: dedupedTags, updateTime: new Date().toISOString() }, '权限标签更新成功')
+    return success({ userId, permissionTags: hydratedTags, updateTime: new Date().toISOString() }, '权限标签更新成功')
   } catch (err) {
     console.error('[adminService.users.updatePermissionTags] 更新权限标签失败:', err)
     return error(500, '更新权限标签失败: ' + err.message)
@@ -458,16 +496,12 @@ async function updateCredit(params, cloud) {
   }
 
   try {
-    const { data: userData } = await db.collection('users')
-      .where({ openid: userId })
-      .limit(1)
-      .get()
-
-    if (userData.length === 0) {
+    const user = await findUserByUserId(db, userId)
+    if (!user) {
       return notFound('用户')
     }
 
-    const user = userData[0]
+    const openid = getUserOpenid(user)
     const currentScore = user.creditScore || 100
     let newScore = currentScore + parseInt(scoreChange)
     newScore = Math.max(0, Math.min(MAX_SCORE, newScore))
@@ -517,17 +551,19 @@ async function updateCredit(params, cloud) {
 
     await db.collection('credit_records').add({
       data: {
-        userId: userId,
+        userId: user._id,
         type: scoreChangeNum >= 0 ? 'plus' : 'minus',
         scoreChange: scoreChangeNum,
+        currentScore: newScore,
         reason: reason.trim(),
+        source: 'admin',
         operatorId: admin._id,
         createTime: db.serverDate()
       }
     })
 
     return success({
-      userId,
+      userId: openid || user._id,
       previousScore: currentScore,
       newScore: newScore,
       change: scoreChangeNum

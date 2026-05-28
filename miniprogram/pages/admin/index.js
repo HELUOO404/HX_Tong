@@ -10,6 +10,7 @@ const { ErrorHandler } = require('../../utils/errorHandler')
 const ThemeMixin = require('../../theme/theme-mixin')
 const AdminService = require('../../services/adminService')
 const { checkAdminAuth, filterMenuByPermission, ROLE_NAMES, getRoleFromTags } = require('../../utils/permission')
+const { LOGO_URL } = require('../../config/constants')
 
 Page({
   ...ThemeMixin,
@@ -21,7 +22,9 @@ Page({
     menuList: [],
     theme: {},
     stats: { totalUsers: 0, totalBookings: 0, pendingApprovals: 0, todayBookings: 0 },
-    recentBookings: []
+    recentBookings: [],
+    canApproveBookings: false,
+    defaultAvatar: LOGO_URL
   },
 
   onLoad() {
@@ -64,14 +67,30 @@ Page({
     const roleName = ROLE_NAMES[role] || '管理员'
 
     const menuList = filterMenuByPermission(adminInfo)
+    const canApproveBookings = menuList.some(item => item.id === 'approvals')
 
     this.setData({
       adminInfo,
       adminRole: role,
       roleName,
       adminRoleName: roleName,
-      menuList
+      menuList,
+      canApproveBookings
     })
+  },
+
+  onPendingApprovalsTap() {
+    if (!this.data.canApproveBookings) {
+      wx.showToast({ title: '暂无预约审批权限', icon: 'none' })
+      return
+    }
+    wx.navigateTo({ url: '/pages/admin/approvals' })
+  },
+
+  onRecentBookingTap(e) {
+    const { id } = e.currentTarget.dataset
+    if (!id) return
+    wx.navigateTo({ url: `/pages/admin/approval-detail?id=${id}` })
   },
 
   onMenuTap(e) {

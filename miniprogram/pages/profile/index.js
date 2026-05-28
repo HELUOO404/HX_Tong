@@ -9,6 +9,7 @@
 const UserStore = require('../../stores/userStore')
 const { ErrorHandler } = require('../../utils/errorHandler')
 const ThemeMixin = require('../../theme/theme-mixin')
+const { APP_NAME, APP_VERSION } = require('../../config/constants')
 
 Page({
   ...ThemeMixin,
@@ -17,42 +18,83 @@ Page({
     isLogin: false,
     userInfo: null,
     hasPermissionTag: false,
+    hasAdminBackendAccess: false,
     adminRole: '',
     adminRoleName: '',
+    appName: APP_NAME,
+    appVersion: APP_VERSION,
     theme: {}
   },
 
+  _unsubscribeUserStore: null,
+
   onLoad() {
     ThemeMixin.onLoad.call(this)
+
+    const userStore = UserStore.getInstance()
+    this._unsubscribeUserStore = userStore.subscribe((state) => {
+      this.applyUserState(state)
+    })
+  },
+
+  onUnload() {
+    if (this._unsubscribeUserStore) {
+      this._unsubscribeUserStore()
+      this._unsubscribeUserStore = null
+    }
   },
 
   onShow() {
     ThemeMixin.onShow.call(this)
+    this.syncUserState()
+  },
+
+  onPullDownRefresh() {
+    this.syncUserState().finally(() => {
+      wx.stopPullDownRefresh()
+    })
+  },
+
+  applyUserState(state) {
     const userStore = UserStore.getInstance()
-    const isReallyLogin = userStore.isLogin
-    const userInfo = userStore.userInfo
-    const hasPermissionTag = userStore.hasPermissionTag()
     const adminRole = userStore.getAdminRole()
     const roleNames = {
       systemAdmin: '系统管理员',
       superAdmin: '超级管理员',
       academyManager: '书院管理人',
       approvalManager: '审批管理人',
+      scheduleViewer: '会议安排查看员',
       custom: '管理员'
     }
 
     this.setData({
-      isLogin: isReallyLogin,
-      userInfo: userInfo,
-      hasPermissionTag: hasPermissionTag,
+      isLogin: state.isLogin,
+      userInfo: state.userInfo,
+      hasPermissionTag: userStore.hasPermissionTag(),
+      hasAdminBackendAccess: userStore.hasAdminBackendAccess(),
       adminRole: adminRole || '',
       adminRoleName: adminRole ? (roleNames[adminRole] || '管理员') : ''
     })
+  },
 
-    if (!isReallyLogin) {
+  async syncUserState() {
+    const userStore = UserStore.getInstance()
+
+    if (!userStore.isLogin) {
       wx.redirectTo({ url: '/pages/login/login' })
       return
     }
+
+    try {
+      await userStore.refreshUserInfo()
+    } catch (error) {
+      console.warn('[profile] 刷新用户信息失败，使用本地缓存:', error)
+    }
+
+    this.applyUserState({
+      isLogin: userStore.isLogin,
+      userInfo: userStore.userInfo
+    })
   },
 
   onEditProfile() {
@@ -109,8 +151,8 @@ Page({
 
   async onEnterAdminBackend() {
     const userStore = UserStore.getInstance()
-    if (!userStore.hasPermissionTag()) {
-      ErrorHandler.showError('无管理权限')
+    if (!userStore.hasAdminBackendAccess()) {
+      ErrorHandler.showError('无管理后台权限')
       return
     }
 

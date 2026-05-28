@@ -19,7 +19,7 @@
           <view class="tag-header">
             <text class="tag-name" style="color: {{theme.textPrimary}};">{{item.name}}</text>
             <view wx:if="{{item.role}}" class="tag-role-badge" style="background: {{theme.primary}}20;">
-              <text style="color: {{theme.primary}}; font-size: 22rpx;">{{item.role === 'systemAdmin' ? '系统管理员' : item.role === 'superAdmin' ? '超级管理员' : item.role === 'academyManager' ? '书院管理人' : item.role === 'approvalManager' ? '审批管理人' : ''}}</text>
+              <text style="color: {{theme.primary}}; font-size: 22rpx;">{{item.role === 'systemAdmin' ? '系统管理员' : item.role === 'superAdmin' ? '超级管理员' : item.role === 'academyManager' ? '书院管理人' : item.role === 'approvalManager' ? '审批管理人' : item.role === 'scheduleViewer' ? '会议安排查看员' : ''}}</text>
             </view>
           </view>
           <text wx:if="{{item.description}}" class="tag-desc" style="color: {{theme.textSecondary}};">{{item.description}}</text>
@@ -53,11 +53,20 @@
         </view>
       </view>
 
-      <scroll-view class="modal-scroll" scroll-y="true">
+      <scroll-view
+        class="modal-scroll"
+        scroll-y="{{true}}"
+        enhanced
+        show-scrollbar="{{true}}"
+        style="height: {{modalScrollHeight}}px;"
+      >
+        <view class="modal-scroll-inner">
         <view class="form-item">
-          <text class="form-label" style="color: {{theme.textPrimary}};">标签名称 *</text>
+          <view class="form-label-row">
+            <text class="form-label" style="color: {{theme.textPrimary}};">标签名称 *</text>
+            <text class="char-count" style="color: {{theme.textTertiary}};">{{formData.name.length || 0}}/20</text>
+          </view>
           <input class="form-input" placeholder="如：高级审核员、资源管理员" placeholder-style="color: {{theme.textTertiary}};" value="{{formData.name}}" data-field="name" bindinput="onInputChange" maxlength="20" style="color: {{theme.textPrimary}}; background: {{theme.background}};"/>
-          <text class="char-count" style="color: {{theme.textTertiary}};">{{formData.name.length || 0}}/20</text>
         </view>
 
         <view class="form-item">
@@ -96,6 +105,7 @@
               </view>
             </block>
           </view>
+        </view>
         </view>
       </scroll-view>
 

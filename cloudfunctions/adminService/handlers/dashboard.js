@@ -5,6 +5,73 @@
 
 const { success, error } = require('../utils/response')
 
+function addUserToMap(userMap, user) {
+  if (!user) return
+  if (user.openid) userMap[user.openid] = user
+  if (user._openid) userMap[user._openid] = user
+  if (user._id) userMap[user._id] = user
+}
+
+async function buildUserMap(db, _, userIds) {
+  const userMap = {}
+  const ids = [...new Set(userIds.filter(Boolean))]
+  if (ids.length === 0) return userMap
+
+  const results = await Promise.all([
+    db.collection('users').where({ openid: _.in(ids) }).get(),
+    db.collection('users').where({ _openid: _.in(ids) }).get()
+  ])
+
+  try {
+    const byDocId = await db.collection('users').where({ _id: _.in(ids) }).get()
+    results.push(byDocId)
+  } catch (e) {
+    console.warn('[dashboard] 按 _id 查询用户跳过:', e.message)
+  }
+  results.forEach(({ data }) => {
+    data.forEach((user) => addUserToMap(userMap, user))
+  })
+
+  return userMap
+}
+
+function getUserForBooking(booking, userMap) {
+  return userMap[booking.userId] || null
+}
+
+function resolveNickname(booking, user) {
+  const stored = booking.userName && String(booking.userName).trim()
+  if (stored) return stored
+  if (!user) return '未知用户'
+  return user.nickname || user.realName || user.name || '未知用户'
+}
+
+async function resolveCloudAvatars(cloud, list) {
+  const cloudIds = []
+  const indices = []
+  list.forEach((item, i) => {
+    if (item.avatarUrl && item.avatarUrl.startsWith('cloud://')) {
+      cloudIds.push(item.avatarUrl)
+      indices.push(i)
+    }
+  })
+  if (cloudIds.length === 0) return list
+
+  try {
+    const tempResult = await cloud.getTempFileURL({ fileList: cloudIds })
+    if (tempResult.fileList) {
+      tempResult.fileList.forEach((fileItem, i) => {
+        if (fileItem.tempFileURL && indices[i] !== undefined) {
+          list[indices[i]].avatarUrl = fileItem.tempFileURL
+        }
+      })
+    }
+  } catch (e) {
+    console.warn('[dashboard] 头像临时链接获取失败:', e.message)
+  }
+  return list
+}
+
 /**
  * 获取仪表盘数据
  * @param {Object} params - 请求参数
@@ -52,16 +119,12 @@ async function getDashboard(params, cloud) {
     const userIds = [...new Set(recentBookingsData.map(b => b.userId))]
     const roomIds = [...new Set(recentBookingsData.map(b => b.roomId))]
 
-    const [usersData, roomsData] = await Promise.all([
-      db.collection('users').where({ openid: _.in(userIds) }).get(),
-      db.collection('rooms').where({ _id: _.in(roomIds) }).get()
+    const [userMap, roomsData] = await Promise.all([
+      buildUserMap(db, _, userIds),
+      roomIds.length > 0
+        ? db.collection('rooms').where({ _id: _.in(roomIds) }).get()
+        : Promise.resolve({ data: [] })
     ])
-
-    // 构建映射表
-    const userMap = {}
-    usersData.data.forEach(u => {
-      userMap[u.openid] = u
-    })
 
     const roomMap = {}
     roomsData.data.forEach(r => {
@@ -69,19 +132,34 @@ async function getDashboard(params, cloud) {
     })
 
     // 组装最近预约数据
-    const recentBookings = recentBookingsData.map(booking => ({
-      _id: booking._id,
-      roomId: booking.roomId,
-      roomName: roomMap[booking.roomId]?.name || '未知会议室',
-      userId: booking.userId,
-      userName: userMap[booking.userId]?.name || userMap[booking.userId]?.realName || '未知用户',
-      date: booking.date,
-      startTime: booking.startTime,
-      endTime: booking.endTime,
-      purpose: booking.purpose,
-      status: booking.status,
-      createTime: booking.createTime || booking.createdAt
-    }))
+    let recentBookings = recentBookingsData.map((booking) => {
+      const user = getUserForBooking(booking, userMap)
+      const remark = (user && user.remark) ? String(user.remark).trim() : ''
+      const attendees = booking.attendees
+      return {
+        _id: booking._id,
+        roomId: booking.roomId,
+        roomName: roomMap[booking.roomId]?.name || booking.roomName || '未知会议室',
+        userId: booking.userId,
+        userName: resolveNickname(booking, user),
+        nickname: resolveNickname(booking, user),
+        remark,
+        avatarUrl: (user && user.avatarUrl) || '',
+        purpose: booking.purpose || '',
+        attendees: attendees !== undefined && attendees !== null && attendees !== '' ? attendees : '',
+        contactPhone: booking.contactPhone || '',
+        date: booking.date,
+        startTime: booking.startTime,
+        endTime: booking.endTime,
+        timeText: booking.date && booking.startTime && booking.endTime
+          ? `${booking.date} ${booking.startTime}-${booking.endTime}`
+          : (booking.date || ''),
+        status: booking.status,
+        createTime: booking.createTime || booking.createdAt
+      }
+    })
+
+    recentBookings = await resolveCloudAvatars(cloud, recentBookings)
 
     return success({
       stats: {

@@ -5,18 +5,27 @@
 
 /* 标签栏 */
 .tab-bar {
-  display: flex;
   background-color: var(--bg-white);
   border-bottom: 1rpx solid var(--border-color);
 }
 
+.tab-scroll {
+  width: 100%;
+  white-space: nowrap;
+}
+
+.tab-scroll-inner {
+  display: inline-flex;
+  min-width: 100%;
+}
+
 .tab-item {
-  flex: 1;
-  text-align: center;
-  padding: 28rpx 0;
-  font-size: 30rpx;
+  flex-shrink: 0;
+  padding: 28rpx 28rpx;
+  font-size: 28rpx;
   color: var(--text-secondary);
   position: relative;
+  text-align: center;
 }
 
 .tab-item.active {
@@ -34,6 +43,238 @@
   height: 4rpx;
   background-color: var(--primary-color);
   border-radius: 2rpx;
+}
+
+/* 独立筛选条：约 40px 高，贴 Tab 下方 */
+.date-filter-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80rpx;
+  padding: 0 32rpx;
+  background-color: var(--bg-white);
+  border-bottom: 1rpx solid var(--border-color);
+  box-sizing: border-box;
+}
+
+.date-filter-strip:active {
+  background-color: #fafafa;
+}
+
+.date-filter-left {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  min-width: 0;
+  flex: 1;
+}
+
+.date-filter-icon {
+  width: 32rpx;
+  height: 32rpx;
+  flex-shrink: 0;
+  display: block;
+}
+
+.date-filter-label {
+  font-size: 28rpx;
+  font-weight: 500;
+  line-height: 32rpx;
+}
+
+.date-filter-caret {
+  font-size: 28rpx;
+  line-height: 32rpx;
+  margin-left: 4rpx;
+  opacity: 0.7;
+}
+
+.date-filter-reset {
+  font-size: 26rpx;
+  line-height: 32rpx;
+  padding: 0 0 0 24rpx;
+  flex-shrink: 0;
+}
+
+.date-filter-reset.active:active {
+  opacity: 0.7;
+}
+
+.date-filter-reset.inactive {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* 底部半屏日历 Bottom Sheet */
+.sheet-mask {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.28s ease, visibility 0.28s ease;
+  z-index: 998;
+}
+
+.sheet-mask.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.sheet-calendar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: 52vh;
+  border-radius: 24rpx 24rpx 0 0;
+  padding: 0 32rpx;
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+  transform: translateY(100%);
+  transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 999;
+  box-shadow: 0 -12rpx 40rpx rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.sheet-calendar.show {
+  transform: translateY(0);
+}
+
+.sheet-handle {
+  width: 64rpx;
+  height: 8rpx;
+  margin: 16rpx auto 8rpx;
+  background-color: #e0e0e0;
+  border-radius: 4rpx;
+}
+
+.sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8rpx 0 16rpx;
+}
+
+.sheet-title {
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.sheet-close {
+  font-size: 28rpx;
+  padding: 8rpx 0 8rpx 16rpx;
+}
+
+.sheet-legend {
+  display: block;
+  text-align: center;
+  font-size: 22rpx;
+  padding-top: 8rpx;
+  padding-bottom: 8rpx;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24rpx;
+}
+
+.calendar-nav-btn {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.calendar-nav-btn:active {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.calendar-nav-arrow {
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+.calendar-title {
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 16rpx;
+}
+
+.calendar-weekday {
+  text-align: center;
+  font-size: 24rpx;
+  padding: 12rpx 0;
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8rpx;
+  margin-bottom: 12rpx;
+}
+
+.calendar-day {
+  height: 72rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  position: relative;
+}
+
+.calendar-day-text {
+  font-size: 28rpx;
+  line-height: 1.2;
+}
+
+.calendar-dot {
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  margin-top: 4rpx;
+  flex-shrink: 0;
+}
+
+/* 无预约：置灰且不可点 */
+.calendar-day.disabled {
+  pointer-events: none;
+}
+
+.calendar-day.disabled .calendar-day-text {
+  color: #d9d9d9 !important;
+}
+
+.calendar-day.other-month.disabled .calendar-day-text {
+  color: #e8e8e8 !important;
+}
+
+/* 有预约：可点击 */
+.calendar-day.enabled:active {
+  background-color: rgba(24, 144, 255, 0.12);
+}
+
+.calendar-day.selected {
+  background-color: var(--primary-color);
+}
+
+.calendar-day.selected .calendar-day-text {
+  font-weight: 600;
+}
+
+.calendar-day.today:not(.selected) .calendar-day-text {
+  font-weight: 600;
 }
 
 /* 加载中 */

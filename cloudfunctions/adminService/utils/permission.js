@@ -11,7 +11,8 @@ const DEFAULT_PERMISSIONS = {
   canManagePermissions: false,
   canManageSystem: false,
   canDatabaseManage: false,
-  canAssignPermissionTags: false
+  canAssignPermissionTags: false,
+  canViewBookingDetails: false
 }
 
 function getRoleFromTags(permissionTags) {

@@ -3,6 +3,7 @@
  */
 
 const { success, error } = require('../../utils/response')
+const { resolveRoomsImages } = require('../../shared/resolveImages')
 
 module.exports = async (params, cloud) => {
   const db = cloud.database()
@@ -30,6 +31,8 @@ module.exports = async (params, cloud) => {
         .get()
       data = result.data || []
     }
+
+    data = await resolveRoomsImages(cloud, data)
 
     return success(data)
   } catch (err) {

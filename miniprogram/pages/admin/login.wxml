@@ -2,7 +2,7 @@
   <!-- 标题 -->
   <view class="header-section">
     <text class="title">系统管理员登录</text>
-    <text class="subtitle">红芯通会议室预约管理系统</text>
+    <text class="subtitle">芯预约会议室预约管理系统</text>
   </view>
 
   <!-- 登录表单 -->

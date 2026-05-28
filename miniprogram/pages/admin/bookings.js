@@ -23,7 +23,9 @@ Page({
       { id: 'cancelled', name: '已取消' },
       { id: 'completed', name: '已结束' },
       { id: 'expired', name: '已过期' }
-    ]
+    ],
+    showRejectModal: false,
+    rejectTargetBooking: null
   },
 
   onLoad() {
@@ -93,26 +95,36 @@ Page({
 
   onReject(e) {
     const { booking } = e.currentTarget.dataset
-    wx.showModal({
-      title: '拒绝预约',
-      content: '请输入拒绝原因（可选）',
-      editable: true,
-      placeholderText: '请输入拒绝原因',
-      success: async (res) => {
-        if (res.confirm) {
-          try {
-            ErrorHandler.showLoading('处理中...')
-            await adminService.approveBooking(booking._id, 'reject', res.content)
-            ErrorHandler.hideLoading()
-            ErrorHandler.showSuccess('已拒绝')
-            this.loadBookings(true)
-          } catch (error) {
-            ErrorHandler.hideLoading()
-            ErrorHandler.handle(error)
-          }
-        }
-      }
+    this.setData({
+      showRejectModal: true,
+      rejectTargetBooking: booking
     })
+  },
+
+  onRejectCancel() {
+    this.setData({
+      showRejectModal: false,
+      rejectTargetBooking: null
+    })
+  },
+
+  async onRejectConfirm(e) {
+    const booking = this.data.rejectTargetBooking
+    if (!booking) return
+
+    const reason = e.detail.reason
+    this.setData({ showRejectModal: false, rejectTargetBooking: null })
+
+    try {
+      ErrorHandler.showLoading('处理中...')
+      await adminService.approveBooking(booking._id, 'reject', reason)
+      ErrorHandler.hideLoading()
+      ErrorHandler.showSuccess('已拒绝')
+      this.loadBookings(true)
+    } catch (error) {
+      ErrorHandler.hideLoading()
+      ErrorHandler.handle(error)
+    }
   },
 
   onLoadMore() {

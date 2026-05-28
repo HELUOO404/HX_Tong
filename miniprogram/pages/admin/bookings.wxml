@@ -47,7 +47,7 @@
         <view class="booking-detail">
           <view class="info-row">
             <text class="label" style="color: {{theme.textTertiary}};">预约人：</text>
-            <text style="color: {{theme.textSecondary}};">{{(item.userInfo && (item.userInfo.name || item.userInfo.realName)) || '未知用户'}}</text>
+            <text style="color: {{theme.textSecondary}};">{{(item.userInfo && (item.userInfo.nickname || item.userInfo.name || item.userInfo.realName)) || '未知用户'}}</text>
           </view>
           <view class="info-row">
             <text class="label" style="color: {{theme.textTertiary}};">日期：</text>
@@ -105,4 +105,12 @@
     <view class="loading-spinner" style="border-color: {{theme.primary}}; border-top-color: transparent;"></view>
     <text style="color: {{theme.textSecondary}};">加载中...</text>
   </view>
+
+  <reject-reason-modal
+    show="{{showRejectModal}}"
+    placeholder="请输入拒绝原因（可选）"
+    required="{{false}}"
+    bindconfirm="onRejectConfirm"
+    bindcancel="onRejectCancel"
+  />
 </view>

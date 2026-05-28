@@ -8,66 +8,30 @@
 
   <view class="form-section" style="background: {{theme.card}};">
     <view class="form-item">
-      <text class="form-label" style="color: {{theme.textSecondary}};">真实姓名</text>
+      <text class="form-label" style="color: {{theme.textSecondary}};">昵称</text>
       <input
         class="form-input"
-        placeholder="请输入真实姓名"
+        placeholder="请输入昵称"
         placeholder-style="color: {{theme.textTertiary}};"
-        value="{{formData.realName}}"
-        data-field="realName"
+        value="{{formData.nickname}}"
+        data-field="nickname"
         bindinput="onInputChange"
         style="background: {{theme.background}}; color: {{theme.textPrimary}};"
       />
     </view>
 
     <view class="form-item">
-      <text class="form-label" style="color: {{theme.textSecondary}};">学院</text>
-      <input
-        class="form-input"
-        placeholder="请输入学院"
+      <text class="form-label" style="color: {{theme.textSecondary}};">备注 <text style="color: {{theme.textTertiary}}; font-size: 24rpx;">选填</text></text>
+      <textarea
+        class="form-textarea"
+        maxlength="200"
+        placeholder="选填"
         placeholder-style="color: {{theme.textTertiary}};"
-        value="{{formData.academy}}"
-        data-field="academy"
+        value="{{formData.remark}}"
+        data-field="remark"
         bindinput="onInputChange"
-        style="background: {{theme.background}}; color: {{theme.textPrimary}};"
-      />
-    </view>
-
-    <view class="form-item">
-      <text class="form-label" style="color: {{theme.textSecondary}};">班级</text>
-      <input
-        class="form-input"
-        placeholder="请输入班级"
-        placeholder-style="color: {{theme.textTertiary}};"
-        value="{{formData.className}}"
-        data-field="className"
-        bindinput="onInputChange"
-        style="background: {{theme.background}}; color: {{theme.textPrimary}};"
-      />
-    </view>
-
-    <view class="form-item">
-      <text class="form-label" style="color: {{theme.textSecondary}};">学号</text>
-      <input
-        class="form-input"
-        placeholder="请输入学号"
-        placeholder-style="color: {{theme.textTertiary}};"
-        value="{{formData.studentId}}"
-        data-field="studentId"
-        bindinput="onInputChange"
-        style="background: {{theme.background}}; color: {{theme.textPrimary}};"
-      />
-    </view>
-
-    <view class="form-item">
-      <text class="form-label" style="color: {{theme.textSecondary}};">手机号</text>
-      <input
-        class="form-input"
-        placeholder="请输入手机号"
-        placeholder-style="color: {{theme.textTertiary}};"
-        value="{{formData.phone}}"
-        data-field="phone"
-        bindinput="onInputChange"
+        auto-height
+        show-confirm-bar="{{false}}"
         style="background: {{theme.background}}; color: {{theme.textPrimary}};"
       />
     </view>
@@ -80,7 +44,7 @@
     </view>
     <view class="tag-select-list">
       <block wx:for="{{availableTags}}" wx:key="_id">
-        <view class="tag-select-item {{item.checked ? 'active' : ''}}" 
+        <view class="tag-select-item {{item.checked ? 'active' : ''}}"
               data-index="{{index}}" bindtap="onToggleTag"
               style="{{item.checked ? 'border-color: ' + theme.primary + '; color: ' + theme.primary + '; background: #e6f4ff;' : ''}}">
           <text>{{item.name}}</text>

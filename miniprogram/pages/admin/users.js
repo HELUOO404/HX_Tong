@@ -1,16 +1,34 @@
 /**
  * @file 用户管理页面
- * @description 管理员用户管理：查看、编辑、删除、重置头像、动态分类筛选、标签关联管理
+ * @description 管理员用户管理：查看、编辑、删除、重置头像、信誉分调整
  */
 
 const AdminService = require('../../services/adminService')
 const { ErrorHandler } = require('../../utils/errorHandler')
 const { checkAdminAuth, checkPermission } = require('../../utils/permission')
+const ThemeMixin = require('../../theme/theme-mixin')
 
 const adminService = AdminService.getInstance()
 
+function normalizeUserList(list) {
+  return (list || []).map((user) => {
+    const tags = user.permissionTags || []
+    const seen = new Set()
+    const permissionTags = tags.filter((tag) => {
+      const key = tag.tagId || tag._id || tag.tagName || tag.name || ''
+      if (!key || seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+    return { ...user, permissionTags }
+  })
+}
+
 Page({
+  ...ThemeMixin,
+
   data: {
+    theme: {},
     users: [],
     page: 1,
     pageSize: 20,
@@ -44,12 +62,14 @@ Page({
     filterProfile: 'all',
     creditModalVisible: false,
     creditTargetUser: null,
-    creditChange: 0,
+    creditIsNegative: false,
+    creditChangeAbs: '',
     creditReason: '',
     creditPreview: 0
   },
 
   onLoad() {
+    ThemeMixin.onLoad.call(this)
     if (!this.checkAdminAuth()) return
     this.loadCurrentAdmin()
   },
@@ -59,6 +79,7 @@ Page({
   },
 
   onShow() {
+    ThemeMixin.onShow.call(this)
     this.loadUsers()
   },
 
@@ -124,7 +145,7 @@ Page({
       const res = await adminService.getUserList(params)
 
       this.setData({
-        users: res.list || [],
+        users: normalizeUserList(res.list),
         total: res.total || 0,
         page: 1,
         totalPages: res.totalPages || 0,
@@ -167,7 +188,7 @@ Page({
 
       const res = await adminService.getUserList(params)
 
-      const newList = res.list || []
+      const newList = normalizeUserList(res.list)
       this.setData({
         users: [...this.data.users, ...newList],
         page: this.data.page + 1,
@@ -199,10 +220,38 @@ Page({
     })
   },
 
+  getUserFromEvent(e) {
+    const rawIndex = e.currentTarget.dataset.idx
+    if (rawIndex !== undefined && rawIndex !== '') {
+      const index = Number(rawIndex)
+      if (!Number.isNaN(index) && this.data.users[index]) {
+        return this.data.users[index]
+      }
+    }
+    let user = e.currentTarget.dataset.user
+    if (typeof user === 'string') {
+      try {
+        user = JSON.parse(user)
+      } catch (err) {
+        user = null
+      }
+    }
+    return user || null
+  },
+
+  resolveUserId(user) {
+    if (!user) return ''
+    return user.openid || user._openid || user._id || ''
+  },
+
   onShowEditModal(e) {
-    const user = e.currentTarget.dataset.user
+    const user = this.getUserFromEvent(e)
+    if (!user) {
+      ErrorHandler.showError('无法获取用户信息')
+      return
+    }
     wx.navigateTo({
-      url: `/pages/admin/user-edit`,
+      url: '/pages/admin/user-edit',
       success: (res) => {
         res.eventChannel.emit('acceptUserData', user)
       }
@@ -214,7 +263,11 @@ Page({
   },
 
   onShowDeleteModal(e) {
-    const user = e.currentTarget.dataset.user
+    const user = this.getUserFromEvent(e)
+    if (!user) {
+      ErrorHandler.showError('无法获取用户信息')
+      return
+    }
     this.setData({ currentUser: user, isShowDeleteModal: true })
   },
 
@@ -222,42 +275,39 @@ Page({
     this.setData({ isShowDeleteModal: false, currentUser: null })
   },
 
-  onFirstConfirmDelete() {
-    wx.showModal({
-      title: '确认删除',
-      content: `确定要删除用户"${this.data.currentUser.realName}"吗？`,
-      success: (res) => {
-        if (res.confirm) {
-          wx.showModal({
-            title: '再次确认',
-            content: '此操作不可恢复，确认删除？',
-            success: (res2) => {
-              if (res2.confirm) {
-                this.doDeleteUser()
-              }
-            }
-          })
-        }
-      }
-    })
+  onConfirmDelete() {
+    this.doDeleteUser()
   },
 
   async doDeleteUser() {
     const { currentUser } = this.data
     if (!currentUser) return
 
+    const userId = this.resolveUserId(currentUser)
+    if (!userId) {
+      ErrorHandler.showError('用户标识无效')
+      return
+    }
+
     try {
-      await adminService.deleteUser(currentUser.openid || currentUser._openid)
+      ErrorHandler.showLoading('删除中...')
+      await adminService.deleteUser(userId)
+      ErrorHandler.hideLoading()
       ErrorHandler.showSuccess('删除成功')
       this.onCloseDeleteModal()
       this.loadUsers()
     } catch (error) {
+      ErrorHandler.hideLoading()
       ErrorHandler.handle(error)
     }
   },
 
   onShowResetAvatarModal(e) {
-    const user = e.currentTarget.dataset.user
+    const user = this.getUserFromEvent(e)
+    if (!user) {
+      ErrorHandler.showError('无法获取用户信息')
+      return
+    }
     this.setData({ currentUser: user, isShowResetAvatarModal: true })
   },
 
@@ -265,23 +315,27 @@ Page({
     this.setData({ isShowResetAvatarModal: false, currentUser: null })
   },
 
-  onConfirmResetAvatar() {
-    wx.showModal({
-      title: '确认重置',
-      content: `确定要重置用户"${this.data.currentUser.realName}"的头像吗？`,
-      success: async (res) => {
-        if (res.confirm) {
-          try {
-            await adminService.resetAvatar(this.data.currentUser.openid || this.data.currentUser._openid)
-            ErrorHandler.showSuccess('头像已重置')
-            this.onCloseResetAvatarModal()
-            this.loadUsers()
-          } catch (error) {
-            ErrorHandler.handle(error)
-          }
-        }
-      }
-    })
+  async onConfirmResetAvatar() {
+    const { currentUser } = this.data
+    if (!currentUser) return
+
+    const userId = this.resolveUserId(currentUser)
+    if (!userId) {
+      ErrorHandler.showError('用户标识无效')
+      return
+    }
+
+    try {
+      ErrorHandler.showLoading('重置中...')
+      await adminService.resetAvatar(userId)
+      ErrorHandler.hideLoading()
+      ErrorHandler.showSuccess('头像已重置')
+      this.onCloseResetAvatarModal()
+      this.loadUsers()
+    } catch (error) {
+      ErrorHandler.hideLoading()
+      ErrorHandler.handle(error)
+    }
   },
 
   onEditTags(e) {
@@ -298,6 +352,9 @@ Page({
         return {
           tagId: tagId,
           name: tag.name || tag.tagName,
+          tagName: tag.name || tag.tagName,
+          role: tag.role || '',
+          permissions: tag.permissions || {},
           selected: currentTagIds.indexOf(tagId) !== -1
         }
       })
@@ -442,11 +499,16 @@ Page({
   },
 
   onShowCreditModal(e) {
-    const user = e.currentTarget.dataset.user
+    const user = this.getUserFromEvent(e)
+    if (!user) {
+      ErrorHandler.showError('无法获取用户信息')
+      return
+    }
     this.setData({
       creditTargetUser: user,
       creditModalVisible: true,
-      creditChange: 0,
+      creditIsNegative: false,
+      creditChangeAbs: '',
       creditReason: '',
       creditPreview: user.creditScore || 0
     })
@@ -456,43 +518,75 @@ Page({
     this.setData({
       creditModalVisible: false,
       creditTargetUser: null,
-      creditChange: 0,
+      creditIsNegative: false,
+      creditChangeAbs: '',
       creditReason: '',
       creditPreview: 0
     })
   },
 
-  onCreditChangeInput(e) {
-    const change = parseInt(e.detail.value) || 0
+  onSetCreditSign(e) {
+    const negative = e.currentTarget.dataset.negative === true || e.currentTarget.dataset.negative === 'true'
+    this.setData({ creditIsNegative: negative })
+    this.updateCreditPreview(this.data.creditChangeAbs, negative)
+  },
+
+  onCreditAmountInput(e) {
+    const raw = (e.detail.value || '').replace(/\D/g, '')
+    this.setData({ creditChangeAbs: raw })
+    this.updateCreditPreview(raw)
+  },
+
+  updateCreditPreview(rawAmount, isNegative) {
+    const amount = parseInt(rawAmount, 10) || 0
+    const negative = typeof isNegative === 'boolean' ? isNegative : this.data.creditIsNegative
+    const change = negative ? -amount : amount
     const baseScore = this.data.creditTargetUser ? (this.data.creditTargetUser.creditScore || 0) : 0
-    this.setData({
-      creditChange: e.detail.value,
-      creditPreview: baseScore + change
-    })
+    let preview = baseScore + change
+    preview = Math.max(0, Math.min(150, preview))
+    this.setData({ creditPreview: preview })
+  },
+
+  onCreditChangeInput(e) {
+    this.onCreditAmountInput(e)
   },
 
   onCreditReasonInput(e) {
     this.setData({ creditReason: e.detail.value })
   },
 
-  onConfirmCreditChange() {
-    const { creditTargetUser, creditChange, creditReason } = this.data
+  async onConfirmCreditChange() {
+    const { creditTargetUser, creditChangeAbs, creditIsNegative, creditReason } = this.data
+    if (!creditTargetUser) return
+
     if (!creditReason || !creditReason.trim()) {
       wx.showToast({ title: '请输入调整原因', icon: 'none' })
       return
     }
-    const changeNum = parseInt(creditChange) || 0
-    if (changeNum === 0) {
+
+    const amount = parseInt(creditChangeAbs, 10) || 0
+    const changeNum = creditIsNegative ? -amount : amount
+    if (!changeNum || changeNum === 0) {
       wx.showToast({ title: '调整值不能为0', icon: 'none' })
       return
     }
-    const userId = creditTargetUser.openid || creditTargetUser._openid
-    adminService.updateCredit(userId, changeNum, creditReason).then(() => {
+
+    const userId = this.resolveUserId(creditTargetUser)
+    if (!userId) {
+      ErrorHandler.showError('用户标识无效')
+      return
+    }
+
+    try {
+      ErrorHandler.showLoading('提交中...')
+      await adminService.updateCredit(userId, changeNum, creditReason.trim())
+      ErrorHandler.hideLoading()
       wx.showToast({ title: '信誉分调整成功', icon: 'success' })
       this.onCloseCreditModal()
       this.loadUsers()
-    }).catch((error) => {
+    } catch (error) {
+      ErrorHandler.hideLoading()
       ErrorHandler.handle(error)
-    })
+    }
   }
 })

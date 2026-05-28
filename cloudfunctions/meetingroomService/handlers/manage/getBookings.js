@@ -44,6 +44,7 @@ module.exports = async (params, cloud) => {
     }
 
     const {
+      bookingId,
       status,
       roomId,
       date,
@@ -52,37 +53,56 @@ module.exports = async (params, cloud) => {
       pageSize = 20
     } = params
 
-    const where = {}
-
-    if (status) {
-      where.status = status
-    }
-
-    if (roomId) {
-      where.roomId = roomId
-    }
-
-    if (date) {
-      where.date = date
-    }
-
-    if (keyword) {
-      where.userName = db.RegExp({ regexp: keyword, options: 'i' })
-    }
-
     const limit = parseInt(pageSize)
     const skip = (parseInt(page) - 1) * limit
 
-    const { data: bookings } = await db.collection('bookings')
-      .where(where)
-      .orderBy('createdAt', 'desc')
-      .skip(skip)
-      .limit(limit)
-      .get()
+    let bookings = []
+    let total = 0
 
-    const { total } = await db.collection('bookings')
-      .where(where)
-      .count()
+    if (bookingId) {
+      try {
+        const { data: booking } = await db.collection('bookings').doc(bookingId).get()
+        if (booking) {
+          bookings = [booking]
+          total = 1
+        }
+      } catch (e) {
+        console.warn('[getBookings] 按 bookingId 查询失败:', e.message)
+      }
+    } else {
+      const where = {}
+
+      if (status) {
+        where.status = status
+      }
+
+      if (roomId) {
+        where.roomId = roomId
+      }
+
+      if (date) {
+        where.date = date
+      }
+
+      if (keyword) {
+        where.userName = db.RegExp({ regexp: keyword, options: 'i' })
+      }
+
+      const queryResult = await db.collection('bookings')
+        .where(where)
+        .orderBy('createdAt', 'desc')
+        .skip(skip)
+        .limit(limit)
+        .get()
+
+      bookings = queryResult.data
+
+      const countResult = await db.collection('bookings')
+        .where(where)
+        .count()
+
+      total = countResult.total
+    }
 
     const userIds = [...new Set(bookings.map(b => b.userId).filter(Boolean))]
     const roomIds = [...new Set(bookings.map(b => b.roomId).filter(Boolean))]
@@ -120,7 +140,10 @@ module.exports = async (params, cloud) => {
       return {
         ...booking,
         userInfo: {
+          nickname: user.nickname || '',
+          remark: user.remark || '',
           realName: user.realName || '',
+          name: user.nickname || user.realName || '',
           avatarUrl: user.avatarUrl || '',
           phone: user.phone || ''
         },

@@ -1,7 +1,6 @@
 /**
  * @file 更新用户信息处理器
- * @description 更新当前登录用户的信息，支持更新：avatarUrl, phone等
- * 不能更新：openid, role, 信誉分等敏感字段
+ * @description 更新当前登录用户的头像、昵称、备注
  */
 
 const response = require('../utils/response')
@@ -15,45 +14,44 @@ module.exports = async (params, cloud) => {
     return response.unauthorized()
   }
 
-  // 允许更新的字段白名单
-  const allowedFields = ['avatarUrl', 'phone']
-  
-  // 禁止更新的敏感字段
+  const allowedFields = ['avatarUrl', 'nickname', 'remark']
   const forbiddenFields = ['openid', 'role', 'status', 'creditScore', 'createdAt', '_id']
 
   try {
-    // 检查是否包含禁止更新的字段
     for (const field of forbiddenFields) {
       if (params[field] !== undefined) {
         return response.error(403, `禁止更新字段: ${field}`)
       }
     }
 
-    // 构建更新数据
     const updateData = {
       updateTime: db.serverDate()
     }
 
-    // 只处理允许的字段
     for (const field of allowedFields) {
       if (params[field] !== undefined) {
-        // 手机号需要验证
-        if (field === 'phone' && params[field]) {
-          const phoneValidation = validator.validatePhone(params[field])
-          if (!phoneValidation.valid) {
-            return response.error(400, phoneValidation.message)
+        if (field === 'nickname') {
+          const nicknameValidation = validator.validateNickname(params[field])
+          if (!nicknameValidation.valid) {
+            return response.error(400, nicknameValidation.message)
           }
+          updateData.nickname = params[field].trim()
+        } else if (field === 'remark') {
+          const remarkValidation = validator.validateRemark(params[field])
+          if (!remarkValidation.valid) {
+            return response.error(400, remarkValidation.message)
+          }
+          updateData.remark = params[field].trim()
+        } else {
+          updateData[field] = params[field]
         }
-        updateData[field] = params[field]
       }
     }
 
-    // 检查是否有可更新的字段
     if (Object.keys(updateData).length <= 1) {
       return response.error(400, '没有需要更新的字段')
     }
 
-    // 查找用户
     const { data: users } = await db.collection('users')
       .where({ openid: OPENID })
       .limit(1)
@@ -65,20 +63,35 @@ module.exports = async (params, cloud) => {
 
     const userId = users[0]._id
 
-    // 更新用户信息
     await db.collection('users')
       .doc(userId)
       .update({ data: updateData })
 
-    // 获取更新后的用户信息
     const { data: updatedUser } = await db.collection('users')
       .doc(userId)
       .get()
 
+    let resolvedAvatarUrl = updatedUser.avatarUrl
+    if (resolvedAvatarUrl && resolvedAvatarUrl.startsWith('cloud://')) {
+      try {
+        const tempResult = await cloud.getTempFileURL({
+          fileList: [resolvedAvatarUrl]
+        })
+        if (tempResult.fileList && tempResult.fileList.length > 0 && tempResult.fileList[0].tempFileURL) {
+          resolvedAvatarUrl = tempResult.fileList[0].tempFileURL
+        }
+      } catch (e) {
+        console.warn('[userService.updateInfo] 头像临时URL转换失败:', e)
+        resolvedAvatarUrl = ''
+      }
+    }
+
     return response.success({
       _id: updatedUser._id,
-      avatarUrl: updatedUser.avatarUrl,
-      phone: updatedUser.phone,
+      nickname: updatedUser.nickname || '',
+      remark: updatedUser.remark || '',
+      avatarUrl: resolvedAvatarUrl,
+      profileCompleted: updatedUser.profileCompleted,
       updateTime: updatedUser.updateTime
     }, '更新成功')
   } catch (error) {

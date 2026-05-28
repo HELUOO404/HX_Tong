@@ -15,7 +15,8 @@ const ROLE_NAMES = {
   systemAdmin: '系统管理员',
   superAdmin: '超级管理员',
   academyManager: '书院管理人',
-  approvalManager: '审批管理人'
+  approvalManager: '审批管理人',
+  scheduleViewer: '会议安排查看员'
 }
 
 Page({
@@ -24,12 +25,9 @@ Page({
   data: {
     userId: '',
     formData: {
-      realName: '',
+      nickname: '',
+      remark: '',
       avatarUrl: '',
-      phone: '',
-      studentId: '',
-      className: '',
-      academy: '',
       permissionTags: []
     },
     availableTags: [],
@@ -82,12 +80,9 @@ Page({
       this.setData({
         userId: user.openid || user._openid || user._id,
         formData: {
-          realName: user.realName || '',
+          nickname: user.nickname || user.realName || '',
+          remark: user.remark || '',
           avatarUrl: user.avatarUrl || '',
-          phone: user.phone || '',
-          studentId: user.studentId || '',
-          className: user.className || '',
-          academy: user.academy || '',
           permissionTags: user.permissionTags || []
         }
       })
@@ -176,13 +171,13 @@ Page({
   async onSaveUser() {
     const { userId, formData } = this.data
 
-    if (!formData.realName.trim()) {
-      ErrorHandler.showError('请输入真实姓名')
+    if (!formData.nickname.trim()) {
+      ErrorHandler.showError('请输入昵称')
       return
     }
 
-    if (formData.studentId && !/^\d{9}$/.test(formData.studentId.trim())) {
-      ErrorHandler.showError('学号必须为9位数字')
+    if (formData.remark.trim().length > 200) {
+      ErrorHandler.showError('备注不能超过200个字符')
       return
     }
 

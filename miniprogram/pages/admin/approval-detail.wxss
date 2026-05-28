@@ -60,7 +60,16 @@
 .user-info {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.user-info-main {
+  display: flex;
+  align-items: center;
   gap: 24rpx;
+  flex: 1;
+  min-width: 0;
 }
 
 .avatar {
@@ -95,9 +104,47 @@
   color: var(--text-primary);
 }
 
-.user-phone {
+.user-remark {
   font-size: 26rpx;
   color: var(--text-secondary);
+  word-break: break-all;
+}
+
+.user-contact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 12rpx 16rpx;
+  border-radius: 16rpx;
+  background-color: rgba(24, 144, 255, 0.06);
+  min-width: 160rpx;
+  max-width: 220rpx;
+}
+
+.user-contact-hover {
+  background-color: rgba(24, 144, 255, 0.14);
+}
+
+.contact-phone-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-bottom: 8rpx;
+}
+
+.contact-phone-num {
+  font-size: 26rpx;
+  font-weight: 600;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.5rpx;
+  text-align: center;
+  word-break: break-all;
+}
+
+.contact-phone-action {
+  font-size: 20rpx;
+  margin-top: 6rpx;
 }
 
 .room-info {
@@ -142,20 +189,6 @@
   text-align: right;
   flex: 1;
   margin-left: 24rpx;
-  color: var(--text-primary);
-}
-
-.purpose-row {
-  flex-direction: column;
-  gap: 8rpx;
-}
-
-.purpose-text {
-  text-align: left;
-  background-color: var(--bg-gray);
-  padding: 16rpx;
-  border-radius: var(--border-radius-md);
-  line-height: 1.5;
   color: var(--text-primary);
 }
 

@@ -4,6 +4,7 @@
  */
 
 const response = require('../utils/response')
+const { hydratePermissionTags } = require('../utils/hydratePermissionTags')
 
 module.exports = async (params, cloud) => {
   const db = cloud.database()
@@ -54,10 +55,14 @@ module.exports = async (params, cloud) => {
       totalMinus: 0
     }
 
+    const permissionTags = await hydratePermissionTags(db, userInfo.permissionTags || [])
+
     return response.success({
       _id: userInfo._id,
       openid: userInfo.openid,
       avatarUrl: avatarUrl,
+      nickname: userInfo.nickname || '',
+      remark: userInfo.remark || '',
       realName: userInfo.realName,
       className: userInfo.className,
       studentId: userInfo.studentId,
@@ -66,7 +71,7 @@ module.exports = async (params, cloud) => {
       status: userInfo.status,
       profileCompleted: userInfo.profileCompleted,
       academy: userInfo.academy || '',
-      permissionTags: userInfo.permissionTags || [],
+      permissionTags: permissionTags,
       creditScore: userInfo.creditScore || creditInfo.currentScore || 100,
       creditInfo: {
         currentScore: userInfo.creditScore || creditInfo.currentScore || 100,

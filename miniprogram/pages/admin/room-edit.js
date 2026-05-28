@@ -192,7 +192,7 @@ Page({
       const ext = filePath.split('.').pop()
       const cloudPath = `room_images/${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${ext}`
       const result = await wx.cloud.uploadFile({ cloudPath, filePath })
-      return { url: result.fileID, isDefault: this.data.images.length === 0 }
+      return { url: result.fileID, fileId: result.fileID, isDefault: this.data.images.length === 0 }
     } catch (error) {
       console.error('[RoomEdit] 上传图片失败:', error)
       return null
@@ -337,7 +337,10 @@ Page({
         openTime: this.data.openTime,
         closeTime: this.data.closeTime,
         status: this.data.status,
-        images: this.data.images,
+        images: this.data.images.map(img => ({
+          url: (img.fileId && img.fileId.startsWith('cloud://')) ? img.fileId : img.url,
+          isDefault: !!img.isDefault
+        })),
         facilities: this.data.facilities,
         publicResources: this.data.publicResources,
         approvalRuleId: this.data.approvalRuleId || null,

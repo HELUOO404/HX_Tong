@@ -35,6 +35,7 @@
     <block wx:if="{{users.length > 0}}">
       <view
         wx:for="{{users}}"
+        wx:for-index="userIndex"
         wx:key="_id"
         class="user-card"
         style="background: {{theme.card}}; border-color: {{theme.border}};"
@@ -42,10 +43,10 @@
         <view class="user-info">
           <image class="avatar" src="{{item.avatarUrl || '/assets/images/logo.png'}}" mode="aspectFill"/>
           <view class="user-detail">
-            <text class="user-name" style="color: {{theme.textPrimary}};">{{item.realName || '未设置姓名'}}</text>
-            <text class="user-phone" style="color: {{theme.textSecondary}};">{{item.phone || '未绑定手机号'}}</text>
+            <text class="user-name" style="color: {{theme.textPrimary}};">{{item.nickname || item.realName || '未设置昵称'}}</text>
+            <text class="user-phone" style="color: {{theme.textSecondary}};">{{item.remark || '未填写备注'}}</text>
             <view class="user-meta">
-              <text class="meta-tag" style="color: {{theme.textTertiary}}; background: {{theme.background}};">学号: {{item.studentId || '无'}}</text>
+              <text class="meta-tag" style="color: {{theme.textTertiary}}; background: {{theme.background}};" wx:if="{{item.phone}}">手机: {{item.phone}}</text>
             </view>
           </view>
         </view>
@@ -61,14 +62,38 @@
           </view>
           <view class="credit-score" style="color: {{theme.primary}};">
             信誉分: {{item.creditScore}}
-            <text wx:if="{{canEditUser}}" class="credit-adjust-btn" bindtap="onShowCreditModal" data-user="{{item}}" style="color: {{theme.primary}};">调整</text>
+            <view
+              wx:if="{{canEditUser}}"
+              class="credit-adjust-btn"
+              catchtap="onShowCreditModal"
+              data-idx="{{userIndex}}"
+              style="color: {{theme.primary}};"
+            >调整</view>
           </view>
         </view>
 
         <view class="user-actions">
-          <view wx:if="{{canEditUser}}" class="action-btn edit" bindtap="onShowEditModal" data-user="{{item}}" style="color: {{theme.primary}};">编辑</view>
-          <view wx:if="{{canResetAvatar}}" class="action-btn danger" bindtap="onShowResetAvatarModal" data-user="{{item}}" style="color: #FF9800;">重置头像</view>
-          <view wx:if="{{canDeleteUser}}" class="action-btn danger" bindtap="onShowDeleteModal" data-user="{{item}}" style="color: #F44336;">删除</view>
+          <view
+            wx:if="{{canEditUser}}"
+            class="action-btn edit"
+            catchtap="onShowEditModal"
+            data-idx="{{userIndex}}"
+            style="color: {{theme.primary}};"
+          >编辑</view>
+          <view
+            wx:if="{{canResetAvatar}}"
+            class="action-btn danger"
+            catchtap="onShowResetAvatarModal"
+            data-idx="{{userIndex}}"
+            style="color: #FF9800;"
+          >重置头像</view>
+          <view
+            wx:if="{{canDeleteUser}}"
+            class="action-btn danger"
+            catchtap="onShowDeleteModal"
+            data-idx="{{userIndex}}"
+            style="color: #F44336;"
+          >删除</view>
         </view>
       </view>
 
@@ -91,13 +116,13 @@
     <text style="color: {{theme.textSecondary}};">加载中...</text>
   </view>
 
-  <view wx:if="{{isShowDeleteModal}}" class="modal-mask" bindtap="onCloseDeleteModal">
+  <view wx:if="{{isShowDeleteModal}}" class="modal-mask show" catchtap="onCloseDeleteModal">
     <view class="dialog-content" style="background: {{theme.card}};" catchtap="preventBubble">
       <view class="modal-header">
         <text class="modal-title" style="color: {{theme.textPrimary}};">删除用户</text>
         <text class="modal-close" bindtap="onCloseDeleteModal" style="color: {{theme.textTertiary}};">×</text>
       </view>
-      <view class="modal-body" style="padding: 40rpx 0;">
+      <view class="modal-body">
         <text style="color: {{theme.textSecondary}}; text-align: center; display: block;">确定要删除该用户吗？</text>
         <text style="color: {{theme.textTertiary}}; text-align: center; display: block; margin-top: 20rpx; font-size: 24rpx;">此操作不可恢复</text>
       </view>
@@ -105,20 +130,20 @@
         <view class="btn-cancel" bindtap="onCloseDeleteModal" style="border-color: {{theme.border}}; color: {{theme.textSecondary}};">
           取消
         </view>
-        <view class="btn-confirm danger" bindtap="onFirstConfirmDelete" style="background: #F44336;">
+        <view class="btn-confirm danger" bindtap="onConfirmDelete" style="background: #F44336;">
           确认删除
         </view>
       </view>
     </view>
   </view>
 
-  <view wx:if="{{isShowResetAvatarModal}}" class="modal-mask" bindtap="onCloseResetAvatarModal">
+  <view wx:if="{{isShowResetAvatarModal}}" class="modal-mask show" catchtap="onCloseResetAvatarModal">
     <view class="dialog-content" style="background: {{theme.card}};" catchtap="preventBubble">
       <view class="modal-header">
         <text class="modal-title" style="color: {{theme.textPrimary}};">重置头像</text>
         <text class="modal-close" bindtap="onCloseResetAvatarModal" style="color: {{theme.textTertiary}};">×</text>
       </view>
-      <view class="modal-body" style="padding: 40rpx 0;">
+      <view class="modal-body">
         <text style="color: {{theme.textSecondary}}; text-align: center; display: block;">确定要重置该用户的头像吗？</text>
         <text style="color: {{theme.textTertiary}}; text-align: center; display: block; margin-top: 20rpx; font-size: 24rpx;">头像将恢复为小程序Logo</text>
       </view>
@@ -126,7 +151,7 @@
         <view class="btn-cancel" bindtap="onCloseResetAvatarModal" style="border-color: {{theme.border}}; color: {{theme.textSecondary}};">
           取消
         </view>
-        <view class="btn-confirm" bindtap="onConfirmResetAvatar" style="background: {{theme.primary}};">
+        <view class="btn-confirm" bindtap="onConfirmResetAvatar">
           确认重置
         </view>
       </view>
@@ -213,13 +238,13 @@
     </view>
   </view>
 
-  <view wx:if="{{creditModalVisible}}" class="modal-mask" bindtap="onCloseCreditModal">
+  <view wx:if="{{creditModalVisible}}" class="modal-mask show" catchtap="onCloseCreditModal">
     <view class="dialog-content" style="background: {{theme.card}};" catchtap="preventBubble">
       <view class="modal-header">
         <text class="modal-title" style="color: {{theme.textPrimary}};">调整信誉分</text>
         <text class="modal-close" bindtap="onCloseCreditModal" style="color: {{theme.textTertiary}};">×</text>
       </view>
-      <view class="modal-body" style="padding: 30rpx 0;">
+      <view class="modal-body">
         <view class="form-item">
           <text class="form-label" style="color: {{theme.textPrimary}};">用户：{{creditTargetUser.nickname || creditTargetUser.openid}}</text>
         </view>
@@ -228,11 +253,35 @@
         </view>
         <view class="form-item">
           <text class="form-label" style="color: {{theme.textPrimary}};">调整值</text>
-          <input class="form-input" type="digit" placeholder="正数加分，负数扣分" value="{{creditChange}}" bindinput="onCreditChangeInput" style="background: {{theme.background}}; color: {{theme.textPrimary}};" />
+          <view class="credit-adjust-row">
+            <view
+              class="credit-sign-btn {{!creditIsNegative ? 'active' : ''}}"
+              style="{{!creditIsNegative ? 'background:' + theme.primary + '; color:#fff; border-color:' + theme.primary + ';' : 'border-color:' + theme.border + '; color:' + theme.textSecondary + ';'}}"
+              bindtap="onSetCreditSign"
+              data-negative="{{false}}"
+            >加分 +</view>
+            <view
+              class="credit-sign-btn {{creditIsNegative ? 'active' : ''}}"
+              style="{{creditIsNegative ? 'background:' + theme.error + '; color:#fff; border-color:' + theme.error + ';' : 'border-color:' + theme.border + '; color:' + theme.textSecondary + ';'}}"
+              bindtap="onSetCreditSign"
+              data-negative="{{true}}"
+            >扣分 −</view>
+          </view>
+          <input
+            class="form-input credit-amount-input"
+            type="digit"
+            placeholder="请输入分数"
+            value="{{creditChangeAbs}}"
+            bindinput="onCreditAmountInput"
+            adjust-position="{{true}}"
+            cursor-spacing="120"
+            style="background: {{theme.background}}; color: {{theme.textPrimary}};"
+          />
+          <text class="form-hint" style="color: {{theme.textTertiary}};">先选加分或扣分，再输入具体分数</text>
         </view>
         <view class="form-item">
           <text class="form-label" style="color: {{theme.textPrimary}};">原因</text>
-          <input class="form-input" placeholder="请输入调整原因（必填）" value="{{creditReason}}" bindinput="onCreditReasonInput" style="background: {{theme.background}}; color: {{theme.textPrimary}};" />
+          <input class="form-input" placeholder="请输入调整原因（必填）" value="{{creditReason}}" bindinput="onCreditReasonInput" adjust-position="{{true}}" cursor-spacing="80" style="background: {{theme.background}}; color: {{theme.textPrimary}};" />
         </view>
         <view class="form-item">
           <text class="form-label" style="color: {{theme.textPrimary}};">预估结果：<text style="color: {{theme.primary}}; font-weight: bold;">{{creditPreview}}</text></text>
@@ -242,7 +291,7 @@
         <view class="btn-cancel" bindtap="onCloseCreditModal" style="border-color: {{theme.border}}; color: {{theme.textSecondary}};">
           取消
         </view>
-        <view class="btn-confirm" bindtap="onConfirmCreditChange" style="background: {{theme.primary}};">
+        <view class="btn-confirm" bindtap="onConfirmCreditChange">
           确认调整
         </view>
       </view>

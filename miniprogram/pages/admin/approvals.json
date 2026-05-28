@@ -1,3 +1,5 @@
 {
-  "usingComponents": {}
+  "usingComponents": {
+    "reject-reason-modal": "/components/reject-reason-modal/index"
+  }
 }

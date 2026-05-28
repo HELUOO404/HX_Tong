@@ -11,6 +11,7 @@ const BookingService = require('../../services/bookingService')
 const UserStore = require('../../stores/userStore')
 const { ErrorHandler } = require('../../utils/errorHandler')
 const ThemeMixin = require('../../theme/theme-mixin')
+const { formatDate, generateCalendarDays } = require('../../utils/bookingCalendar')
 
 Page({
   ...ThemeMixin,
@@ -47,6 +48,7 @@ Page({
     calendarDays: [],
     calendarTouchStartX: 0,
     calendarTouchStartY: 0,
+    dateAvailability: {},
     noSlotsToday: false
   },
 
@@ -154,7 +156,7 @@ Page({
       calendarYear: firstSelectableDate.getFullYear(),
       calendarMonth: firstSelectableDate.getMonth() + 1
     })
-    this.generateCalendarDays()
+    this.refreshCalendarDays()
 
     this.generateTimeSlots()
   },
@@ -551,13 +553,13 @@ Page({
     }
 
     if (!this.data.contactPhone.trim()) {
-      ErrorHandler.showError('请填写联系电话')
+      ErrorHandler.showError('请输入11位数')
       return
     }
 
     const phoneRegex = /^1[3-9]\d{9}$/
     if (!phoneRegex.test(this.data.contactPhone.trim())) {
-      ErrorHandler.showError('请填写正确的手机号码')
+      ErrorHandler.showError('请输入正确的11位数')
       return
     }
 
@@ -595,74 +597,43 @@ Page({
     }
   },
 
-  generateCalendarDays() {
-    const { calendarYear, calendarMonth, selectedDate, minDate, maxDate } = this.data
-    const year = calendarYear
-    const month = calendarMonth
-
-    // 当月第一天是星期几
-    const firstDayOfMonth = new Date(year, month - 1, 1)
-    const startWeekday = firstDayOfMonth.getDay() // 0=周日
-
-    // 当月总天数
-    const daysInMonth = new Date(year, month, 0).getDate()
-
-    // 上月总天数（用于填充前置空白）
-    const daysInPrevMonth = new Date(year, month - 1, 0).getDate()
-
-    const days = []
-    const today = this.formatDate(new Date())
-
-    // 填充上月尾部日期（灰色显示）
-    for (let i = startWeekday - 1; i >= 0; i--) {
-      const day = daysInPrevMonth - i
-      const dateStr = this.formatDate(new Date(year, month - 2, day))
-      days.push({
-        day: day,
-        date: dateStr,
-        isCurrentMonth: false,
-        isToday: dateStr === today,
-        isSelectable: false,
-        isSelected: dateStr === selectedDate
+  refreshCalendarDays() {
+    const { calendarYear, calendarMonth, selectedDate, minDate, maxDate, dateAvailability } = this.data
+    this.setData({
+      calendarDays: generateCalendarDays({
+        calendarYear,
+        calendarMonth,
+        selectedDate,
+        minDate,
+        maxDate,
+        dateAvailability
       })
-    }
+    })
+  },
 
-    // 当月日期
-    for (let day = 1; day <= daysInMonth; day++) {
-      const dateStr = this.formatDate(new Date(year, month - 1, day))
-      const dateTime = new Date(year, month - 1, day).getTime()
-      const isSelectable = dateTime >= minDate && (!maxDate || dateTime <= maxDate)
-      days.push({
-        day: day,
-        date: dateStr,
-        isCurrentMonth: true,
-        isToday: dateStr === today,
-        isSelectable: isSelectable,
-        isSelected: dateStr === selectedDate
-      })
-    }
+  async loadMonthAvailability() {
+    const { roomId, calendarYear, calendarMonth } = this.data
+    if (!roomId) return
 
-    // 填充下月头部日期（灰色显示），补齐到 42 格（6行 x 7列）
-    const remaining = 42 - days.length
-    for (let day = 1; day <= remaining; day++) {
-      const dateStr = this.formatDate(new Date(year, month, day))
-      days.push({
-        day: day,
-        date: dateStr,
-        isCurrentMonth: false,
-        isToday: dateStr === today,
-        isSelectable: false,
-        isSelected: dateStr === selectedDate
-      })
-    }
+    const startDate = formatDate(new Date(calendarYear, calendarMonth - 1, 1))
+    const endDate = formatDate(new Date(calendarYear, calendarMonth, 0))
 
-    this.setData({ calendarDays: days })
+    try {
+      const roomService = RoomService.getInstance()
+      const data = await roomService.getDateAvailability(roomId, startDate, endDate)
+      this.setData({ dateAvailability: data.dateMap || {} })
+    } catch (error) {
+      console.error('[BookingCreate] 加载日期预约状态失败:', error)
+      this.setData({ dateAvailability: {} })
+    }
+    this.refreshCalendarDays()
   },
 
   onShowCalendar() {
     if (!this.data.datePickerReady) return
     this.setData({ showCalendar: true })
-    this.generateCalendarDays()
+    this.refreshCalendarDays()
+    this.loadMonthAvailability()
   },
 
   onCloseCalendar() {
@@ -677,7 +648,8 @@ Page({
       calendarYear--
     }
     this.setData({ calendarYear, calendarMonth })
-    this.generateCalendarDays()
+    this.refreshCalendarDays()
+    this.loadMonthAvailability()
   },
 
   onNextMonth() {
@@ -688,17 +660,22 @@ Page({
       calendarYear++
     }
     this.setData({ calendarYear, calendarMonth })
-    this.generateCalendarDays()
+    this.refreshCalendarDays()
+    this.loadMonthAvailability()
   },
 
   onCalendarDayTap(e) {
-    const { date, selectable } = e.currentTarget.dataset
+    const { date, selectable, availability } = e.currentTarget.dataset
     if (!selectable) {
       wx.showToast({ title: '该日期不可预约', icon: 'none' })
       return
     }
+    if (availability === 'full') {
+      wx.showToast({ title: '该日期已约满', icon: 'none' })
+      return
+    }
     this.setData({ selectedDate: date, showCalendar: false })
-    this.generateCalendarDays()
+    this.refreshCalendarDays()
     // 触发原有日期变更逻辑
     this.onDateChange({ detail: { value: date } })
   },
