@@ -58,10 +58,8 @@
 .info-value {
   font-size: 28rpx;
   text-align: right;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   max-width: 400rpx;
+  word-break: break-all;
 }
 
 .about-footer {
