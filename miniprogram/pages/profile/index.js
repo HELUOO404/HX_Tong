@@ -98,6 +98,10 @@ Page({
   },
 
   onEditProfile() {
+    if (!this.data.isLogin) {
+      wx.navigateTo({ url: '/pages/login/login' })
+      return
+    }
     wx.navigateTo({ url: '/pages/profile/edit' })
   },
 

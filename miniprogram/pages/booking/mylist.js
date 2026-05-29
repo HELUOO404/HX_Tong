@@ -19,6 +19,7 @@ Page({
 
   data: {
     isLoading: true,
+    needLogin: false,
     bookingList: [],
     bookingDates: [],
     selectedDate: '',
@@ -42,19 +43,18 @@ Page({
   onLoad() {
     ThemeMixin.onLoad.call(this)
 
-    const userStore = UserStore.getInstance()
-    if (!userStore.isLogin) {
-      wx.redirectTo({ url: '/pages/login/login' })
-      return
-    }
-
     const now = new Date()
     this.setData({
       calendarYear: now.getFullYear(),
       calendarMonth: now.getMonth() + 1
     })
 
-    this.loadBookingList()
+    const userStore = UserStore.getInstance()
+    if (userStore.isLogin) {
+      this.loadBookingList()
+    } else {
+      this.setData({ isLoading: false, needLogin: true })
+    }
   },
 
   onShow() {
@@ -242,5 +242,9 @@ Page({
     wx.navigateTo({
       url: `/pages/booking/detail?id=${id}`
     })
+  },
+
+  onGoLogin() {
+    wx.navigateTo({ url: '/pages/login/login' })
   }
 })

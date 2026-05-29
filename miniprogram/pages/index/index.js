@@ -158,7 +158,6 @@ Page({
 
   onQuickActionTap(e) {
     const { id } = e.currentTarget.dataset
-    const userStore = UserStore.getInstance()
 
     switch (id) {
       case 'booking':
@@ -168,17 +167,9 @@ Page({
         ErrorHandler.showError('课表功能开发中，敬请期待')
         break
       case 'mybookings':
-        if (!userStore.isLogin) {
-          wx.redirectTo({ url: '/pages/login/login' })
-          return
-        }
         wx.navigateTo({ url: '/pages/booking/mylist' })
         break
       case 'credit':
-        if (!userStore.isLogin) {
-          wx.redirectTo({ url: '/pages/login/login' })
-          return
-        }
         wx.navigateTo({ url: '/pages/credit/index' })
         break
     }

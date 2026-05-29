@@ -55,23 +55,6 @@ Page({
   onLoad(options) {
     ThemeMixin.onLoad.call(this)
 
-    const userStore = UserStore.getInstance()
-    if (!userStore.isLogin) {
-      wx.showModal({
-        title: '提示',
-        content: '请先登录后再预约会议室',
-        confirmText: '去登录',
-        success: (res) => {
-          if (res.confirm) {
-            wx.redirectTo({ url: '/pages/login/login' })
-          } else {
-            wx.navigateBack()
-          }
-        }
-      })
-      return
-    }
-
     const { roomId } = options
     if (!roomId) {
       ErrorHandler.showError('参数错误')
@@ -83,7 +66,11 @@ Page({
     this.setData({ roomId, todayDate: today })
 
     this.loadRoomDetail(roomId)
-    this.loadCreditScore()
+
+    const userStore = UserStore.getInstance()
+    if (userStore.isLogin) {
+      this.loadCreditScore()
+    }
   },
 
   onShow() {
@@ -508,6 +495,21 @@ Page({
 
   async onSubmit() {
     if (this.data.isSubmitting) return
+
+    const userStore = UserStore.getInstance()
+    if (!userStore.isLogin) {
+      wx.showModal({
+        title: '提示',
+        content: '请先登录后再提交预约',
+        confirmText: '去登录',
+        success: (res) => {
+          if (res.confirm) {
+            wx.navigateTo({ url: '/pages/login/login' })
+          }
+        }
+      })
+      return
+    }
 
     if (this.data.creditScore < 80) {
       ErrorHandler.showError('信誉分低于80分，暂无法预约')

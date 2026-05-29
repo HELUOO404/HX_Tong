@@ -15,20 +15,24 @@ Page({
     creditScore: 100,
     creditLevel: '良好',
     records: [],
-    isLoading: true
+    isLoading: true,
+    needLogin: false
   },
 
   onLoad() {
     const userStore = UserStore.getInstance()
-    if (!userStore.isLogin) {
-      wx.redirectTo({ url: '/pages/login/login' })
-      return
+    if (userStore.isLogin) {
+      this.loadCreditInfo()
+    } else {
+      this.setData({ isLoading: false, needLogin: true })
     }
-
-    this.loadCreditInfo()
   },
 
   onPullDownRefresh() {
+    if (this.data.needLogin) {
+      wx.stopPullDownRefresh()
+      return
+    }
     this.loadCreditInfo().finally(() => {
       wx.stopPullDownRefresh()
     })
@@ -71,5 +75,9 @@ Page({
       ErrorHandler.handle(error)
       this.setData({ isLoading: false })
     }
+  },
+
+  onGoLogin() {
+    wx.navigateTo({ url: '/pages/login/login' })
   }
 })

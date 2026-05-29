@@ -72,9 +72,13 @@
 
   <view class="empty-container" wx:else>
     <image class="empty-image" src="/assets/images/empty-booking.png" mode="aspectFit" />
-    <text class="empty-text" style="color: {{theme.textTertiary}};">
+    <text class="empty-text" style="color: {{theme.textTertiary}};" wx:if="{{needLogin}}">登录后查看完整内容</text>
+    <text class="empty-text" style="color: {{theme.textTertiary}};" wx:else>
       {{selectedDate ? ('暂无 ' + selectedDate + ' 的预约记录') : ('暂无' + (activeTab === 'all' ? '' : activeTab === 'pending' ? '待审批' : activeTab === 'approved' ? '已通过' : '已结束') + '预约记录')}}
     </text>
+    <view class="login-btn" wx:if="{{needLogin}}" bindtap="onGoLogin" style="margin-top: 20rpx; padding: 16rpx 48rpx; background-color: {{theme.primary}}; border-radius: 8rpx; display: inline-block;">
+      <text style="color: #fff; font-size: 28rpx;">去登录</text>
+    </view>
   </view>
 
   <!-- 底部半屏日历 Bottom Sheet -->
