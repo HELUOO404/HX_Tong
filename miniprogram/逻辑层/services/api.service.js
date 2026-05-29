@@ -47,7 +47,12 @@ class ApiService {
       
       return result.data
     } catch (error) {
-      console.error(`[ApiService] ${functionName}.${action} 调用失败:`, error)
+      console.error(`[ApiService] ${functionName}.${action} 调用失败:`, {
+        errCode: error.errCode,
+        errMsg: error.errMsg,
+        message: error.message,
+        fullError: error
+      })
       throw error
     }
   }

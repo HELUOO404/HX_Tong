@@ -43,6 +43,7 @@ coverage/
 
 # 云函数依赖（每个云函数单独管理）
 cloudfunctions/**/node_modules/
+cloudfunctions/**/package-lock.json
 
 # 小程序构建产物
 miniprogram/miniprogram_npm/
