@@ -37,7 +37,7 @@ async function initDatabase(params, cloud) {
   const {
     resetAll = false,
     adminUsername = 'superadmin',
-    adminPassword = 'REDACTED_PASSWORD',
+    adminPassword = '<CHANGE_ME>',
     initSampleData = true
   } = params || {}
 

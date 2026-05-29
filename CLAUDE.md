@@ -6,8 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 "红芯通" (HX_Tong) is a WeChat Mini Program for meeting room booking at 深职大集成电路学院 (Shenzhen Polytechnic University, School of Integrated Circuits). The app name displayed to users is "芯预约". It uses WeChat Cloud Development (云开发) with no external backend server.
 
-AppID: `REDACTED_APPID`  
-Cloud Environment ID: `REDACTED_ENV_ID`
+AppID: 见 `project.config.json`（本地文件，不入库）  
+Cloud Environment ID: 见 `miniprogram/config/env.js`（本地文件，不入库）
 
 ## Development Environment
 
