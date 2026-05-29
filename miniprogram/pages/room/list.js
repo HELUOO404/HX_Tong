@@ -32,16 +32,7 @@ Page({
   },
 
   onShow() {
-    // 调用混入的 onShow 来检查主题变化
     ThemeMixin.onShow.call(this)
-
-    // 检查用户是否已完善信息
-    const userStore = UserStore.getInstance()
-    if (!userStore.isLogin) {
-      // 未登录或未完善信息，跳转到登录页
-      wx.redirectTo({ url: '/pages/login/login' })
-      return
-    }
 
     if (!this.data.isLoading) {
       this.loadRoomList()
@@ -123,6 +114,20 @@ Page({
    * 立即预约
    */
   onBookTap(e) {
+    const userStore = UserStore.getInstance()
+    if (!userStore.isLogin) {
+      wx.showModal({
+        title: '提示',
+        content: '请先登录后再预约会议室',
+        confirmText: '去登录',
+        success: (res) => {
+          if (res.confirm) {
+            wx.navigateTo({ url: '/pages/login/login' })
+          }
+        }
+      })
+      return
+    }
     const { id } = e.currentTarget.dataset
     wx.navigateTo({
       url: `/pages/booking/create?roomId=${id}`

@@ -81,7 +81,7 @@ Page({
     const userStore = UserStore.getInstance()
 
     if (!userStore.isLogin) {
-      wx.redirectTo({ url: '/pages/login/login' })
+      this.applyUserState({ isLogin: false, userInfo: null })
       return
     }
 
